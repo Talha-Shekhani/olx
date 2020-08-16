@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList, Alert, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList, Alert } from 'react-native';
 import { Icon, Input, Image, Button } from 'react-native-elements';
 import { TextValidator, Form } from 'react-native-validator-form'
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,7 +13,7 @@ import { ads } from '../../redux/ads';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { isEmail, isEmpty } from 'react-native-validator-form/lib/ValidationRules';
 import { fetchUser } from '../../redux/Actions';
-// import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const mapStateToProps = state => ({
     user: state.users
@@ -45,17 +45,17 @@ class Login extends Component {
                     .then(() => {
                         if (!isEmpty(this.props.user.users[0])) {
                             if (this.state.email == this.props.user.users[0].email) {
-                                async function removeStoreData() {
+                                _removeStoreData = async () => {
                                     AsyncStorage.removeItem('userdata')
                                         .then(() => {
-                                            await AsyncStorage.setItem('userdata',
-                                                JSON.stringify({ email: this.state.email, userId: this.props.user.users[0].id }))
-                                                .then(() => this.props.navigation.navigate('password'))
-                                                .catch((err) => console.log('Could not save user info', err))
-
+                                            _StoreData = async () => {
+                                                await AsyncStorage.setItem('userdata',
+                                                    JSON.stringify({ email: this.state.email, userId: this.props.user.users[0].id }))
+                                                    .then(() => this.props.navigation.navigate('password'))
+                                                    .catch((err) => console.log('Could not save user info', err))
+                                            }
                                         })
                                 }
-                                removeStoreData()
                             }
                             else this.setState({ errmsg: 'Email not Matched' })
                         }

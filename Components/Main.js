@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Alert, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import productList from './Home/productList';
 import adDetail from './Home/adDetail'
 import Login from './Login/Login'
-// import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 import Password from './Login/Password'
 import SellCategories from './Sell/SellCategories'
 import tabMyAds from './Ads/TabMyAds'

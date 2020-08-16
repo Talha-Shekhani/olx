@@ -8,7 +8,7 @@ import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { fetchAds, fetchCategories, fetchLoc } from '../../redux/Actions'
-// import * as SecureStore from 'expo-secure-store'
+import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import MyAds from './MyAds';

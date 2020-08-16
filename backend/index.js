@@ -10,8 +10,8 @@ const loc = require('./routes/location')
 const user = require('./routes/users')
 const favorites = require('./routes/favorites')
 
-// const hostname = '192.168.1.63'
-const hostname = 'localhost'
+const hostname = '192.168.0.105'
+// const hostname = 'localhost'
 const port = 3000
 // const port = 8080
 

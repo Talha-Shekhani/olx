@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +10,7 @@ import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { postComment } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
-// import * as SecureStore from 'expo-secure-store'
+import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Appbar } from 'react-native-paper'
 
