@@ -95,19 +95,18 @@ class Main extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    async function retrieveData () {
-        const userdata = await AsyncStorage.getItem('userdata')
-        .then((userdata) => {
+        // const userdata = AsyncStorage.getItem('userdata')
+        // .then((userdata) => {
           // Alert.alert(JSON.stringify(userinfo))
-          if (userdata) {
-            let userinfo = JSON.parse(userdata)
-            this.setState({ userId: userinfo.userId })
-            Alert.alert(this.state.userId.toString())
-          }
-        })
-        .catch((err) => console.log('Cannot find user info' + err))
-    }
-    retrieveData()
+        //   if (userdata != undefined) {
+        //     let userinfo = JSON.parse(userdata)
+        //     this.setState({ userId: userinfo.userId })
+        //   }
+        //   else {
+        //     this.setState({ userId: '0' })
+        //   }
+        // })
+        // .catch((err) => console.log('Cannot find user info' + err))
     // SecureStore.getItemAsync('userdata')
     //   .then((userdata) => {
     //     // Alert.alert(JSON.stringify(userinfo))

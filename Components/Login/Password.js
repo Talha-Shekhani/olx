@@ -38,19 +38,19 @@ class Password extends Component {
     }
 
     componentDidMount() {
-        async function retrieveData() {
-            const userdata = await AsyncStorage.getItem('userdata')
-                .then((userdata) => {
-                    // Alert.alert(JSON.stringify(userinfo))
-                    if (userdata) {
-                        let userinfo = JSON.parse(userdata)
-                        this.setState({ email: userinfo.email, userId: userinfo.userId })
-                        console.log(userinfo)
-                    }
-                })
-                .catch((err) => console.log('Cannot find user info' + err))
-        }
-        retrieveData()
+        // async function retrieveData() {
+        const userdata = AsyncStorage.getItem('userdata')
+            .then((userdata) => {
+                // Alert.alert(JSON.stringify(userinfo))
+                if (userdata) {
+                    let userinfo = JSON.parse(userdata)
+                    this.setState({ email: userinfo.email, userId: userinfo.userId })
+                    console.log(userinfo)
+                }
+            })
+            .catch((err) => console.log('Cannot find user info' + err))
+        // }
+        // retrieveData()
     }
 
     handleSubmit() {
@@ -63,7 +63,7 @@ class Password extends Component {
                         check = data
                     }).then(() => {
                         if (check != false)
-                            SecureStore.setItemAsync('userdata',
+                            AsyncStorage.setItem('userdata',
                                 JSON.stringify({ email: this.state.email, password: this.state.password, userId: this.state.userId }))
                                 .then(() => this.props.navigation.navigate('root'))
                                 .catch((err) => console.log('Could not save user info', err))

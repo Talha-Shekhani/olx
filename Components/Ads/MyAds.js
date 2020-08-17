@@ -30,8 +30,8 @@ class MyAds extends Component {
   }
 
   componentDidMount() {
-    async function retrieveData() {
-      const userdata = await AsyncStorage.getItem('userdata')
+    // async function retrieveData() {
+      const userdata = AsyncStorage.getItem('userdata')
         .then((userdata) => {
           // Alert.alert(JSON.stringify(userinfo))
           if (userdata) {
@@ -40,8 +40,8 @@ class MyAds extends Component {
           }
         })
         .catch((err) => console.log('Cannot find user info' + err))
-    }
-    retrieveData()
+    // }
+    // retrieveData()
   }
 
   render() {

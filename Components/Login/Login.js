@@ -45,17 +45,18 @@ class Login extends Component {
                     .then(() => {
                         if (!isEmpty(this.props.user.users[0])) {
                             if (this.state.email == this.props.user.users[0].email) {
-                                _removeStoreData = async () => {
+                                // _removeStoreData = async () => {
                                     AsyncStorage.removeItem('userdata')
                                         .then(() => {
-                                            _StoreData = async () => {
-                                                await AsyncStorage.setItem('userdata',
+                                            // _StoreData = async () => {
+                                                AsyncStorage.setItem('userdata',
                                                     JSON.stringify({ email: this.state.email, userId: this.props.user.users[0].id }))
+                                                    .then(() => console.log(this.state.email))
                                                     .then(() => this.props.navigation.navigate('password'))
                                                     .catch((err) => console.log('Could not save user info', err))
-                                            }
+                                            // }
                                         })
-                                }
+                                // }
                             }
                             else this.setState({ errmsg: 'Email not Matched' })
                         }

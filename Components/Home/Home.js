@@ -59,12 +59,12 @@ function RenderAds(props) {
         { val = props.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == props.userId).map((item, index) => { return (item.ad_id) }) }
         return (
           <Card containerStyle={styles.productCardColumn} key={index} >
-            {/* <Text>{JSON.stringify(props.props.fav.favorites)}</Text> */}
-            <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} onPress={() => {
+            {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
+            <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
               if (val == item.id)
-                props.props.delFav(item.user_id, item.id)
+                props.props.delFav(props.userId, item.id)
               else
-                props.props.postFav(item.user_id, item.id)
+                props.props.postFav(props.userId, item.id)
             }
 
             }
@@ -102,8 +102,8 @@ class Home extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    async function retrieveData() {
-      const userdata = await AsyncStorage.getItem('userdata')
+    // async function retrieveData() {
+      const userdata = AsyncStorage.getItem('userdata')
         .then((userdata) => {
           // Alert.alert(JSON.stringify(userinfo))
           if (userdata) {
@@ -113,8 +113,8 @@ class Home extends Component {
         })
         .then(() => this.props.fetchFav(this.state.userId))
         .catch((err) => console.log('Cannot find user info' + err))
-    }
-    retrieveData()
+    // }
+    // retrieveData()
   }
 
   render() {
@@ -194,7 +194,9 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   categoryLink: {
-    width: 120,
+    // width: 120,
+    maxWidth: 120,
+    minWidth: 110,
     margin: 5,
     marginVertical: 12
   },
