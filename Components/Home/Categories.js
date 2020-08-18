@@ -27,7 +27,7 @@ function RenderItem(props) {
       // <Text>{JSON.stringify(props.props)}</Text>
       props.props.cat.categories.map((item, index) => {
         return (
-          <ListItem containerStyle={styles.navLink} onPress={() => props.props.navigation.navigate('subcategories', { cat_id: item.cat_id, catName: item.title })}
+          <ListItem containerStyle={styles.navLink} onPress={() => props.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })}
             key={index}
             title={item.title}
             leftAvatar={{ source: { uri: baseUrl + item.img } }}

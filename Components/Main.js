@@ -23,6 +23,8 @@ import Password from './Login/Password'
 import SellCategories from './Sell/SellCategories'
 import tabMyAds from './Ads/TabMyAds'
 import MyAccount from './Account/MyAccount';
+import cat1 from './Sell/cat1';
+import ImageSelection from './Sell/ImageSelection';
 
 const mapStateToProps = state => {
   return {
@@ -134,6 +136,8 @@ class Main extends Component {
             <Stack.Screen name='subcategories' component={SubCategories} />
             <Stack.Screen name="productlist" component={productList} options={{ headerShown: false }} />
             <Stack.Screen name="addetail" component={adDetail} options={{ headerShown: false }} />
+            <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
+            <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

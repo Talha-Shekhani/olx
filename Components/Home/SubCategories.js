@@ -8,6 +8,7 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { fetchSubCategories } from '../../redux/Actions'
 import { connect } from 'react-redux';
 import { Loading } from '../LoadingComponent';
+import { Divider } from 'react-native-paper'
 
 const mapDispatchToProps = dispatch => ({
   fetchSubCategories: () => dispatch(fetchSubCategories())
@@ -30,33 +31,31 @@ function RenderItem(props) {
     return (<Text>Network Error</Text>)
   }
   else
-    return (
-      <View style={styles.container}>
-        {/* <Text>{JSON.stringify(props)}</Text> */}
-        {props.props.subcat.subcategories.filter(item => item.cat_id == props.catId).map((item, index) => {
-          return (
-            <ListItem key={index} style={styles.categoryLink} onPress={() => props.props.navigation.navigate('productlist', {subcatId: item.subcat_id, catId: item.cat_id})} title={item.title} ></ListItem>
-          )
-        })}
-        <ListItem style={styles.categoryLink} title='View All' onPress={() => props.props.navigation.navigate('productlist', {subcat_id: 'none', catId: props.catId})} >
-        </ListItem>
-      </View>
-    )
-  // }
-  // else if (props.name == 'vehicle') {
-  //   return(
-  //     <View style={styles.container}>
-  //       <ListItem style={styles.categoryLink} title='Cars' >
-  //       </ListItem>
-  //       <ListItem style={styles.categoryLink} title='Cars on Installment' >
-  //       </ListItem>
-  //       <ListItem style={styles.categoryLink} title='Cars Accessories' >
-  //       </ListItem>
-  //       <ListItem style={styles.categoryLink} title='Spare Parts' >
-  //       </ListItem>
-  //     </View>
-  //   )
-  // }
+    if (props.sell === false)
+      return (
+        <View style={styles.container}>
+          {props.props.subcat.subcategories.filter(item => item.cat_id == props.catId).map((item, index) => {
+            return (
+              <ListItem key={index} style={styles.categoryLink} onPress={() => props.props.navigation.navigate('productlist', { subcatId: item.subcat_id, catId: item.cat_id })} title={item.title} ></ListItem>
+            )
+          })}
+          <ListItem style={styles.categoryLink} title='View All' onPress={() => props.props.navigation.navigate('productlist', { subcat_id: 'none', catId: props.catId })} >
+          </ListItem>
+        </View>
+      )
+    else if (props.sell === true)
+      return (
+        <View style={styles.container}>
+          {/* <Text>{JSON.stringify(props)}</Text> */}
+          {props.props.subcat.subcategories.filter(item => item.cat_id == props.catId).map((item, index) => {
+            return (
+              <ListItem key={index} style={styles.categoryLink}
+                onPress={() => props.props.navigation.navigate(`cat${item.cat_id}`, { subcatId: item.subcat_id, catId: item.cat_id })} 
+                title={item.title} ></ListItem>
+            )
+          })}
+        </View>
+      )
 }
 
 class SubCategories extends Component {
@@ -65,7 +64,7 @@ class SubCategories extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    if (this.props.subcat == undefined)
+    if (this.props.subcat.subcategories == [])
       this.props.fetchSubCategories()
   }
 
@@ -73,11 +72,11 @@ class SubCategories extends Component {
     this.props.navigation.setOptions({
       title: this.props.route.params.catName
     })
-    const { cat_id } = this.props.route.params
+    const { catId, sell } = this.props.route.params
 
     return (
-      <ScrollView style={{backgroundColor: 'white'}} >
-        <RenderItem catId={cat_id} props={this.props} />
+      <ScrollView style={{ backgroundColor: 'white' }} >
+        <RenderItem catId={catId} sell={sell} props={this.props} />
       </ScrollView>
     )
   }
@@ -88,7 +87,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   categoryLink: {
-    margin: 5,
+    margin: 2,
+    borderBottomColor: '#aaa',
+    borderBottomWidth: 1,
+    borderStyle: "solid",
+    marginVertical: 0
   },
   productText: {
     marginHorizontal: 5
