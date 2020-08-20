@@ -21,51 +21,51 @@ const mapStateToProps = state => {
   }
 }
 
-function RenderItem(props) {
-  if (props.props.subcat.isLoading) {
-    return (
-      <Loading />
-    )
-  }
-  else if (props.props.subcat.errMess) {
-    return (<Text>Network Error</Text>)
-  }
-  else
-    if (props.sell === false)
-      return (
-        <View style={styles.container}>
-          {props.props.subcat.subcategories.filter(item => item.cat_id == props.catId).map((item, index) => {
-            return (
-              <ListItem key={index} style={styles.categoryLink} onPress={() => props.props.navigation.navigate('productlist', { subcatId: item.subcat_id, catId: item.cat_id })} title={item.title} ></ListItem>
-            )
-          })}
-          <ListItem style={styles.categoryLink} title='View All' onPress={() => props.props.navigation.navigate('productlist', { subcat_id: 'none', catId: props.catId })} >
-          </ListItem>
-        </View>
-      )
-    else if (props.sell === true)
-      return (
-        <View style={styles.container}>
-          {/* <Text>{JSON.stringify(props)}</Text> */}
-          {props.props.subcat.subcategories.filter(item => item.cat_id == props.catId).map((item, index) => {
-            return (
-              <ListItem key={index} style={styles.categoryLink}
-                onPress={() => props.props.navigation.navigate(`cat${item.cat_id}`, { subcatId: item.subcat_id, catId: item.cat_id })} 
-                title={item.title} ></ListItem>
-            )
-          })}
-        </View>
-      )
-}
-
 class SubCategories extends Component {
   constructor(props) {
     super(props)
   }
 
   UNSAFE_componentWillMount() {
-    if (this.props.subcat.subcategories == [])
+    // if (this.props.subcat.subcategories == [])
       this.props.fetchSubCategories()
+  }
+
+  renderItem(catId, sell) {
+    if (this.props.subcat.isLoading) {
+      return (
+        <Loading />
+      )
+    }
+    else if (this.props.subcat.errMess) {
+      return (<Text>Network Error</Text>)
+    }
+    else
+      if (sell === false)
+        return (
+          <View style={styles.container}>
+            {this.props.subcat.subcategories.filter(item => item.cat_id == catId).map((item, index) => {
+              return (
+                <ListItem key={index} style={styles.categoryLink} onPress={() => this.props.navigation.navigate('productlist', { subcatId: item.subcat_id, catId: item.cat_id })} title={item.title} ></ListItem>
+              )
+            })}
+            <ListItem style={styles.categoryLink} title='View All' onPress={() => this.props.navigation.navigate('productlist', { subcat_id: 'none', catId: props.catId })} >
+            </ListItem>
+          </View>
+        )
+      else if (sell === true)
+        return (
+          <View style={styles.container}>
+            {/* <Text>{JSON.stringify(props)}</Text> */}
+            {this.props.subcat.subcategories.filter(item => item.cat_id == catId).map((item, index) => {
+              return (
+                <ListItem key={index} style={styles.categoryLink}
+                  onPress={() => this.props.navigation.navigate(`cat${item.cat_id}`, { subcatId: item.subcat_id, catId: item.cat_id })}
+                  title={item.title} ></ListItem>
+              )
+            })}
+          </View>
+        )
   }
 
   render() {
@@ -76,7 +76,7 @@ class SubCategories extends Component {
 
     return (
       <ScrollView style={{ backgroundColor: 'white' }} >
-        <RenderItem catId={catId} sell={sell} props={this.props} />
+        {this.renderItem(catId, sell)}
       </ScrollView>
     )
   }

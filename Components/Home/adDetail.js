@@ -12,6 +12,7 @@ import { postComment } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { fetchUser } from '../../redux/Actions'
+import { SliderBox } from 'react-native-image-slider-box'
 import NumberFormat from 'react-number-format';
 // const Intl = require('react-native-intl')
 // const en = new Intl.Translation('en-US')
@@ -79,7 +80,10 @@ function RenderAd(props) {
         return (
           <View key={index} style={styles.container} >
             <View style={styles.imgConatiner}>
-              <Image source={{ uri: baseUrl + item.img1 }} resizeMode='stretch' style={{ width: '100%', height: '100%', opacity: 0.7 }} />
+            <SliderBox
+                  images={[baseUrl + item.img1, baseUrl + item.img1]} resizeMode='contain' style={{ width: '100%', height: '100%', opacity: 0.7 }}
+                />
+              {/* <Image source={{ uri: baseUrl + item.img1 }} resizeMode='stretch' style={{ width: '100%', height: '100%', opacity: 0.7 }} /> */}
               {/* <Text>{JSON.stringify(props.props.user)}</Text> */}
               {/* <Text>{JSON.stringify(props.props.ad.ads.filter(item => item.id == props.adId )[0])}</Text> */}
             </View>
@@ -174,8 +178,7 @@ const styles = StyleSheet.create({
   },
   imgConatiner: {
     width: '100%',
-    height: 280,
-    flex: 1
+    height: 280
   },
   titleBar: {
     height: 100,

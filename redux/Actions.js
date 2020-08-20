@@ -327,6 +327,11 @@ export const postFav = (userId, adId) => (dispatch) => {
                 return errmess
             })
         .then((response) => { return response.json() })
-        .then(response => dispatch(fetchFav(userId)))
+        .then(response => dispatch(postFavorite({"ad_id": adId, "user_id": userId})))
         .catch(error => dispatch(favFailed(error)))
 }
+
+export const postFavorite = (fav) => ({
+    type: ActionTypes.POST_FAV,
+    payload: fav
+})

@@ -14,6 +14,9 @@ export const favorites = (state = {
         case ActionTypes.DEL_FAV:
             console.log(action.payload + ' ', JSON.stringify(state.favorites.filter((item) => item.ad_id !== action.payload)))
             return { ...state, isLoading: false, errMess: null, favorites: state.favorites.filter((item) => item.ad_id !== action.payload) }
+        case ActionTypes.POST_FAV:
+            console.log(action.payload, state.favorites)
+            return { ...state, isLoading: false, errMess: null, favorites: state.favorites.concat(action.payload) }
         default:
             return state
     }

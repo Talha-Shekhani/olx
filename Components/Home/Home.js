@@ -27,71 +27,6 @@ const mapDispatchToProps = dispatch => ({
   postFav: (userId, adId) => dispatch(postFav(userId, adId)),
 })
 
-function RenderCat(props) {
-  if (props.props.cat.errMess) {
-    return (<Text>Network Error</Text>)
-  }
-  else
-    return (
-      // <Text>{JSON.stringify(props.props)}</Text>
-      props.props.cat.categories.map((item, index) => {
-        while (index < 9)
-          return (
-            <TouchableOpacity key={index} style={styles.categoryLink} onPress={() => props.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })} >
-              <View style={styles.iconBack}><Image style={{ width: 40, height: 40 }} source={{ uri: baseUrl + item.img }} /></View>
-              <Text style={styles.productText} >{item.title}</Text>
-            </TouchableOpacity>
-          )
-      })
-    )
-}
-
-function RenderAds(props) {
-  if (props.props.ads.errMess || props.props.fav.errMess) {
-    return (<Text>Network Error</Text>)
-  }
-  else
-    // if (!isEmpty(props.props.fav.favorites))
-    return (
-      // <Text>{JSON.stringify(props.props)}</Text>
-      props.props.ads.map((item, index) => {
-        let val = ''
-        { val = props.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == props.userId).map((item, index) => { return (item.ad_id) }) }
-        return (
-          <Card containerStyle={styles.productCardColumn} key={index} >
-            {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
-            <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
-              if (val == item.id)
-                props.props.delFav(props.userId, item.id)
-              else
-                props.props.postFav(props.userId, item.id)
-            }
-
-            }
-
-              type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-            <TouchableOpacity key={index} onPress={() => props.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
-              <View style={styles.imageConatiner}>
-                <Image containerStyle={styles.cardImage}
-                  resizeMethod="scale"
-                  resizeMode="stretch"
-                  source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
-                />
-              </View>
-              <View>
-                <Text style={styles.priceText}> Rs {item.price}</Text>
-                <Text >{item.title}</Text>
-                <Text style={styles.loc} ><MatIcon name="map-marker" size={10} /><Text style={styles.locText}>{props.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
-                  return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
-                })}</Text> </Text>
-              </View>
-            </TouchableOpacity>
-          </Card>
-        )
-      })
-    )
-}
-
 class Home extends Component {
   constructor(props) {
     super(props)
@@ -101,20 +36,81 @@ class Home extends Component {
     }
   }
 
-  UNSAFE_componentWillMount() {
-    // async function retrieveData() {
-      const userdata = AsyncStorage.getItem('userdata')
-        .then((userdata) => {
-          // Alert.alert(JSON.stringify(userinfo))
-          if (userdata) {
-            let userinfo = JSON.parse(userdata)
-            this.setState({ userId: userinfo.userId })
-          }
+  componentDidMount() {
+    const userdata = AsyncStorage.getItem('userdata')
+      .then((userdata) => {
+        if (userdata) {
+          let userinfo = JSON.parse(userdata)
+          this.setState({ userId: userinfo.userId })
+        }
+      })
+      .then(() => this.props.fetchFav(this.state.userId))
+      .catch((err) => console.log('Cannot find user info' + err))
+  }
+
+  renderCat() {
+    if (this.props.cat.errMess) {
+      return (<Text>Network Error</Text>)
+    }
+    else
+      return (
+        // <Text>{JSON.stringify(props.props)}</Text>
+        this.props.cat.categories.map((item, index) => {
+          while (index < 9)
+            return (
+              <TouchableOpacity key={index} style={styles.categoryLink} onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })} >
+                <View style={styles.iconBack}><Image style={{ width: 40, height: 40 }} source={{ uri: baseUrl + item.img }} /></View>
+                <Text style={styles.productText} >{item.title}</Text>
+              </TouchableOpacity>
+            )
         })
-        .then(() => this.props.fetchFav(this.state.userId))
-        .catch((err) => console.log('Cannot find user info' + err))
-    // }
-    // retrieveData()
+      )
+  }
+
+  renderAds(userId) {
+    if (this.props.ads.errMess || this.props.fav.errMess) {
+      return (<Text>Network Error</Text>)
+    }
+    else
+      // if (!isEmpty(this.props.fav.favorites))
+      return (
+        // <Text>{JSON.stringify(this.props)}</Text>
+        this.props.ads.map((item, index) => {
+          let val = ''
+          { val = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
+          return (
+            <Card containerStyle={styles.productCardColumn} key={index} >
+              {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
+              <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
+                if (val == item.id)
+                  this.props.delFav(userId, item.id)
+                else
+                  this.props.postFav(userId, item.id)
+              }
+
+              }
+
+                type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
+              <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
+                <View style={styles.imageConatiner}>
+                  <Image containerStyle={styles.cardImage}
+                    resizeMethod="scale"
+                    resizeMode="contain"
+                    source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                  />
+                </View>
+                <View>
+                  <Text style={styles.priceText}> Rs {item.price}</Text>
+                  <Text >{item.title}</Text>
+                  <Text style={styles.loc} ><MatIcon name="map-marker" size={10} /><Text style={styles.locText}>{this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
+                    return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                  })}</Text> </Text>
+                </View>
+              </TouchableOpacity>
+            </Card>
+          )
+        })
+      )
   }
 
   render() {
@@ -132,7 +128,7 @@ class Home extends Component {
             <View style={styles.cardContainer}>
               <View style={styles.row}><Text>Browse Categories</Text><Text style={styles.link} onPress={() => this.props.navigation.navigate('categories')} >See all</Text></View>
               <View style={styles.categories}>
-                <RenderCat props={this.props} />
+                {this.renderCat()}
               </View>
             </View>
             <View style={styles.cardContainer} >
@@ -144,7 +140,7 @@ class Home extends Component {
             <View style={styles.cardContainer} >
               <View style={styles.row}><Text>Fresh Recommendations</Text></View>
               <View style={styles.cardColumn} >
-                <RenderAds props={this.props} userId={this.state.userId} />
+                {this.renderAds(this.state.userId)}
               </View>
             </View>
           </View>

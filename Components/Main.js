@@ -129,8 +129,8 @@ class Main extends Component {
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="loginEmail" component={Login} options={{headerShown: false}} />
-            <Stack.Screen name="password" component={Password} options={{headerShown: false}} />
+            {/* <Stack.Screen name="loginEmail" component={Login} options={{headerShown: false}} />
+            <Stack.Screen name="password" component={Password} options={{headerShown: false}} /> */}
             <Stack.Screen name="root" component={tabNavigation} options={{ headerShown: false }} />
             <Stack.Screen name='categories' component={Categories} />
             <Stack.Screen name='subcategories' component={SubCategories} />

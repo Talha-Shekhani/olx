@@ -21,10 +21,12 @@ class cat1 extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      condition: '',
-      type: '',
-      title: '',
-      description: '',
+      form: {
+        condition: '',
+        type: '',
+        title: '',
+        description: '',
+      },
       errCond: '',
       errType: '',
       errTitle: '',
@@ -35,18 +37,19 @@ class cat1 extends Component {
   }
 
   handleSubmit() {
-    if (this.state.condition == '') this.setState({ errCond: 'Condition Required' })
+    console.log(JSON.stringify(this.state.form))
+    if (this.state.form.condition == '') this.setState({ errCond: 'Condition Required' })
     else this.setState({ errCond: ' ' })
-    if (this.state.type == '') this.setState({ errType: 'Type Required' })
+    if (this.state.form.type == '') this.setState({ errType: 'Type Required' })
     else this.setState({ errType: ' ' })
-    if (this.state.title == '') this.setState({ errTitle: 'Title Required' })
-    else if (this.state.title.length < 5) this.setState({ errTitle: 'A minimum length of 5 characters is required.' })
+    if (this.state.form.title == '') this.setState({ errTitle: 'Title Required' })
+    else if (this.state.form.title.length < 5) this.setState({ errTitle: 'A minimum length of 5 characters is required.' })
     else this.setState({ errTitle: ' ' })
-    if (this.state.description == '') this.setState({ errDesc: 'Description Required' })
-    else if (this.state.description.length < 20) this.setState({ errDesc: 'A minimum length of 5 characters is required.' })
+    if (this.state.form.description == '') this.setState({ errDesc: 'Description Required' })
+    else if (this.state.form.description.length < 20) this.setState({ errDesc: 'A minimum length of 5 characters is required.' })
     else this.setState({ errDesc: ' ' })
     if (this.state.errCond == ' ' && this.state.errDesc == ' ' && this.state.errTitle == ' ' && this.state.errType == ' ')
-      this.props.navigation.navigate('imageselection')
+      this.props.navigation.navigate('imageselection', { form: this.state.form })
   }
 
   render() {
@@ -60,12 +63,12 @@ class cat1 extends Component {
           <View style={styles.container} >
             <Text style={styles.textCond} >Condition *</Text>
             <View style={styles.rowBtn}>
-              <Button style={this.state.isNewPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({ condition: this.state.condition == 'new' ? '' : 'new' }); this.setState({ isNewPress: !this.state.isNewPress }); this.setState({ isUsedPress: false }) }} mode='outlined' color='black' >New</Button>
-              <Button style={this.state.isUsedPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({ condition: this.state.condition == 'used' ? '' : 'used' }); this.setState({ isUsedPress: !this.state.isUsedPress }); this.setState({ isNewPress: false }) }} mode='outlined' color='black' >Used</Button>
+              <Button style={this.state.isNewPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({form: {...this.state.form, condition: this.state.form.condition == 'new' ? '' : 'new' }}); this.setState({ isNewPress: !this.state.isNewPress }); this.setState({ isUsedPress: false }) }} mode='outlined' color='black' >New</Button>
+              <Button style={this.state.isUsedPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({form: {...this.state.form, condition: this.state.form.condition == 'used' ? '' : 'used' }}); this.setState({ isUsedPress: !this.state.isUsedPress }); this.setState({ isNewPress: false }) }} mode='outlined' color='black' >Used</Button>
             </View>
             <Text style={styles.errText} >{this.state.errCond}</Text>
             <Text style={styles.textTitle} >Type *</Text>
-            <Picker style={styles.inputCont} selectedValue={this.state.type} onValueChange={(item) => this.setState({ type: item })} >
+            <Picker style={styles.inputCont} selectedValue={this.state.form.type} onValueChange={(item) => this.setState({form: {...this.state.form, type: item}})} >
               <Picker.Item label='Tablet > Type' value='' />
               <Picker.Item label='Apple' value='Apple' />
               <Picker.Item label='Danny Tabs' value='Danny Tabs' />
@@ -84,9 +87,8 @@ class cat1 extends Component {
               name="title"
               renderErrorMessage={true}
               errorMessage={this.state.errTitle}
-              onChangeText={(title) => this.setState({ title: title })}
-              value={this.state.email}
-              rightIcon={<Text style={styles.counterText} >{this.state.title.length}/70</Text>}
+              onChangeText={(title) => this.setState({form: {...this.state.form, title: title}})}
+              rightIcon={<Text style={styles.counterText} >{this.state.form.title.length}/70</Text>}
             />
             <Text style={styles.textTitle}>Description what are you selling? *</Text>
             <Input
@@ -98,9 +100,8 @@ class cat1 extends Component {
               name="desc"
               renderErrorMessage={true}
               errorMessage={this.state.errDesc}
-              onChangeText={(desc) => this.setState({ description: desc })}
-              value={this.state.email}
-              rightIcon={<Text style={styles.counterText} >{this.state.description.length}/4096</Text>}
+              onChangeText={(desc) => this.setState({form: {...this.state.form, description: desc}})}
+              rightIcon={<Text style={styles.counterText} >{this.state.form.description.length}/4096</Text>}
             />
           </View>
         </ScrollView>

@@ -18,36 +18,37 @@ const mapStateToProps = state => {
   }
 }
 
-function RenderItem(props) {
-  if (props.props.cat.errMess) {
-    return (<Text>Network Error</Text>)
-  }
-  else
-    return (
-      // <Text>{JSON.stringify(props.props)}</Text>
-      props.props.cat.categories.map((item, index) => {
-        return (
-          <ListItem containerStyle={styles.navLink} onPress={() => props.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })}
-            key={index}
-            title={item.title}
-            leftAvatar={{ source: { uri: baseUrl + item.img } }}
-            rightIcon={<Icon style={styles.arrowIcon} name='angle-right' type='font-awesome' size={24} />} >
-          </ListItem>
-        )
-      })
-    )
-}
-
 class Categories extends Component {
   constructor(props) {
     super(props)
   }
 
+  renderItem() {
+    if (this.props.cat.errMess) {
+      return (<Text>Network Error</Text>)
+    }
+    else
+      return (
+        // <Text>{JSON.stringify(props.props)}</Text>
+        this.props.cat.categories.map((item, index) => {
+          return (
+            <ListItem containerStyle={styles.navLink} onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })}
+              key={index}
+              title={item.title}
+              leftAvatar={{ source: { uri: baseUrl + item.img } }}
+              rightIcon={<Icon style={styles.arrowIcon} name='angle-right' type='font-awesome' size={24} />} >
+            </ListItem>
+          )
+        })
+      )
+  }
+
   render() {
+    console.log('cat')
     return (
       <ScrollView>
         <View style={styles.container}>
-          <RenderItem props={this.props} />
+          {this.renderItem()}
         </View>
       </ScrollView>
     )

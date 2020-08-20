@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, ScrollView, ToastAndroid } from 'react-native';
-import { SearchBar, Icon, Card, Image, ListItem, Input } from 'react-native-elements';
+import { SearchBar, Icon, Card, Image, ListItem, Input, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import SimIcon from 'react-native-vector-icons/SimpleLineIcons'
@@ -14,6 +14,9 @@ import CameraRoll from '@react-native-community/cameraroll'
 import { Divider, Button } from 'react-native-paper'
 import { Picker } from '@react-native-community/picker'
 import { baseUrl } from '../../shared/baseUrl';
+import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
+import { SliderBox } from 'react-native-image-slider-box'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const mapStateToProps = state => {
     return {
@@ -26,62 +29,139 @@ class ImageSelection extends Component {
         super(props)
         this.state = {
             images: [],
+            selectedImage: []
         }
     }
 
+    componentDidMount() {
+        this.processImage()
+    }
+
+    renderImages() {
+        return (
+            this.state.images.map((item, index) => {
+                return (
+                    <TouchableOpacity onPress={() => {
+                        this.setState({
+                            selectedImage: this.state.selectedImage.includes(item) ? this.state.selectedImage.filter(el => el != item) : this.state.selectedImage.concat(item)
+                        })
+                    }} >
+                        <CheckBox checked={this.state.selectedImage.includes(item) ? true : false}
+                            containerStyle={styles.checkBox} />
+                        <Image source={{ uri: item.uri }} style={styles.image} />
+                    </TouchableOpacity>
+                )
+            })
+        )
+    }
+
     processImage() {
-        // requestNotifications(["alert", "sound"]).then(({ settings, status }) => {
-        // console.log(status)
+        this.setState({ images: [] })
         request("android.permission.CAMERA").then((results) => {
             switch (results) {
-                case RESULTS.GRANTED:
-                    {
-                        // ImagePicker.launchCamera({}, (response) => {
-                        //     if (response.didCancel) {
-                        //         console.log('User cancelled image picker')
-                        //     } else if (response.error) {
-                        //         console.log('ImagePicker Error: ', response)
-                        //     } else if (response.customButton) {
-                        //         console.log('User tapped custom button: ', response.customButton)
-                        //     } else {
-                        //         console.log(response)
-                        //     }
-                        // })
-                        CameraRoll.getPhotos({first: 20, assetType: "Photos"}).then((res) => {
-                            console.log(res.edges)
-                        })
-                        // ImagePicker.launchImageLibrary({
-                        //     allowsEditing: true,
-                        // }, (response) => {
-                        //     if (response.didCancel) {
-                        //         console.log('User cancelled image picker')
-                        //     } else if (response.error) {
-                        //         console.log('ImagePicker Error: ', response)
-                        //     } else if (response.customButton) {
-                        //         console.log('User tapped custom button: ', response.customButton)
-                        //     } else {
-                        //         console.log(response.fileName)
-                        //     }
-                        // })
-                    }
+                case RESULTS.GRANTED: {
+                    CameraRoll.getPhotos({ first: 100000, assetType: "Photos" }).then((res) => {
+                        return (
+                            res.edges.map((item, index) => {
+                                this.setState({ images: this.state.images.concat(item.node.image) })
+                            })
+                        )
+                    })
+                }
             }
         })
     }
-    render() {
-        // const { catId, subcatId } = this.props.route.params
 
+    openCamera() {
+        ImagePicker.launchCamera({ allowsEditing: true, mediaType: "photo", storageOptions: { cameraRoll: true } }, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                console.log(response)
+                this.setState({ selectedImage: this.state.selectedImage.concat(response) })
+                this.processImage()
+            }
+        })
+    }
+
+    handleSubmit(form) {
+        console.log(form)
+    }
+
+    render() {
+        const { form } = this.props.route.params
+        { var d = ''; isEmpty(this.state.selectedImage) ? d = 'flex' : d = 'none' }
         return (
             <SafeAreaView style={{ backgroundColor: 'white' }} >
-                <ScrollView style={{ height: '90%', backgroundColor: 'white' }}  >
-                    {/* <View><Text>{catId + ' ' + subcatId}</Text></View> */}
-                    <Button onPress={this.processImage} mode="contained" >Press</Button>
+                <View style={styles.sliderBox} >
+
+                    <Text style={[styles.selectText, { display: d }]} >No Item Selected</Text>
+                    <SliderBox resizeMode='contain'
+                        images={this.state.selectedImage.map((itm, indx) => {
+                            return itm.uri
+                        })}
+                        sliderBoxHeight={400}
+                    />
+                </View>
+                <ScrollView style={{ height: '64%', backgroundColor: 'white' }}  >
+                    {/* <Text>{JSON.stringify(thi.state.images[0])}{this.state.image}</Text> */}
+                    {/* <Text>{JSON.stringify(this.state.selectedImage)}</Text> */}
+                    <View style={styles.imageCont} >
+                        <TouchableOpacity onPress={() => this.openCamera()}
+                            style={styles.gridView} >
+                            <Image source={{ uri: baseUrl + 'camera.png' }} style={styles.image} />
+                        </TouchableOpacity>
+                        {this.renderImages()}
+                    </View>
                 </ScrollView>
+                <View style={styles.formButton} >
+                    <Button mode="contained" color='black'
+                        onPress={() => this.handleSubmit(form)}
+                        buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
+                </View>
             </SafeAreaView>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    image: {
+        width: 90,
+        height: 90,
+        margin: 1
+    },
+    imageCont: {
+        width: '100%',
+        flexDirection: 'row',
+        flexWrap: "wrap"
+    },
+    checkBox: {
+        position: "absolute",
+        top: -12,
+        right: -20,
+        zIndex: 1
+    },
+    sliderBox: {
+        width: '100%',
+        height: 400,
+        backgroundColor: '#ddd',
+        justifyContent: 'center',
+    },
+    selectText: {
+        alignSelf: 'center',
+        fontSize: 16,
+        zIndex: 0
+    },
+    formButton: {
+        width: '90%',
+        justifyContent: 'flex-end',
+        margin: 20,
+        bottom: 0,
+    },
 })
 
 export default connect(mapStateToProps)(ImageSelection)
