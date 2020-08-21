@@ -25,6 +25,7 @@ import tabMyAds from './Ads/TabMyAds'
 import MyAccount from './Account/MyAccount';
 import cat1 from './Sell/cat1';
 import ImageSelection from './Sell/ImageSelection';
+import FirstPage from './Login/First'
 
 const mapStateToProps = state => {
   return {
@@ -97,40 +98,34 @@ class Main extends Component {
   }
 
   UNSAFE_componentWillMount() {
-        // const userdata = AsyncStorage.getItem('userdata')
-        // .then((userdata) => {
-          // Alert.alert(JSON.stringify(userinfo))
-        //   if (userdata != undefined) {
-        //     let userinfo = JSON.parse(userdata)
-        //     this.setState({ userId: userinfo.userId })
-        //   }
-        //   else {
-        //     this.setState({ userId: '0' })
-        //   }
-        // })
-        // .catch((err) => console.log('Cannot find user info' + err))
-    // SecureStore.getItemAsync('userdata')
-    //   .then((userdata) => {
-    //     // Alert.alert(JSON.stringify(userinfo))
-    //     if (userdata) {
-    //       let userinfo = JSON.parse(userdata)
-    //       this.setState({ userId: userinfo.userId })
-    //       Alert.alert(this.state.userId.toString())
-    //     }
-    //   })
-    //   .catch((err) => console.log('Cannot find user info' + err))
+    AsyncStorage.getItem('userdata')
+      .then((userdata) => {
+        if (userdata != undefined) {
+          let userinfo = JSON.parse(userdata)
+          this.setState({ userId: userinfo.userId })
+        }
+        else {
+          this.setState({ userId: 0 })
+        }
+      })
+      .catch((err) => console.log('Cannot find user info ' + err))
     this.props.fetchAds()
     this.props.fetchCategories()
     this.props.fetchLoc()
   }
 
   render() {
+    let initialRoute = ''
+    if (this.state.userId != 0)
+      initialRoute = 'firstpage'
+    else initialRoute = 'root'
     return (
       <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator>
-            {/* <Stack.Screen name="loginEmail" component={Login} options={{headerShown: false}} />
-            <Stack.Screen name="password" component={Password} options={{headerShown: false}} /> */}
+          <Stack.Navigator initialRouteName={initialRoute} >
+            <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
+            <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />
             <Stack.Screen name="root" component={tabNavigation} options={{ headerShown: false }} />
             <Stack.Screen name='categories' component={Categories} />
             <Stack.Screen name='subcategories' component={SubCategories} />

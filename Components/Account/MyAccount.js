@@ -12,7 +12,7 @@ import { postComment } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Appbar } from 'react-native-paper'
+import { Appbar, Button } from 'react-native-paper'
 
 const mapStateToProps = state => ({
     ads: state.ads.ads,
@@ -30,21 +30,30 @@ class MyAccount extends Component {
     }
 
     componentDidMount() {
-        async function retrieveData() {
-            const userdata = await AsyncStorage.getItem('userdata')
-                .then((userdata) => {
-                    // Alert.alert(JSON.stringify(userinfo))
-                    if (userdata) {
-                        let userinfo = JSON.parse(userdata)
-                        this.setState({ userId: userinfo.userId })
-                    }
-                })
-                .catch((err) => console.log('Cannot find user info' + err))
-        }
-        retrieveData()
+        AsyncStorage.getItem('userdata')
+            .then((userdata) => {
+                // Alert.alert(JSON.stringify(userinfo))
+                if (userdata) {
+                    let userinfo = JSON.parse(userdata)
+                    this.setState({ userId: userinfo.userId })
+                }
+                else this.setState({ userId: 0 })
+            })
+            .catch((err) => console.log('Cannot find user info' + err))
+    }
+
+    displayContent(isLogin) {
+        if (isLogin)
+            return (
+                <Button onPress={() => { AsyncStorage.removeItem('userdata'); this.props.navigation.navigate('firstpage') }} >LogOut</Button>
+            )
+        else return (<View></View>)
     }
 
     render() {
+        let isLogin = false
+        if (this.state.userId != 0)
+            isLogin = true
         return (
             <SafeAreaView>
                 <Appbar.Header>
@@ -55,6 +64,7 @@ class MyAccount extends Component {
                 </Appbar.Header>
                 <ScrollView>
                     <View><Text>MyAccount</Text></View>
+                    {this.displayContent(isLogin)}
                 </ScrollView>
             </SafeAreaView>
         )

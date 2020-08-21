@@ -1,5 +1,5 @@
 let mysql = require('mysql')
-let fs = require('fs')
+// let fs = require('fs')
 
 // pool = mysql.createPool({
 //     host: '145.14.144.52',

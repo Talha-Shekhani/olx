@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
+import user from '../../backend/routes/users';
 
 
 const mapStateToProps = state => {
@@ -28,56 +29,6 @@ const mapDispatchToProps = dispatch => ({
   delFav: (userId, adId) => dispatch(delFav(userId, adId))
 })
 
-function RenderItem(props) {
-  if (props.props.fav.isLoading) {
-    return (
-      <Loading />
-    )
-  }
-  else if (props.props.fav.errMess) {
-    return (<Text>Network Error</Text>)
-  }
-  else
-    if (props.userId != undefined)
-      if (!isEmpty(props.props.fav.favorites)) {
-        return (
-          // <Text>{JSON.stringify(props.props.fav.favorites[0].ad_id) + ' '+ x}</Text>
-          props.props.fav.favorites.map((itm, indx) => {
-            return (
-              props.props.ads.ads.filter(item => item.id == itm.ad_id).map((item, index) => {
-                return (
-                  <Card containerStyle={styles.productCardColumn} key={index} onPress={() => props.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}>
-                    <View style={styles.iconHBack} ><Icon name='heart' onPress={() => props.props.delFav(item.user_id, item.id)} type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-                    <TouchableOpacity>
-                      <View style={styles.product} >
-                        <View style={styles.imageConatiner}>
-                          <Image containerStyle={styles.cardImage}
-                            resizeMethod="scale"
-                            resizeMode="stretch"
-                            source={{ uri: baseUrl + item.img1 }}
-                          />
-                        </View>
-                        <View style={styles.rightSide} >
-                          <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
-                          <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
-                          <View style={styles.rightBottom} >
-                            <Text style={styles.productLoc}><IconMat name="map-marker" size={10} />Karachi, Sindh</Text>
-                            <Text style={styles.productDate}>23 JUL</Text>
-                          </View>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  </Card>
-                )
-              })
-            )
-          })
-
-        )
-      }
-      else return (<View><Text>No Favorites</Text></View>)
-}
-
 class Favorites extends Component {
 
   constructor(props) {
@@ -88,32 +39,78 @@ class Favorites extends Component {
   }
 
   componentDidUpdate() {
-    // this.props.fetchFav(this.state.userId)
     console.log(this.props.fav)
   }
 
   UNSAFE_componentWillMount() {
-    async function retrieveData() {
-      const userdata = await AsyncStorage.getItem('userdata')
-        .then((userdata) => {
-          // Alert.alert(JSON.stringify(userinfo))
-          if (userdata) {
-            let userinfo = JSON.parse(userdata)
-            this.setState({ userId: userinfo.userId })
-          }
-        })
-        // .then(() => this.props.fetchFav(this.state.userId))
-        .catch((err) => console.log('Cannot find user info' + err))
-    }
-    retrieveData()
+    AsyncStorage.getItem('userdata')
+      .then((userdata) => {
+        if (userdata) {
+          let userinfo = JSON.parse(userdata)
+          this.setState({ userId: userinfo.userId })
+        }
+        else this.setState({ userId: 0 })
+      })
+      // .then(() => this.props.fetchFav(this.state.userId))
+      .catch((err) => console.log('Cannot find user info' + err))
 
+  }
+
+  renderFav() {
+    if (this.props.fav.isLoading) {
+      return (
+        <Loading />
+      )
+    }
+    else if (this.props.fav.errMess) {
+      return (<Text>Network Error</Text>)
+    }
+    else
+      if (this.state.userId != 0)
+        if (!isEmpty(this.props.fav.favorites)) {
+          return (
+            // <Text>{JSON.stringify(this.props.fav.favorites[0].ad_id) + ' '+ x}</Text>
+            this.props.fav.favorites.map((itm, indx) => {
+              return (
+                this.props.ads.ads.filter(item => item.id == itm.ad_id).map((item, index) => {
+                  return (
+                    <Card containerStyle={styles.productCardColumn} key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}>
+                      <View style={styles.iconHBack} ><Icon name='heart' onPress={() => this.props.delFav(item.user_id, item.id)} type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
+                      <TouchableOpacity>
+                        <View style={styles.product} >
+                          <View style={styles.imageConatiner}>
+                            <Image containerStyle={styles.cardImage}
+                              resizeMethod="scale"
+                              resizeMode="stretch"
+                              source={{ uri: baseUrl + item.img1 }}
+                            />
+                          </View>
+                          <View style={styles.rightSide} >
+                            <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
+                            <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
+                            <View style={styles.rightBottom} >
+                              <Text style={styles.productLoc}><IconMat name="map-marker" size={10} />Karachi, Sindh</Text>
+                              <Text style={styles.productDate}>23 JUL</Text>
+                            </View>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    </Card>
+                  )
+                })
+              )
+            })
+
+          )
+        }
+        else return (<View><Text>No Favorites</Text></View>)
   }
 
   render() {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.cardContainer} >
-          <RenderItem props={this.props} userId={this.state.userId} />
+          {this.renderFav()}
         </View>
       </ScrollView>
     );
