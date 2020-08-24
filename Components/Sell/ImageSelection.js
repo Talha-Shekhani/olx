@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, ToastAndroid, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image, ListItem, Input, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntIcon from 'react-native-vector-icons/AntDesign'
@@ -43,10 +43,10 @@ class ImageSelection extends Component {
                 return (
                     <TouchableOpacity onPress={() => {
                         this.setState({
-                            selectedImage: this.state.selectedImage.includes(item) ? this.state.selectedImage.filter(el => el != item) : this.state.selectedImage.concat(item)
+                            selectedImage: this.state.selectedImage.includes(item.uri) ? this.state.selectedImage.filter(el => el != item.uri) : this.state.selectedImage.concat(item.uri)
                         })
                     }} >
-                        <CheckBox checked={this.state.selectedImage.includes(item) ? true : false}
+                        <CheckBox checked={this.state.selectedImage.includes(item.uri) ? true : false}
                             containerStyle={styles.checkBox} />
                         <Image source={{ uri: item.uri }} style={styles.image} />
                     </TouchableOpacity>
@@ -89,7 +89,13 @@ class ImageSelection extends Component {
     }
 
     handleSubmit(form) {
-        console.log(form)
+        if (!isEmpty(this.state.selectedImage)) {
+            // console.log(Object.assign(form, { img: this.state.selectedImage }))
+            form = Object.assign(form, { img: this.state.selectedImage })
+            console.log(form)
+            this.props.navigation.navigate('pricePage', {form: form} )
+        }
+        else Alert.alert('No images Selected', 'Please select atleast one image')
     }
 
     render() {
@@ -107,7 +113,7 @@ class ImageSelection extends Component {
                         sliderBoxHeight={400}
                     />
                 </View>
-                <ScrollView style={{ height: '64%', backgroundColor: 'white' }}  >
+                <ScrollView style={{ height: '37%', backgroundColor: 'white' }}  >
                     {/* <Text>{JSON.stringify(thi.state.images[0])}{this.state.image}</Text> */}
                     {/* <Text>{JSON.stringify(this.state.selectedImage)}</Text> */}
                     <View style={styles.imageCont} >

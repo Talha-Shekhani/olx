@@ -26,6 +26,8 @@ class cat1 extends Component {
         type: '',
         title: '',
         description: '',
+        catId: '',
+        subcatId: ''
       },
       errCond: '',
       errType: '',
@@ -53,9 +55,7 @@ class cat1 extends Component {
   }
 
   render() {
-
     const { catId, subcatId } = this.props.route.params
-
     return (
       <SafeAreaView style={{ backgroundColor: 'white' }} >
         <ScrollView style={{ height: '90%', backgroundColor: 'white' }}  >
@@ -107,7 +107,7 @@ class cat1 extends Component {
         </ScrollView>
         <View style={styles.formButton} >
           <Button mode="contained" color='black'
-            onPress={() => this.handleSubmit()}
+            onPress={() => {this.setState({form: {...this.state.form, catId: catId, subcatId: subcatId}}); this.handleSubmit()}}
             buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
         </View>
       </SafeAreaView>

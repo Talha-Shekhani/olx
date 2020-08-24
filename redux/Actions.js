@@ -335,3 +335,28 @@ export const postFavorite = (fav) => ({
     type: ActionTypes.POST_FAV,
     payload: fav
 })
+
+export const postAd = (userId, formData) => (dispatch) => {
+    console.log('formData ', formData)
+    return fetch(`${baseUrl}ad/${userId}/${formData}`, {
+        mode: 'no-cors',
+        method: 'POST'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => console.log(response))
+        .catch(error => dispatch(adsFailed(error)))
+}

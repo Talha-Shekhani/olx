@@ -53,6 +53,10 @@ class Password extends Component {
         // retrieveData()
     }
 
+    componentWillUnmount() {
+        this.forceUpdate()
+    }
+
     handleSubmit() {
         if (this.state.password != '') {
             // Alert.alert(JSON.stringify(this.props.user))

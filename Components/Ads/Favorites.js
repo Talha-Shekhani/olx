@@ -14,7 +14,6 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
-import user from '../../backend/routes/users';
 
 
 const mapStateToProps = state => {

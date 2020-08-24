@@ -26,6 +26,7 @@ import MyAccount from './Account/MyAccount';
 import cat1 from './Sell/cat1';
 import ImageSelection from './Sell/ImageSelection';
 import FirstPage from './Login/First'
+import pricePage from './Sell/price'
 
 const mapStateToProps = state => {
   return {
@@ -40,7 +41,6 @@ const mapDispatchToProps = dispatch => ({
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator()
-
 const tabNavigation = () => {
   return (
     <Tab.Navigator initialRouteName="Explore"
@@ -96,7 +96,6 @@ class Main extends Component {
       userId: '',
     }
   }
-
   UNSAFE_componentWillMount() {
     AsyncStorage.getItem('userdata')
       .then((userdata) => {
@@ -115,28 +114,32 @@ class Main extends Component {
   }
 
   render() {
+    console.log(this.state)
     let initialRoute = ''
-    if (this.state.userId != 0)
+    if (this.state.userId == 0)
       initialRoute = 'firstpage'
     else initialRoute = 'root'
-    return (
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName={initialRoute} >
-            <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
-            <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />
-            <Stack.Screen name="root" component={tabNavigation} options={{ headerShown: false }} />
-            <Stack.Screen name='categories' component={Categories} />
-            <Stack.Screen name='subcategories' component={SubCategories} />
-            <Stack.Screen name="productlist" component={productList} options={{ headerShown: false }} />
-            <Stack.Screen name="addetail" component={adDetail} options={{ headerShown: false }} />
-            <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
-            <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    );
+    if (this.state.userId != '')
+      return (
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName={initialRoute} >
+              <Stack.Screen name="root" component={tabNavigation} options={{ headerShown: false }} />
+              <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
+              <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />
+              <Stack.Screen name='categories' component={Categories} />
+              <Stack.Screen name='subcategories' component={SubCategories} />
+              <Stack.Screen name="productlist" component={productList} options={{ headerShown: false }} />
+              <Stack.Screen name="addetail" component={adDetail} options={{ headerShown: false }} />
+              <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
+              <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
+              <Stack.Screen name="pricePage" component={pricePage} options={{headerShown: false}} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      )
+    else return (<View></View>)
   }
 }
 

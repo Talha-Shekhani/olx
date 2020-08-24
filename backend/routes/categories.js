@@ -21,8 +21,8 @@ const con = require("../connection");
 
 // module.exports = Ads
 
-const express = require('../node_modules/express')
-const bodyParser = require('../node_modules/body-parser');
+const express = require('express')
+const bodyParser = require('body-parser');
 const connection = require("../connection");
 
 const Cat = express.Router()
