@@ -102,7 +102,7 @@ class ImageSelection extends Component {
         const { form } = this.props.route.params
         { var d = ''; isEmpty(this.state.selectedImage) ? d = 'flex' : d = 'none' }
         return (
-            <SafeAreaView style={{ backgroundColor: 'white' }} >
+            <SafeAreaView style={{ backgroundColor: 'white', height: '100%' }} >
                 <View style={styles.sliderBox} >
 
                     <Text style={[styles.selectText, { display: d }]} >No Item Selected</Text>

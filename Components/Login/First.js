@@ -26,7 +26,7 @@ class FirstPage extends Component {
         <View>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('root')} style={styles.cancelBtn} ><FeatIcon name='x' size={20} /></TouchableOpacity>
         </View>
-        <View>
+        <View style={{height: '60%'}} >
           <Image source={{ uri: baseUrl + 'OLX_BLUE_LOGO.png' }} resizeMode='contain' style={styles.img} />
         </View>
         <View style={styles.bottomContainer}>
@@ -55,14 +55,15 @@ const styles = StyleSheet.create({
   },
   img: {
     width: '100%',
-    height: 450
+    height: '100%'
   },
   bottomContainer: {
-    backgroundColor: '#387eff'
+    backgroundColor: '#387eff',
+    height: '40%'
   },
   btnContainer: {
     margin: 10,
-    height: '40%'
+    height: '100%'
   },
   btns: {
     backgroundColor: 'white',

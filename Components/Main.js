@@ -119,7 +119,7 @@ class Main extends Component {
     if (this.state.userId == 0)
       initialRoute = 'firstpage'
     else initialRoute = 'root'
-    if (this.state.userId != '')
+    if (this.state.userId !== "")
       return (
         <SafeAreaProvider>
           <NavigationContainer>
@@ -134,7 +134,7 @@ class Main extends Component {
               <Stack.Screen name="addetail" component={adDetail} options={{ headerShown: false }} />
               <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
               <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
-              <Stack.Screen name="pricePage" component={pricePage} options={{headerShown: false}} />
+              <Stack.Screen name="pricePage" component={pricePage} options={{ headerShown: false }} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

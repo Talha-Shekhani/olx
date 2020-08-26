@@ -42,6 +42,7 @@ class pricePage extends Component {
         if (this.state.errPrice == ' ') {
             form = Object.assign(form, { price: this.state.price })
             console.log(form)
+            // console.log(JSON.stringify(this.props))
             this.props.postAd(this.state.userId, form)
         }
     }
@@ -160,4 +161,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(pricePage)
+export default connect(mapStateToProps, mapDispatchToProps)(pricePage)

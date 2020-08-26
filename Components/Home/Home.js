@@ -36,14 +36,13 @@ class Home extends Component {
     }
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     const userdata = AsyncStorage.getItem('userdata')
       .then((userdata) => {
         if (userdata) {
           let userinfo = JSON.parse(userdata)
           this.setState({ userId: userinfo.userId })
         }
-        else this.setState({ userId: 0 })
       })
       .then(() => this.props.fetchFav(this.state.userId))
       .catch((err) => console.log('Cannot find user info' + err))
@@ -83,13 +82,14 @@ class Home extends Component {
             <Card containerStyle={styles.productCardColumn} key={index} >
               {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
               <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
-                if (userId != 0)
-                  if (val == item.id)
-                    this.props.delFav(userId, item.id)
-                  else
-                    this.props.postFav(userId, item.id)
-                else this.props.navigation.navigate('firstpage')
-              }}
+                if (val == item.id)
+                  this.props.delFav(userId, item.id)
+                else
+                  this.props.postFav(userId, item.id)
+              }
+
+              }
+
                 type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
               <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
                 <View style={styles.imageConatiner}>
@@ -190,9 +190,9 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   categoryLink: {
-    // width: 120,
-    maxWidth: 120,
-    minWidth: 110,
+    width: 120,
+    // maxWidth: 120,
+    // minWidth: 110,
     margin: 5,
     marginVertical: 12
   },

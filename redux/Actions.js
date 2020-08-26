@@ -337,7 +337,6 @@ export const postFavorite = (fav) => ({
 })
 
 export const postAd = (userId, formData) => (dispatch) => {
-    console.log('formData ', formData)
     return fetch(`${baseUrl}ad/${userId}/${formData}`, {
         mode: 'no-cors',
         method: 'POST'
