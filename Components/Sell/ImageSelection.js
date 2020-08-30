@@ -90,10 +90,11 @@ class ImageSelection extends Component {
 
     handleSubmit(form) {
         if (!isEmpty(this.state.selectedImage)) {
-            // console.log(Object.assign(form, { img: this.state.selectedImage }))
+            console.log(this.state.selectedImage[0].slice(this.state.selectedImage[0].lastIndexOf('/') + 1))
+            // console.log(this.state.selectedImage[0].lastIndexOf('/'))
             form = Object.assign(form, { img: this.state.selectedImage })
-            console.log(form)
-            this.props.navigation.navigate('pricePage', {form: form} )
+            // console.log(form)
+            // this.props.navigation.navigate('pricePage', {form: form} )
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }

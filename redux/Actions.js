@@ -355,7 +355,7 @@ export const postAd = (userId, formData) => (dispatch) => {
                 var errmess = new Error(error.message)
                 return errmess
             })
-        .then((response) => { return response.json() })
-        .then(response => console.log(response))
-        .catch(error => dispatch(adsFailed(error)))
+        // .then((response) => { return response.json() })
+        .then(response => console.log('res', response))
+        .catch(error => console.log(error))
 }

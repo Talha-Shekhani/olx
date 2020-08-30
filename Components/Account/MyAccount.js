@@ -55,23 +55,53 @@ class MyAccount extends Component {
         if (this.state.userId != 0)
             isLogin = true
         return (
-            <SafeAreaView>
-                <Appbar.Header>
-                    <Appbar.BackAction />
-                    <Appbar.Content title="Title" subtitle="Subtitle" />
-                    <Appbar.Action icon="magnify" />
-                    <Appbar.Action icon="dots-vertical" />
-                </Appbar.Header>
-                <ScrollView>
-                    <View><Text>MyAccount</Text></View>
-                    {this.displayContent(isLogin)}
+            <SafeAreaView style={{ backgroundColor: 'white' }}>
+                <ScrollView style={styles.container}  >
+                    <View style={styles.header} >
+                        <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
+                        <View style={styles.subHead} >
+                            <Text style={styles.username} >UserName</Text>
+                            <Text style={styles.username} >UserName</Text>
+                        </View>
+                    </View>
                 </ScrollView>
-            </SafeAreaView>
+            </SafeAreaView >
         )
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        margin: 25,
+        backgroundColor: 'white',
+        height: '100%'
+    },
+    header: {
+        flexDirection: 'row'
+    },
+    username: {
+        marginLeft: 15,
+        fontSize: 20,
+        fontWeight: "bold"
+    },
+    subHead: {
+        // justifyContent: ''
+    },
+
+
+    title: {
+        fontSize: 22,
+        fontWeight: 'bold'
+    },
+    heading: {
+        fontSize: 16,
+        marginTop: 40,
+    },
+    image: {
+        margin: 10,
+        width: 80,
+        height: 80
+    },
 })
 
 

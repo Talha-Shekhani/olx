@@ -65,11 +65,12 @@ Ads.route('/:userId/:formData')
         next()
     })
     .get((req, res, next) => {
-        console.log(`Get ad `)
+        console.log('formData', req.params.userId, ' ', req.params.formData)
 
     })
     .post((req, res, next) => {
-        console.log(req.params.formData)
+        console.log('formData', req.params.userId, ' ', req.params.formData)
+        res.send(true)
         // con.query(`INSERT INTO ads (user_id, title, description, price, category_id, sub_category_id, img1) 
         // values (${req.params}, ${req.params.adKey}) `, (err, result) => {
         //     if (err) {
