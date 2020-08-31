@@ -227,7 +227,7 @@ class adDetail extends Component {
             <View key={index} style={styles.container} >
               <View style={styles.imgConatiner}>
                 <SliderBox
-                  images={[baseUrl + item.img1, baseUrl + item.img1]} resizeMode='contain' style={{ width: '100%', height: '100%', opacity: 0.7 }}
+                  images={[baseUrl + item.img1, baseUrl + item.img1]} resizeMode='contain' style={{ width: '100%', height: '100%', opacity: 0.9 }}
                 />
               </View>
               <View style={styles.titleBar} >

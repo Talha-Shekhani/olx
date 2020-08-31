@@ -131,12 +131,12 @@ class Home extends Component {
                 {this.renderCat()}
               </View>
             </View>
-            <View style={styles.cardContainer} >
+            {/* <View style={styles.cardContainer} >
               <View style={styles.row}><Text>More on Land & Plots</Text><Text style={styles.link}>View more</Text></View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}
               >
               </ScrollView>
-            </View>
+            </View> */}
             <View style={styles.cardContainer} >
               <View style={styles.row}><Text>Fresh Recommendations</Text></View>
               <View style={styles.cardColumn} >
@@ -187,14 +187,15 @@ const styles = StyleSheet.create({
   categories: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: '100%'
   },
   categoryLink: {
-    width: 120,
-    // maxWidth: 120,
-    // minWidth: 110,
-    margin: 5,
-    marginVertical: 12
+    // width: 120,
+    maxWidth: '33%',
+    minWidth: '33%',
+    margin: '0%',
+    marginVertical: 12,
+    justifyContent: 'center',
+    alignSelf: 'center'
   },
   iconBack: {
     borderRadius: 50,

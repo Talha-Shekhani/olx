@@ -42,11 +42,13 @@ class ImageSelection extends Component {
             this.state.images.map((item, index) => {
                 return (
                     <TouchableOpacity onPress={() => {
+                        item.filename = item.uri.slice(item.uri.lastIndexOf('/') + 1)
+                        item.originalname = item.filename
                         this.setState({
-                            selectedImage: this.state.selectedImage.includes(item.uri) ? this.state.selectedImage.filter(el => el != item.uri) : this.state.selectedImage.concat(item.uri)
+                            selectedImage: this.state.selectedImage.includes(item) ? this.state.selectedImage.filter(el => el != item) : this.state.selectedImage.concat(item)
                         })
                     }} >
-                        <CheckBox checked={this.state.selectedImage.includes(item.uri) ? true : false}
+                        <CheckBox checked={this.state.selectedImage.includes(item) ? true : false}
                             containerStyle={styles.checkBox} />
                         <Image source={{ uri: item.uri }} style={styles.image} />
                     </TouchableOpacity>
@@ -90,11 +92,11 @@ class ImageSelection extends Component {
 
     handleSubmit(form) {
         if (!isEmpty(this.state.selectedImage)) {
-            console.log(this.state.selectedImage[0].slice(this.state.selectedImage[0].lastIndexOf('/') + 1))
+            // console.log(this.state.selectedImage[0].slice(this.state.selectedImage[0].lastIndexOf('/') + 1))
             // console.log(this.state.selectedImage[0].lastIndexOf('/'))
             form = Object.assign(form, { img: this.state.selectedImage })
-            // console.log(form)
-            // this.props.navigation.navigate('pricePage', {form: form} )
+            console.log('form', form)
+            this.props.navigation.navigate('pricePage', {form: form} )
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }
@@ -109,7 +111,7 @@ class ImageSelection extends Component {
                     <Text style={[styles.selectText, { display: d }]} >No Item Selected</Text>
                     <SliderBox resizeMode='contain'
                         images={this.state.selectedImage.map((itm, indx) => {
-                            return itm.uri
+                            return itm
                         })}
                         sliderBoxHeight={400}
                     />
