@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ToastAndroid } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,39 +7,43 @@ import IconMat from 'react-native-vector-icons/MaterialCommunityIcons'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import { fetchAds, fetchCategories, fetchLoc } from '../../redux/Actions'
+import { putStatus } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import NumberFormat from 'react-number-format';
-
-
+import { Button } from 'react-native-paper';
 
 const mapStateToProps = state => {
   return {
-    ads: state.ads
+    ads: state.ads,
+    loc: state.loc,
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  putStatus: (userId, adId, active) => dispatch(putStatus(userId, adId, active))
+})
 
 class MyAds extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      userId: '',
+      userId: ''
     }
   }
 
   componentDidMount() {
     // async function retrieveData() {
-      const userdata = AsyncStorage.getItem('userdata')
-        .then((userdata) => {
-          // Alert.alert(JSON.stringify(userinfo))
-          if (userdata) {
-            let userinfo = JSON.parse(userdata)
-            this.setState({ userId: userinfo.userId })
-          }
-        })
-        .catch((err) => console.log('Cannot find user info' + err))
+    const userdata = AsyncStorage.getItem('userdata')
+      .then((userdata) => {
+        // Alert.alert(JSON.stringify(userinfo))
+        if (userdata) {
+          let userinfo = JSON.parse(userdata)
+          this.setState({ userId: userinfo.userId })
+        }
+      })
+      .catch((err) => console.log('Cannot find user info' + err))
     // }
     // retrieveData()
   }
@@ -49,31 +53,50 @@ class MyAds extends Component {
       <ScrollView style={styles.container}>
         <View style={styles.cardContainer} >
           {/* <Text>{JSON.stringify(this.props)}</Text> */}
-          {this.props.ads.ads.filter(item => item.user_id == this.state.userId).map((item, index) => {
-            return (
-              <Card containerStyle={styles.productCardColumn} key={index} onPress={() => props.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}>
-                <TouchableOpacity>
-                  <View style={styles.product} >
-                    <View style={styles.imageConatiner}>
-                      <Image containerStyle={styles.cardImage}
-                        resizeMethod="scale"
-                        resizeMode="stretch"
-                        source={{ uri: baseUrl + item.img1 }}
-                      />
-                    </View>
-                    <View style={styles.rightSide} >
-                      <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
-                      <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
-                      <View style={styles.rightBottom} >
-                        <Text style={styles.productLoc}><IconMat name="map-marker" size={10} />Karachi, Sindh</Text>
-                        <Text style={styles.productDate}>23 JUL</Text>
+          {this.props.ads.ads
+            .filter(item => item.user_id == this.state.userId)
+            .map((item, index) => {
+              { var dat = new Date(item.created_date) }
+              return (
+                <Card containerStyle={styles.productCardColumn} key={index} >
+                  <View style={styles.btnFlow} >
+                    <Button style={styles.btnactive}
+                      mode={"contained"}
+                      labelStyle={{ fontSize: 12, textTransform: "none" }}
+                      contentStyle={{ margin: -6 }} color='#00a6ff'
+                      onPress={() => {ToastAndroid.show("Others can't see your ad", ToastAndroid.SHORT); item.active ? console.log('active') : console.log('disbale'); this.props.putStatus(this.state.userId, item.id, item.active)}} >{item.active == 'true' ? 'Disable ?' : 'Active ?'}</Button>
+                  </View>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
+                    <View style={styles.product} >
+                      <View style={styles.imageConatiner}>
+                        <Image containerStyle={styles.cardImage}
+                          resizeMethod="scale"
+                          resizeMode="stretch"
+                          source={{ uri: baseUrl + item.img1 }}
+                        />
+                      </View>
+                      <View style={styles.rightSide} >
+                        <NumberFormat value={item.price}
+                          displayType={'text'}
+                          thousandSeparator={true}
+                          prefix={'Rs '}
+                          renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
+                        <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
+                        <View style={styles.rightBottom} >
+                          <Text style={styles.productLoc}>
+                            <IconMat name="map-marker" size={10} />
+                            {this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
+                              return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                            })}
+                          </Text>
+                          <Text style={styles.productDate}>{dat.toUTCString().slice(5, 12)}</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </Card>
-            )
-          })}
+                  </TouchableOpacity>
+                </Card>
+              )
+            })}
         </View>
       </ScrollView>
     );
@@ -135,7 +158,17 @@ const styles = StyleSheet.create({
   product: {
     flexDirection: 'row',
     width: '100%'
+  },
+  btnFlow: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    zIndex: 1,
+  },
+  btnactive: {
+    fontSize: 10,
+    textTransform: "none",
   }
 })
 
-export default connect(mapStateToProps)(MyAds)
+export default connect(mapStateToProps, mapDispatchToProps)(MyAds)

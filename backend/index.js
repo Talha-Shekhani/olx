@@ -2,6 +2,7 @@
 const express = require('express')
 const http = require('http')
 const morgan = require('morgan')
+const con = require("./connection");
 const bodyParser = require('body-parser')
 const Ads = require('./routes/ads')
 const Cat = require('./routes/categories')
@@ -18,14 +19,44 @@ const port = 3000
 const app = express()
 app.use(morgan('dev'))
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/ads', Ads)
-app.use('/fetchSubcat', Subcat )
-app.use('/fetchCat', Cat )
-app.use('/loc', loc )
-app.use('/users', user )
-app.use('/favorite', favorites )
-app.use(express.static(__dirname+ '/assets/images'))
+app.use('/fetchSubcat', Subcat)
+app.use('/fetchCat', Cat)
+app.use('/loc', loc)
+app.use('/users', user)
+app.use('/favorite', favorites)
+app.put('/setStatus', (req, res) => {
+    console.log(req.body)
+    let stat = req.body.active == 'true' ? 'false' : 'true'
+    console.log(stat)
+    con.query(`UPDATE ads set active = '${stat}' where user_id = ${req.body.userId} AND id = ${req.body.adId}`, (err, result) => {
+        if (err) {
+            res.statusCode = 403
+            console.log("error: ", err)
+        }
+        else {
+            console.log(result)
+            res.send(true)
+        }
+    })
+})
+app.use(express.static(__dirname + '/assets/images'))
+
+setInterval(() => {
+    const dat = new Date()
+    dat.setHours(24, 0, 0, 0)
+    // console.log(`${dat.getFullYear()}-${dat.getMonth()}-${dat.getDate()}`)
+    con.query(`SELECT updated_date FROM ads where updated_date = '${dat.toISOString().slice(0, 10)}'`, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            console.log(err)
+        }
+        else {
+            console.log(result)
+        }
+    })
+}, 1000 * 60 * 60 * 24)
 app.use((req, res, next) => {
     console.log(req.headers)
     res.statusCode = 200

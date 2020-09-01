@@ -1,5 +1,6 @@
 import * as ActionTypes from './ActionTypes'
 import { baseUrl } from '../shared/baseUrl'
+import { act } from 'react-test-renderer'
 
 export const fetchAds = () => (dispatch) => {
     dispatch(adsLoading(true))
@@ -344,7 +345,7 @@ export const postAd = (userId, formData) => (dispatch) => {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
-            'Content-Type' : 'multipart/form-data',
+            'Content-Type': 'multipart/form-data',
         },
         body: data
     })
@@ -392,4 +393,34 @@ export const postAd = (userId, formData) => (dispatch) => {
     //     .then((response) => { return response.json() })
     //     .then(response => dispatch(fetchAds()))
     //     .catch(error => dispatch(adsFailed(error)))
+}
+
+export const putStatus = (userId, adId, active) => (dispatch) => {
+    console.log({ 'userId': userId, 'adId': adId, 'active': active })
+    return fetch(`${baseUrl}setStatus`, {
+        mode: 'no-cors',
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'userId': userId, 'adId': adId, 'active': active }),
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => dispatch(fetchAds()))
+        .catch(error => dispatch(adsFailed))
 }

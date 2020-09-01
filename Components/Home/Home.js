@@ -11,7 +11,7 @@ import { Loading } from '../LoadingComponent';
 import { postFav, delFav, fetchFav } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, State } from 'react-native-gesture-handler';
 import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
 
 const mapStateToProps = state => ({
@@ -58,8 +58,11 @@ class Home extends Component {
         this.props.cat.categories.map((item, index) => {
           while (index < 9)
             return (
-              <TouchableOpacity key={index} style={styles.categoryLink} onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })} >
-                <View style={styles.iconBack}><Image style={{ width: 40, height: 40 }} source={{ uri: baseUrl + item.img }} /></View>
+              <TouchableOpacity key={index} style={styles.categoryLink}
+                onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })} >
+                <View style={styles.iconBack}>
+                  <Image style={{ width: 40, height: 40 }} source={{ uri: baseUrl + item.img }} />
+                </View>
                 <Text style={styles.productText} >{item.title}</Text>
               </TouchableOpacity>
             )
@@ -68,48 +71,62 @@ class Home extends Component {
   }
 
   renderAds(userId) {
-    if (this.props.ads.errMess || this.props.fav.errMess) {
+    if (this.props.ads.isLoading || this.props.fav.isLoading) {
+      return (
+        <Loading />
+      )
+    }
+    else if (this.props.ads.errMess || this.props.fav.errMess) {
       return (<Text>Network Error</Text>)
     }
     else
       // if (!isEmpty(this.props.fav.favorites))
       return (
         // <Text>{JSON.stringify(this.props)}</Text>
-        this.props.ads.map((item, index) => {
-          let val = ''
-          { val = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
-          return (
-            <Card containerStyle={styles.productCardColumn} key={index} >
-              {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
-              <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
-                if (val == item.id)
-                  this.props.delFav(userId, item.id)
-                else
-                  this.props.postFav(userId, item.id)
-              }
+        // item => item.title.toLowerCase().includes(this.state.search) ||
+        this.props.ads.filter(item => item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
+          this.props.cat.categories.filter(el => el.title.toLowerCase().includes(this.state.search)).find(el => el.cat_id == item.category_id) != undefined)
+        )
+          .map((item, index) => {
+            let val = ''
+            { val = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
+            return (
+              <Card containerStyle={styles.productCardColumn} key={index} >
+                {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
+                <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
+                  if (val == item.id)
+                    this.props.delFav(userId, item.id)
+                  else
+                    this.props.postFav(userId, item.id)
+                }
 
-              }
+                }
 
-                type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-              <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
-                <View style={styles.imageConatiner}>
-                  <Image containerStyle={styles.cardImage}
-                    resizeMethod="scale"
-                    resizeMode="contain"
-                    source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
-                  />
-                </View>
-                <View>
-                  <Text style={styles.priceText}> Rs {item.price}</Text>
-                  <Text >{item.title}</Text>
-                  <Text style={styles.loc} ><MatIcon name="map-marker" size={10} /><Text style={styles.locText}>{this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
-                    return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
-                  })}</Text> </Text>
-                </View>
-              </TouchableOpacity>
-            </Card>
-          )
-        })
+                  type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
+                <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
+                  <View style={styles.imageConatiner}>
+                    <Image containerStyle={styles.cardImage}
+                      resizeMethod="scale"
+                      resizeMode="contain"
+                      source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={styles.priceText}> Rs {item.price}</Text>
+                    <Text >{item.title}</Text>
+                    <Text style={styles.loc} >
+                      <MatIcon name="map-marker" size={10} />
+                      <Text style={styles.locText}>
+                        {this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
+                          return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                        })}
+                      </Text>
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </Card>
+            )
+          })
       )
   }
 
@@ -158,7 +175,6 @@ const styles = StyleSheet.create({
     height: 24,
   },
   inputStyle: {
-    minHeight: 24,
     fontSize: 14
   },
   searchBar: {
@@ -189,9 +205,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   categoryLink: {
-    // width: 120,
-    maxWidth: '33%',
-    minWidth: '33%',
+    width: 120,
+    minWidth: 95,
     margin: '0%',
     marginVertical: 12,
     justifyContent: 'center',
@@ -199,7 +214,7 @@ const styles = StyleSheet.create({
   },
   iconBack: {
     borderRadius: 50,
-    width: 40,
+    // width: '100%',
     height: 40,
     alignSelf: 'center',
     justifyContent: 'center',
@@ -213,7 +228,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     justifyContent: 'center',
     zIndex: 2,
-    // elevation: 20,
   },
   iconHeart: {
     zIndex: 2

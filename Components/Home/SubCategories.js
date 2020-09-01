@@ -27,7 +27,7 @@ class SubCategories extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    // if (this.props.subcat.subcategories == [])
+    if (this.props.subcat.subcategories == [])
       this.props.fetchSubCategories()
   }
 

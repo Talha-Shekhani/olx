@@ -19,7 +19,8 @@ import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
 const mapStateToProps = state => {
   return {
     fav: state.favorites,
-    ads: state.ads
+    ads: state.ads,
+    loc: state.loc,
   }
 }
 
@@ -72,10 +73,11 @@ class Favorites extends Component {
             this.props.fav.favorites.map((itm, indx) => {
               return (
                 this.props.ads.ads.filter(item => item.id == itm.ad_id).map((item, index) => {
+                  var dat = new Date(item.created_date)
                   return (
                     <Card containerStyle={styles.productCardColumn} key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}>
                       <View style={styles.iconHBack} ><Icon name='heart' onPress={() => this.props.delFav(item.user_id, item.id)} type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-                      <TouchableOpacity>
+                      <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}  >
                         <View style={styles.product} >
                           <View style={styles.imageConatiner}>
                             <Image containerStyle={styles.cardImage}
@@ -88,8 +90,13 @@ class Favorites extends Component {
                             <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
                             <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
                             <View style={styles.rightBottom} >
-                              <Text style={styles.productLoc}><IconMat name="map-marker" size={10} />Karachi, Sindh</Text>
-                              <Text style={styles.productDate}>23 JUL</Text>
+                              <Text style={styles.productLoc}>
+                                <IconMat name="map-marker" size={10} />
+                                {this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
+                                  return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                                })}
+                              </Text>
+                              <Text style={styles.productDate}>{dat.toUTCString().slice(5, 12)}</Text>
                             </View>
                           </View>
                         </View>

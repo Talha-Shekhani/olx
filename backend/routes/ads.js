@@ -19,6 +19,7 @@ Ads.route('/')
         con.query("SELECT * FROM ads", (err, result) => {
             if (err) {
                 console.log("error: ", err);
+                res.statusCode = 403
                 res.send(err)
             }
             else {
