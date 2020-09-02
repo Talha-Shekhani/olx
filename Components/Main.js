@@ -27,6 +27,7 @@ import cat1 from './Sell/cat1';
 import ImageSelection from './Sell/ImageSelection';
 import FirstPage from './Login/First'
 import pricePage from './Sell/price'
+import AddLocation from './Sell/AddLocation';
 
 const mapStateToProps = state => {
   return {
@@ -135,6 +136,7 @@ class Main extends Component {
               <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
               <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
               <Stack.Screen name="pricePage" component={pricePage} options={{ headerShown: false }} />
+              <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

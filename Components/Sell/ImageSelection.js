@@ -62,7 +62,7 @@ class ImageSelection extends Component {
         request("android.permission.CAMERA").then((results) => {
             switch (results) {
                 case RESULTS.GRANTED: {
-                    CameraRoll.getPhotos({ first: 100000, assetType: "Photos" }).then((res) => {
+                    CameraRoll.getPhotos({ first: 10, assetType: "Photos" }).then((res) => {
                         return (
                             res.edges.map((item, index) => {
                                 this.setState({ images: this.state.images.concat(item.node.image) })

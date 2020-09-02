@@ -159,6 +159,62 @@ export const fetchLoc = () => (dispatch) => {
     fetchData()
 }
 
+export const fetchProvince = () => (dispatch) => {
+    dispatch(locLoading(true))
+    async function fetchData() {
+        return await fetch(`${baseUrl}loc/province`, {
+            mode: 'no-cors',
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response
+                }
+                else {
+                    var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                    error.response = response
+                    return error
+                }
+            },
+                error => {
+                    var errmess = new Error(error.message)
+                    return errmess
+                })
+            .then((response) => { return response.json() })
+            .then(response => dispatch({type: ActionTypes.ADD_PROVINCE , payload: response}))
+            .catch(error => dispatch({type: ActionTypes.LOC_FAILED , payload: error}))
+    }
+    fetchData()
+}
+
+export const fetchCity = () => (dispatch) => {
+    dispatch(locLoading(true))
+    async function fetchData() {
+        return await fetch(`${baseUrl}loc/city`, {
+            mode: 'no-cors',
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response
+                }
+                else {
+                    var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                    error.response = response
+                    return error
+                }
+            },
+                error => {
+                    var errmess = new Error(error.message)
+                    return errmess
+                })
+            .then((response) => { return response.json() })
+            .then(response => dispatch({type: ActionTypes.ADD_CITY , payload: response}))
+            .catch(error => dispatch({type: ActionTypes.LOC_FAILED , payload: error}))
+    }
+    fetchData()
+}
+
 export const locLoading = () => ({
     type: ActionTypes.LOC_LOADING
 })
@@ -341,10 +397,10 @@ export const postAd = (userId, formData) => (dispatch) => {
     console.log('val', formData)
     var data = new FormData()
     data.append('img', formData.img)
-    return fetch(`${baseUrl}ads/upload`, {
+    fetch(`${baseUrl}ads/upload`, {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
+            // 'Accept': 'application/json',
             'Content-Type': 'multipart/form-data',
         },
         body: data
@@ -367,32 +423,32 @@ export const postAd = (userId, formData) => (dispatch) => {
         .then(response => console.log(response))
         .catch(error => console.log(error))
 
-    // return fetch(`${baseUrl}ads/${userId}/form`, {
-    //     mode: 'no-cors',
-    //     method: 'POST',
-    //     headers: {
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(formData),
-    // })
-    //     .then(response => {
-    //         if (response.ok) {
-    //             return response
-    //         }
-    //         else {
-    //             var error = new Error('Error ' + response.status + ': ' + response.statusText)
-    //             error.response = response
-    //             return error
-    //         }
-    //     },
-    //         error => {
-    //             var errmess = new Error(error.message)
-    //             return errmess
-    //         })
-    //     .then((response) => { return response.json() })
-    //     .then(response => dispatch(fetchAds()))
-    //     .catch(error => dispatch(adsFailed(error)))
+    return fetch(`${baseUrl}ads/${userId}/form`, {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => dispatch(fetchAds()))
+        .catch(error => dispatch(adsFailed(error)))
 }
 
 export const putStatus = (userId, adId, active) => (dispatch) => {
@@ -424,3 +480,4 @@ export const putStatus = (userId, adId, active) => (dispatch) => {
         .then(response => dispatch(fetchAds()))
         .catch(error => dispatch(adsFailed))
 }
+

@@ -126,17 +126,21 @@ class adDetail extends Component {
                 <View style={styles.row} >
                   <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.priceText} >{formattedValue}</Text>} />
                   <Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
-                  if (val == item.id)
-                    this.props.delFav(userId, item.id)
-                  else
-                    this.props.postFav(userId, item.id) }}
-                  type="font-awesome" style={styles.iconHeart} color={'red'} />
+                    if (val == item.id)
+                      this.props.delFav(userId, item.id)
+                    else
+                      this.props.postFav(userId, item.id)
+                  }}
+                    type="font-awesome" style={styles.iconHeart} color={'red'} />
                 </View>
                 <Text style={styles.titleText} >{item.title}</Text>
                 <View style={styles.row}>
-                  <Text><MatIcon name="map-marker" size={11} /><Text style={styles.locText}>{this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
-                    return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
-                  })}</Text> </Text>
+                  <Text>
+                    <MatIcon name="map-marker" size={11} />
+                    <Text style={styles.locText}>
+                      {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                        return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                      })}</Text> </Text>
                   <Text style={styles.dateText}>{dat.toUTCString().slice(5, 12)}</Text>
                 </View>
               </View>
@@ -266,6 +270,7 @@ const styles = StyleSheet.create({
     overflow: "scroll",
     flexWrap: "nowrap",
     flexDirection: 'row',
+    margin: 10
   },
   imageConatiner: {
     width: '94%',

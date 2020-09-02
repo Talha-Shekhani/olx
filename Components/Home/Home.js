@@ -117,7 +117,7 @@ class Home extends Component {
                     <Text style={styles.loc} >
                       <MatIcon name="map-marker" size={10} />
                       <Text style={styles.locText}>
-                        {this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
+                        {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
                           return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
                         })}
                       </Text>

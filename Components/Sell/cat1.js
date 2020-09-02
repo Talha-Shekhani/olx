@@ -16,7 +16,7 @@ const mapStateToProps = state => {
     subcat: state.subcategories
   }
 }
-
+var errCond = '', errType = '', errTitle = '', errDesc = ''
 class cat1 extends Component {
   constructor(props) {
     super(props)
@@ -40,21 +40,40 @@ class cat1 extends Component {
 
   handleSubmit() {
     console.log(JSON.stringify(this.state.form))
-    if (this.state.form.condition == '') this.setState({ errCond: 'Condition Required' })
-    else this.setState({ errCond: ' ' })
-    if (this.state.form.type == '') this.setState({ errType: 'Type Required' })
-    else this.setState({ errType: ' ' })
-    if (this.state.form.title == '') this.setState({ errTitle: 'Title Required' })
-    else if (this.state.form.title.length < 5) this.setState({ errTitle: 'A minimum length of 5 characters is required.' })
-    else this.setState({ errTitle: ' ' })
-    if (this.state.form.description == '') this.setState({ errDesc: 'Description Required' })
-    else if (this.state.form.description.length < 20) this.setState({ errDesc: 'A minimum length of 5 characters is required.' })
-    else this.setState({ errDesc: ' ' })
-    if (this.state.errCond == ' ' && this.state.errDesc == ' ' && this.state.errTitle == ' ' && this.state.errType == ' ')
+    if (this.state.form.condition == '') {
+      this.setState({ errCond: 'Condition Required' })
+      errCond = 'Condition Required'
+    }
+    else errCond = ' '
+    if (this.state.form.type == '') {
+      this.setState({ errType: 'Type Required' })
+      errType = 'Type Required'
+    }
+    else errType = ' '
+    if (this.state.form.title == '') {
+      this.setState({ errTitle: 'Title Required' })
+      errTitle = 'Title Required'
+    }
+    else if (this.state.form.title.length < 5) {
+      this.setState({ errTitle: 'A minimum length of 5 characters is required.' })
+      errTitle = 'A minimum length of 5 characters is required.'
+    }
+    else errTitle = ' '
+    if (this.state.form.description == '') {
+      this.setState({ errDesc: 'Description Required' })
+      errDesc = 'Description Required'
+    }
+    else if (this.state.form.description.length < 20) {
+      this.setState({ errDesc: 'A minimum length of 5 characters is required.' })
+      errDesc = 'A minimum length of 5 characters is required.'
+    }
+    else errDesc = ' '
+    if (errCond == ' ' && errDesc == ' ' && errTitle == ' ' && errType == ' ')
       this.props.navigation.navigate('imageselection', { form: this.state.form })
   }
 
   render() {
+    
     const { catId, subcatId } = this.props.route.params
     return (
       <SafeAreaView style={{ backgroundColor: 'white' }} >
@@ -63,12 +82,12 @@ class cat1 extends Component {
           <View style={styles.container} >
             <Text style={styles.textCond} >Condition *</Text>
             <View style={styles.rowBtn}>
-              <Button style={this.state.isNewPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({form: {...this.state.form, condition: this.state.form.condition == 'new' ? '' : 'new' }}); this.setState({ isNewPress: !this.state.isNewPress }); this.setState({ isUsedPress: false }) }} mode='outlined' color='black' >New</Button>
-              <Button style={this.state.isUsedPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({form: {...this.state.form, condition: this.state.form.condition == 'used' ? '' : 'used' }}); this.setState({ isUsedPress: !this.state.isUsedPress }); this.setState({ isNewPress: false }) }} mode='outlined' color='black' >Used</Button>
+              <Button style={this.state.isNewPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({ form: { ...this.state.form, condition: this.state.form.condition == 'new' ? '' : 'new' } }); this.setState({ isNewPress: !this.state.isNewPress }); this.setState({ isUsedPress: false }) }} mode='outlined' color='black' >New</Button>
+              <Button style={this.state.isUsedPress ? styles.pressBtn : styles.btn} onPress={() => { this.setState({ form: { ...this.state.form, condition: this.state.form.condition == 'used' ? '' : 'used' } }); this.setState({ isUsedPress: !this.state.isUsedPress }); this.setState({ isNewPress: false }) }} mode='outlined' color='black' >Used</Button>
             </View>
-            <Text style={styles.errText} >{this.state.errCond}</Text>
+            <Text style={styles.errText} >{errCond}</Text>
             <Text style={styles.textTitle} >Type *</Text>
-            <Picker style={styles.inputCont} selectedValue={this.state.form.type} onValueChange={(item) => this.setState({form: {...this.state.form, type: item}})} >
+            <Picker style={styles.inputCont} selectedValue={this.state.form.type} onValueChange={(item) => this.setState({ form: { ...this.state.form, type: item } })} >
               <Picker.Item label='Tablet > Type' value='' />
               <Picker.Item label='Apple' value='Apple' />
               <Picker.Item label='Danny Tabs' value='Danny Tabs' />
@@ -76,7 +95,7 @@ class cat1 extends Component {
               <Picker.Item label='Samsung' value='Samsung' />
               <Picker.Item label='Other Tablets' value='Other Tablets' />
             </Picker>
-            <Text style={styles.errText} >{this.state.errType}</Text>
+            <Text style={styles.errText} >{errType}</Text>
             <Text style={styles.textTitle} >Ad Title *</Text>
             <Input
               maxLength={70}
@@ -86,8 +105,8 @@ class cat1 extends Component {
               keyboardType="default"
               name="title"
               renderErrorMessage={true}
-              errorMessage={this.state.errTitle}
-              onChangeText={(title) => this.setState({form: {...this.state.form, title: title}})}
+              errorMessage={errTitle}
+              onChangeText={(title) => this.setState({ form: { ...this.state.form, title: title } })}
               rightIcon={<Text style={styles.counterText} >{this.state.form.title.length}/70</Text>}
             />
             <Text style={styles.textTitle}>Description what are you selling? *</Text>
@@ -99,15 +118,15 @@ class cat1 extends Component {
               keyboardType="default"
               name="desc"
               renderErrorMessage={true}
-              errorMessage={this.state.errDesc}
-              onChangeText={(desc) => this.setState({form: {...this.state.form, description: desc}})}
+              errorMessage={errDesc}
+              onChangeText={(desc) => this.setState({ form: { ...this.state.form, description: desc } })}
               rightIcon={<Text style={styles.counterText} >{this.state.form.description.length}/4096</Text>}
             />
           </View>
         </ScrollView>
         <View style={styles.formButton} >
           <Button mode="contained" color='black'
-            onPress={() => {this.setState({form: {...this.state.form, catId: catId, subcatId: subcatId}}); this.handleSubmit()}}
+            onPress={() => { this.setState({ form: { ...this.state.form, catId: catId, subcatId: subcatId } }); this.handleSubmit() }}
             buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
         </View>
       </SafeAreaView>

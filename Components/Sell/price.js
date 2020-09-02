@@ -22,43 +22,34 @@ const mapDispatchToProps = dispatch => ({
     // fetchFav: (userId) => dispatch(fetchFav(userId)),
     postAd: (userId, formData) => dispatch(postAd(userId, formData))
 })
-
+var errPrice = ''
 class pricePage extends Component {
     constructor(props) {
         super(props)
         this.state = {
             price: '',
             errPrice: '',
-            userId: '',
         }
     }
 
     handleSubmit(form) {
-        console.log(form)
         // console.log(this.state.price)
-        if (this.state.price == '') this.setState({ errPrice: 'Price Required' })
-        else if (this.state.price < 500) this.setState({ errPrice: 'A minimum 500 of price is required.' })
-        else this.setState({ errPrice: ' ' })
-        if (this.state.errPrice == ' ') {
+        if (this.state.price == '') {
+            errPrice = 'Price Required'
+            this.setState({ errPrice: 'Price Required' })
+        }
+        else if (this.state.price < 500) {
+            errPrice = 'A minimum 500 of price is required.'
+            this.setState({ errPrice: 'A minimum 500 of price is required.' })
+        }
+        else errPrice = ' '
+        // this.setState({ errPrice: ' ' })
+        if (errPrice == ' ') {
             form = Object.assign(form, { price: this.state.price })
             console.log(form)
-            // console.log(JSON.stringify(this.props))
-            this.props.postAd(this.state.userId, form)
+            this.props.navigation.navigate('location', { form: form })
         }
-    }
-
-    UNSAFE_componentWillMount() {
-        AsyncStorage.getItem('userdata')
-            .then((userdata) => {
-                if (userdata) {
-                    let userinfo = JSON.parse(userdata)
-                    this.setState({ userId: userinfo.userId })
-                }
-                else this.setState({ userId: 0 })
-            })
-            // .then(() => this.props.fetchFav(this.state.userId))
-            .catch((err) => console.log('Cannot find user info' + err))
-
+        console.log(form, errPrice)
     }
 
     render() {
@@ -76,7 +67,7 @@ class pricePage extends Component {
                             containerStyle={styles.formInput}
                             inputContainerStyle={styles.inputContainer}
                             inputStyle={styles.input}
-                            keyboardType="default"
+                            keyboardType="decimal-pad"
                             name="price"
                             renderErrorMessage={true}
                             errorMessage={this.state.errPrice}

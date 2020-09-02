@@ -40,7 +40,7 @@ Ads.route('/')
         res.end(`Deleting all the dishes!`)
     })
 
-Ads.route('/:userId/form',)
+Ads.route('/:userId/form')
     .all((req, res, next) => {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
@@ -52,7 +52,14 @@ Ads.route('/:userId/form',)
 
     })
     .post((req, res, next) => {
-        const img1 = req.body.img[0].uri.slice(req.body.img[0].uri.lastIndexOf('/') + 1)
+        let dat = new Date()
+        let img1 = '', img2 = '', img3 = ''
+        img1 = req.body.img[0].uri.slice(req.body.img[0].uri.lastIndexOf('/') + 1)
+        if (req.body.img[1] != undefined)
+            img2 = req.body.img[1].uri.slice(req.body.img[1].uri.lastIndexOf('/') + 1)
+        if (req.body.img[2] != undefined)
+            img3 = req.body.img[2].uri.slice(req.body.img[2].uri.lastIndexOf('/') + 1)
+        console.log(img1, img2, img3)
         console.log('formData', req.params.userId, ' ', req.body)
 
         // fs.copyFile(req.body.img[0].uri.replace('file://', ""), '../assets/images/', (err, res) => {
@@ -66,19 +73,32 @@ Ads.route('/:userId/form',)
         // })
         // res.send(req.body)
 
-        // con.query(`INSERT INTO ads (user_id, title, description, price, category_id, sub_category_id, img1) 
-        // values (${req.params.userId}, '${req.body.title}', '${req.body.description}', '${req.body.price}', ${req.body.catId}, ${req.body.subcatId}, '${img1}') `, (err, result) => {
-        //     if (err) {
-        //         console.log("error: ", err);
-        //         res.statusCode = 403
-        //         res.send(err)
-        //     }
-        //     else {
-        //         // console.log("cat: ", result);
-        //         res.send(result)
-        //     }
-        // })
-        res.send(req.body)
+        con.query(`INSERT INTO ads 
+        (user_id, title, description, price, category_id, sub_category_id, area_id, img1, img2, img3, created_date, updated_date, active) 
+        values (${req.params.userId}, 
+            '${req.body.title}', 
+            '${req.body.description}', 
+            '${req.body.price}', 
+            ${req.body.catId}, 
+            ${req.body.subcatId}, 
+            ${req.body.loc},
+            '${img1}', 
+            '${img2}',
+            '${img3}',
+            '${dat.toISOString()}', 
+            '${dat.toISOString()}',
+            'true') `, (err, result) => {
+            if (err) {
+                console.log("error: ", err);
+                res.statusCode = 403
+                res.send(err)
+            }
+            else {
+                // console.log("cat: ", result);
+                res.send(result)
+            }
+        })
+        // res.send(req.body)
     })
     .put((req, res, next) => {
         res.statusCode = 403

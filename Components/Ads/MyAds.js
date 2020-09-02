@@ -66,7 +66,7 @@ class MyAds extends Component {
                       contentStyle={{ margin: -6 }} color='#00a6ff'
                       onPress={() => {ToastAndroid.show("Others can't see your ad", ToastAndroid.SHORT); item.active ? console.log('active') : console.log('disbale'); this.props.putStatus(this.state.userId, item.id, item.active)}} >{item.active == 'true' ? 'Disable ?' : 'Active ?'}</Button>
                   </View>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} onLongPress={() => {console.log(this.render())}}  >
                     <View style={styles.product} >
                       <View style={styles.imageConatiner}>
                         <Image containerStyle={styles.cardImage}
@@ -85,7 +85,7 @@ class MyAds extends Component {
                         <View style={styles.rightBottom} >
                           <Text style={styles.productLoc}>
                             <IconMat name="map-marker" size={10} />
-                            {this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
+                            {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
                               return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
                             })}
                           </Text>

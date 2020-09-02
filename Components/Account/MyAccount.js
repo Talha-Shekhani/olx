@@ -12,12 +12,14 @@ import { postComment } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Appbar, Button } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 
 const mapStateToProps = state => ({
-    ads: state.ads.ads,
-    cat: state.categories,
-    loc: state.loc
+    user: state.users
+})
+
+const mapDispatchToProps = dispatch => ({
+    fetchUser: (userId) => dispatch(fetchUser(userId))
 })
 
 class MyAccount extends Component {
@@ -36,6 +38,8 @@ class MyAccount extends Component {
                 if (userdata) {
                     let userinfo = JSON.parse(userdata)
                     this.setState({ userId: userinfo.userId })
+                    this.props.fetchUser(this.state.userId)
+                    console.log(userinfo)
                 }
                 else this.setState({ userId: 0 })
             })
@@ -45,9 +49,23 @@ class MyAccount extends Component {
     displayContent(isLogin) {
         if (isLogin)
             return (
-                <Button onPress={() => { AsyncStorage.removeItem('userdata'); this.props.navigation.navigate('firstpage') }} >LogOut</Button>
+                <Button
+                    onPress={() => {
+                        AsyncStorage.removeItem('userdata');
+                        this.props.navigation.navigate('firstpage')
+                    }}
+                    mode='outlined' >LogOut
+                </Button>
             )
-        else return (<View></View>)
+        else
+            return (
+                <Button
+                    onPress={() => {
+                        this.props.navigation.navigate('firstpage')
+                    }}
+                    mode='outlined' >LogIn
+                </Button>
+            )
     }
 
     render() {
@@ -60,10 +78,11 @@ class MyAccount extends Component {
                     <View style={styles.header} >
                         <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
                         <View style={styles.subHead} >
-                            <Text style={styles.username} >UserName</Text>
+                            <Text style={styles.username} >{isLogin ? this.props.user.users[0].name : 'Username'}</Text>
                             <Text style={styles.username} >UserName</Text>
                         </View>
                     </View>
+                    {this.displayContent(isLogin)}
                 </ScrollView>
             </SafeAreaView >
         )
@@ -105,4 +124,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default connect(mapStateToProps)(MyAccount)
+export default connect(mapStateToProps, mapDispatchToProps)(MyAccount)

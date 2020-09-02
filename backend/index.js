@@ -30,7 +30,9 @@ app.put('/setStatus', (req, res) => {
     console.log(req.body)
     let stat = req.body.active == 'true' ? 'false' : 'true'
     console.log(stat)
-    con.query(`UPDATE ads set active = '${stat}' where user_id = ${req.body.userId} AND id = ${req.body.adId}`, (err, result) => {
+    let dat = new Date()
+    console.log(`UPDATE ads set active = '${stat}', updated_date = '${dat.toISOString()}' where user_id = ${req.body.userId} AND id = ${req.body.adId}`)
+    con.query(`UPDATE ads set active = '${stat}', updated_date = '${dat.toISOString()}' where user_id = ${req.body.userId} AND id = ${req.body.adId}`, (err, result) => {
         if (err) {
             res.statusCode = 403
             console.log("error: ", err)
@@ -46,8 +48,8 @@ app.use(express.static(__dirname + '/assets/images'))
 setInterval(() => {
     const dat = new Date()
     dat.setHours(24, 0, 0, 0)
-    // console.log(`${dat.getFullYear()}-${dat.getMonth()}-${dat.getDate()}`)
-    con.query(`SELECT updated_date FROM ads where updated_date = '${dat.toISOString().slice(0, 10)}'`, (err, result) => {
+    dat.setDate(dat.getDate() + 30)
+    con.query(`DELETE FROM ads where updated_date = '${dat.toISOString().slice(0, 10)}'`, (err, result) => {
         if (err) {
             console.log("error: ", err);
             console.log(err)

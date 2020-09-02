@@ -49,7 +49,7 @@ class SubCategories extends Component {
                 <ListItem key={index} style={styles.categoryLink} onPress={() => this.props.navigation.navigate('productlist', { subcatId: item.subcat_id, catId: item.cat_id })} title={item.title} ></ListItem>
               )
             })}
-            <ListItem style={styles.categoryLink} title='View All' onPress={() => this.props.navigation.navigate('productlist', { subcat_id: 'none', catId: props.catId })} >
+            <ListItem style={styles.categoryLink} title='View All' onPress={() => this.props.navigation.navigate('productlist', { subcatId: undefined, catId: catId })} >
             </ListItem>
           </View>
         )

@@ -15,6 +15,7 @@ const mapStateToProps = state => ({
   cat: state.categories,
   subcat: state.subcategories,
   ads: state.ads,
+  loc: state.loc,
 })
 
 function RenderAds(props) {
@@ -30,6 +31,7 @@ function RenderAds(props) {
     if (props.subcatId == undefined)
       return (
         props.props.ads.ads.filter(item => item.category_id == props.catId).map((item, index) => {
+          { var dat = new Date(item.created_date) }
           return (
             <Card containerStyle={styles.productCardColumn}>
               <View style={styles.product} >
@@ -44,8 +46,12 @@ function RenderAds(props) {
                   <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
                   <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
                   <View style={styles.rightBottom} >
-                    <Text style={styles.productLoc}><MatIcon name="map-marker" size={10} />Karachi, Sindh</Text>
-                    <Text style={styles.productDate}>23 JUL</Text>
+                    <Text style={styles.productLoc}>
+                      <MatIcon name="map-marker" size={10} />
+                      {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                        return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                      })}</Text>
+                    <Text style={styles.productDate}>{dat.toUTCString().slice(5, 12)}</Text>
                   </View>
                 </View>
               </View>
@@ -56,6 +62,7 @@ function RenderAds(props) {
     else
       return (
         props.props.ads.ads.filter(item => item.category_id == props.catId && item.sub_category_id == props.subcatId).map((item, index) => {
+          { var dat = new Date(item.created_date) }
           return (
             <Card containerStyle={styles.productCardColumn} key={index}>
               <View style={styles.product} >
@@ -70,8 +77,12 @@ function RenderAds(props) {
                   <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
                   <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
                   <View style={styles.rightBottom} >
-                    <Text style={styles.productLoc}><MatIcon name="map-marker" size={10} />Karachi, Sindh</Text>
-                    <Text style={styles.productDate}>23 JUL</Text>
+                    <Text style={styles.productLoc}>
+                      <MatIcon name="map-marker" size={10} />
+                      {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                        return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                      })}</Text>
+                    <Text style={styles.productDate}>{dat.toUTCString().slice(5, 12)}</Text>
                   </View>
                 </View>
               </View>
@@ -89,14 +100,87 @@ class Home extends Component {
     }
   }
 
-  render() {
+  renderAds(catId, subcatId) {
+    if (this.props.ads.isLoading) {
+      return (
+        <Loading />
+      )
+    }
+    else if (this.props.ads.errMess) {
+      return (<Text>Network Error</Text>)
+    }
+    else
+      if (subcatId == undefined)
+        return (
+          this.props.ads.ads.filter(item => item.category_id == catId).map((item, index) => {
+            { var dat = new Date(item.created_date) }
+            return (
+              <Card containerStyle={styles.productCardColumn}>
+                <View style={styles.product} >
+                  <View style={styles.imageConatiner}>
+                    <Image containerStyle={styles.cardImage}
+                      resizeMethod="scale"
+                      resizeMode="stretch"
+                      source={{ uri: baseUrl + item.img1 }}
+                    />
+                  </View>
+                  <View style={styles.rightSide} >
+                    <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
+                    <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
+                    <View style={styles.rightBottom} >
+                      <Text style={styles.productLoc}>
+                        <MatIcon name="map-marker" size={10} />
+                        {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                          return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                        })}</Text>
+                      <Text style={styles.productDate}>{dat.toUTCString().slice(5, 12)}</Text>
+                    </View>
+                  </View>
+                </View>
+              </Card>
+            )
+          })
+        )
+      else
+        return (
+          this.props.ads.ads.filter(item => item.category_id == catId && item.sub_category_id == subcatId).map((item, index) => {
+            { var dat = new Date(item.created_date) }
+            return (
+              <Card containerStyle={styles.productCardColumn} key={index}>
+                <View style={styles.product} >
+                  <View style={styles.imageConatiner}>
+                    <Image containerStyle={styles.cardImage}
+                      resizeMethod="scale"
+                      resizeMode="stretch"
+                      source={{ uri: baseUrl + item.img1 }}
+                    />
+                  </View>
+                  <View style={styles.rightSide} >
+                    <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
+                    <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
+                    <View style={styles.rightBottom} >
+                      <Text style={styles.productLoc}>
+                        <MatIcon name="map-marker" size={10} />
+                        {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                          return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                        })}</Text>
+                      <Text style={styles.productDate}>{dat.toUTCString().slice(5, 12)}</Text>
+                    </View>
+                  </View>
+                </View>
+              </Card>
+            )
+          })
+        )
+  }
 
+  render() {
     const { catId, subcatId } = this.props.route.params
     return (
       <SafeAreaView >
         <ScrollView >
           {/* <Text>{JSON.stringify(this.props)}</Text> */}
-          <Text>{catId + ' ' + subcatId}</Text>
+          {/* <Text>{catId + ' ' + subcatId}</Text> */}
           <View style={styles.container}>
             <SearchBar containerStyle={styles.searchBar}
               inputContainerStyle={styles.inputContainerStyle}
@@ -106,7 +190,8 @@ class Home extends Component {
               onChangeText={(val) => this.setState({ search: val })}
               platform='android' />
             <View style={styles.cardContainer} >
-              <RenderAds props={this.props} catId={catId} subcatId={subcatId} />
+              {this.renderAds(catId, subcatId)}
+              {/* <RenderAds props={this.props} catId={catId} subcatId={subcatId} /> */}
             </View>
           </View>
         </ScrollView>
