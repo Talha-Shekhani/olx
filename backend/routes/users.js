@@ -43,10 +43,12 @@ user.route('/:userKey')
         con.query(`SELECT * FROM users where id='${req.params.userKey}' OR email='${req.params.userKey}'`, (err, result) => {
             if (err) {
                 console.log("error: ", err);
+                res.statusCode = 403
                 res.send(err)
             }
             else {
                 // console.log("userId: ", result);
+                res.statusCode = 200
                 res.send(result)
             }
         })
@@ -79,6 +81,23 @@ user.route('/:email/:password')
                         res.send(true)
                     else res.send(false)
                 else res.send(false)
+            }
+        })
+    })
+
+user.route('/chat/user/:userId')
+    .get((req, res) => {
+        con.query(`SELECT * FROM chatlist where user_id = '${req.params.userId}'`, (err, result) => {
+            if (err) {
+                console.log("error: ", err)
+                res.statusCode = 403
+                res.send(err)
+            }
+            else {
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json')
+                console.log(result)
+                res.send(result)
             }
         })
     })

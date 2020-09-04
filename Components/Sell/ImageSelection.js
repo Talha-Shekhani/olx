@@ -23,6 +23,7 @@ const mapStateToProps = state => {
         subcat: state.subcategories
     }
 }
+var images = []
 
 class ImageSelection extends Component {
     constructor(props) {
@@ -39,7 +40,7 @@ class ImageSelection extends Component {
 
     renderImages() {
         return (
-            this.state.images.map((item, index) => {
+            images.map((item, index) => {
                 return (
                     <TouchableOpacity onPress={() => {
                         item.filename = item.uri.slice(item.uri.lastIndexOf('/') + 1)
@@ -58,16 +59,18 @@ class ImageSelection extends Component {
     }
 
     processImage() {
-        this.setState({ images: [] })
+        // this.setState({ images: [] })
         request("android.permission.CAMERA").then((results) => {
             switch (results) {
                 case RESULTS.GRANTED: {
-                    CameraRoll.getPhotos({ first: 10, assetType: "Photos" }).then((res) => {
+                    CameraRoll.getPhotos({ first: 100000, assetType: "Photos" }).then((res) => {
                         return (
                             res.edges.map((item, index) => {
-                                this.setState({ images: this.state.images.concat(item.node.image) })
+                                images = images.concat(item.node.image)
                             })
                         )
+                    }).then(() => {
+                        this.forceUpdate()
                     })
                 }
             }
@@ -92,11 +95,9 @@ class ImageSelection extends Component {
 
     handleSubmit(form) {
         if (!isEmpty(this.state.selectedImage)) {
-            // console.log(this.state.selectedImage[0].slice(this.state.selectedImage[0].lastIndexOf('/') + 1))
-            // console.log(this.state.selectedImage[0].lastIndexOf('/'))
             form = Object.assign(form, { img: this.state.selectedImage })
             console.log('form', form)
-            this.props.navigation.navigate('pricePage', {form: form} )
+            this.props.navigation.navigate('pricePage', { form: form })
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }

@@ -28,6 +28,7 @@ import ImageSelection from './Sell/ImageSelection';
 import FirstPage from './Login/First'
 import pricePage from './Sell/price'
 import AddLocation from './Sell/AddLocation';
+import ChatList from './Chats/ChatList';
 
 const mapStateToProps = state => {
   return {
@@ -81,7 +82,7 @@ const tabNavigation = () => {
       inactiveColor="grey"
       barStyle={{ backgroundColor: '#ddd' }}>
       <Tab.Screen name="Explore" component={Home} />
-      <Tab.Screen name="Chats" component={Chat} />
+      <Tab.Screen name="Chats" component={ChatList} />
       <Tab.Screen name="Sell" component={SellCategories} />
       <Tab.Screen name="MyAds" component={tabMyAds} />
       <Tab.Screen name="MyAccount" component={MyAccount} />
@@ -137,6 +138,7 @@ class Main extends Component {
               <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
               <Stack.Screen name="pricePage" component={pricePage} options={{ headerShown: false }} />
               <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
+              <Stack.Screen name="chat" component={Chat} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

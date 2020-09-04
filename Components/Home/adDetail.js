@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList } from 'react-native';
-import { SearchBar, Icon, Card, Image } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet, Text, View, Platform, ScrollView, Linking } from 'react-native';
+import { Icon, Card, Image } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
@@ -14,8 +12,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { fetchUser } from '../../redux/Actions'
 import { SliderBox } from 'react-native-image-slider-box'
 import NumberFormat from 'react-number-format';
-// const Intl = require('react-native-intl')
-// const en = new Intl.Translation('en-US')
+import { Button } from 'react-native-paper';
 
 const mapStateToProps = state => ({
   ad: state.ads,
@@ -80,9 +77,10 @@ class adDetail extends Component {
                 <View>
                   <View style={styles.row} ><Text style={styles.priceText}>Rs {item.price}</Text><Icon name="heart-o" type="font-awesome" /></View>
                   <Text >{item.title}</Text>
-                  <Text style={styles.loc} ><MatIcon name="map-marker" size={10} /><Text style={styles.locText}>{this.props.loc.loc.filter(itm => itm.area_id == item.area_id).map((itm, index) => {
-                    return (<Text key={index} >  {itm.area}, {itm.city}</Text>)
-                  })}</Text> </Text>
+                  <Text style={styles.loc} ><MatIcon name="map-marker" size={10} /><Text style={styles.locText}>
+                    {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                      return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                    })}</Text> </Text>
                 </View>
               </TouchableOpacity>
             </Card>
@@ -99,6 +97,7 @@ class adDetail extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(snapshot)
   }
+
   renderAd(adId, userId) {
     console.log(this.state)
     if (this.props.ad.isLoading) {
@@ -113,13 +112,18 @@ class adDetail extends Component {
       return (
         this.props.ad.ads.filter(item => item.id == adId).map((item, index) => {
           let val = ''
-          { val = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
+          {
+            val = this.props.fav.favorites
+              .filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) })
+          }
           var dat = new Date(item.created_date)
           return (
             <View key={index} style={styles.container} >
               <View style={styles.imgConatiner}>
                 <SliderBox
-                  images={[baseUrl + item.img1, baseUrl + item.img1]} resizeMode='contain' style={{ width: '100%', height: '100%', opacity: 0.9 }}
+                  images={[baseUrl + item.img1, baseUrl + item.img1]}
+                  resizeMode='contain'
+                  style={styles.sliderImg}
                 />
               </View>
               <View style={styles.titleBar} >
@@ -159,7 +163,7 @@ class adDetail extends Component {
                       <View>
                         <Text>{item.name}</Text>
                         {/* {date = new Date(item.created_at)} */}
-                        <Text>Member since  </Text>
+                        <Text>Member since {dat.toUTCString().slice(7, 16)} </Text>
                         {/* {new Intl.DateTimeFormat('en-US').format(date).then((str) => {
                           console.log(str)
                         })} */}
@@ -191,6 +195,20 @@ class adDetail extends Component {
     const { adId, userId } = this.props.route.params
     return (
       <SafeAreaView>
+        <View style={styles.footer}>
+          <Button style={styles.footerBtn} contentStyle={styles.footerBtnCont}
+            labelStyle={styles.footerBtnLabel}
+            icon={() => <Icon name='message-circle' type='feather' color='white' />}
+            onPress={() => this.props.navigation.navigate('chat')} >Chat</Button>
+          <Button style={styles.footerBtn} contentStyle={styles.footerBtnCont}
+            labelStyle={styles.footerBtnLabel}
+            icon={() => <Icon name='envelope-o' type='font-awesome' color='white' />}
+            onPress={() => { var sms = ''; sms = Platform.OS == 'android' ? 'sms:${0123}' : 'smsprompt:${0123}'; Linking.openURL(sms) }} > SMS</Button>
+          <Button style={styles.footerBtn} contentStyle={styles.footerBtnCont}
+            labelStyle={styles.footerBtnLabel}
+            icon={() => <Icon name='phone' type='feather' color='white' />}
+            onPress={() => { var phn = ''; phn = Platform.OS == 'android' ? 'tel:${0123}' : 'telprompt:${0123}'; Linking.openURL(phn) }} > Call</Button>
+        </View>
         <ScrollView>
           <View style={styles.container}>
             {/* <RenderAd props={this.props} adId={adId} userId={userId} /> */}
@@ -208,13 +226,22 @@ const styles = StyleSheet.create({
   },
   imgConatiner: {
     width: '100%',
-    height: 280
+    height: 260
+  },
+  sliderImg: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.9,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignSelf: 'center'
   },
   titleBar: {
     height: 100,
-    borderColor: 'black',
+    borderColor: '#999',
     borderStyle: "solid",
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
     padding: 10
   },
   row: {
@@ -270,7 +297,8 @@ const styles = StyleSheet.create({
     overflow: "scroll",
     flexWrap: "nowrap",
     flexDirection: 'row',
-    margin: 10
+    margin: 10,
+    marginBottom: 70
   },
   imageConatiner: {
     width: '94%',
@@ -302,6 +330,33 @@ const styles = StyleSheet.create({
   },
   loc: {
     marginTop: 10
+  },
+  footer: {
+    zIndex: 2,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    borderTopColor: 'black',
+    borderWidth: 1,
+    height: 60,
+    elevation: 22,
+    shadowColor: 'grey',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+
+  },
+  footerBtn: {
+    backgroundColor: 'black',
+    alignSelf: 'center',
+    height: '70%'
+  },
+  footerBtnLabel: {
+    color: 'white',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    fontSize: 16
   }
 })
 

@@ -3,7 +3,7 @@ import { baseUrl } from '../shared/baseUrl'
 import { act } from 'react-test-renderer'
 
 export const fetchAds = () => (dispatch) => {
-    dispatch(adsLoading(true))
+    // dispatch(adsLoading(true))
     async function fetchData() {
         return await fetch(`${baseUrl}ads`, {
             mode: 'no-cors',
@@ -46,7 +46,7 @@ export const addAllAds = (ads) => ({
 })
 
 export const fetchCategories = () => (dispatch) => {
-    dispatch(catLoading(true))
+    // dispatch(catLoading(true))
     async function fetchData() {
         return await fetch(`${baseUrl}fetchCat`, {
             mode: 'no-cors',
@@ -181,8 +181,8 @@ export const fetchProvince = () => (dispatch) => {
                     return errmess
                 })
             .then((response) => { return response.json() })
-            .then(response => dispatch({type: ActionTypes.ADD_PROVINCE , payload: response}))
-            .catch(error => dispatch({type: ActionTypes.LOC_FAILED , payload: error}))
+            .then(response => dispatch({ type: ActionTypes.ADD_PROVINCE, payload: response }))
+            .catch(error => dispatch({ type: ActionTypes.LOC_FAILED, payload: error }))
     }
     fetchData()
 }
@@ -209,8 +209,8 @@ export const fetchCity = () => (dispatch) => {
                     return errmess
                 })
             .then((response) => { return response.json() })
-            .then(response => dispatch({type: ActionTypes.ADD_CITY , payload: response}))
-            .catch(error => dispatch({type: ActionTypes.LOC_FAILED , payload: error}))
+            .then(response => dispatch({ type: ActionTypes.ADD_CITY, payload: response }))
+            .catch(error => dispatch({ type: ActionTypes.LOC_FAILED, payload: error }))
     }
     fetchData()
 }
@@ -230,7 +230,7 @@ export const addAllLoc = (loc) => ({
 })
 
 export const fetchUser = (userId) => (dispatch) => {
-    dispatch(userLoading(true))
+    // dispatch(userLoading(true))
     return fetch(`${baseUrl}users/${userId}`, {
         mode: 'no-cors',
         method: 'GET'
@@ -293,7 +293,7 @@ export const checkUser = (email, password) => (dispatch) => {
 }
 
 export const fetchFav = (userId) => (dispatch) => {
-    dispatch(favLoading(true))
+    // dispatch(favLoading(true))
     async function fetchData() {
         return await fetch(`${baseUrl}favorite/${userId}`, {
             mode: 'no-cors',
@@ -481,3 +481,31 @@ export const putStatus = (userId, adId, active) => (dispatch) => {
         .catch(error => dispatch(adsFailed))
 }
 
+export const fetchChatUser = (userId) => (dispatch) => {
+    return fetch(`${baseUrl}users/chat/user/${userId}`, {
+        mode: 'no-cors',
+        method: 'GET'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => {dispatch(addChatUser(response))})
+        .catch(error => dispatch(userFailed(error)))
+}
+
+export const addChatUser = (user) => ({
+    type: ActionTypes.ADD_CHAT_USER,
+    payload: user
+})
