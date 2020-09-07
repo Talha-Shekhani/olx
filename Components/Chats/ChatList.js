@@ -50,18 +50,11 @@ class ChatList extends Component {
                 .map((item, index) => {
                     console.log(item.name)
                     return (
-                        // <Text>{item.name}</Text>
-                        // <Card>
-                        // <ListItem.Item key={index} bottomDivider
-                        //     onPress={() => console.log('object')}
-                        //     title='TITLE' description='description'
-                        //     left={() => <Avatar.Image source={{ uri: baseUrl + item.img }} style={{ width: 40, height: 40, alignSelf: 'center', backgroundColor: '#eee' }} />} />
-                        // </Card>
-                        <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', {userId: item.id})}
+                        <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id })}
                             title={item.name}
                             subtitle='subtitle'
                             chevron={true}
-                            leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{width: 40, height: 40, borderRadius: 50 }} />} >
+                            leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }} />} >
                         </ListItem>
                     )
                 })

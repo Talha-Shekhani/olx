@@ -9,7 +9,8 @@ const Cat = require('./routes/categories')
 const Subcat = require('./routes/subCategories')
 const loc = require('./routes/location')
 const user = require('./routes/users')
-const favorites = require('./routes/favorites')
+const favorites = require('./routes/favorites');
+const Chats = require('./routes/chats');
 
 // const hostname = '192.168.0.105'
 const hostname = 'localhost'
@@ -26,6 +27,7 @@ app.use('/fetchCat', Cat)
 app.use('/loc', loc)
 app.use('/users', user)
 app.use('/favorite', favorites)
+app.use('/chat', Chats)
 app.put('/setStatus', (req, res) => {
     console.log(req.body)
     let stat = req.body.active == 'true' ? 'false' : 'true'

@@ -400,7 +400,7 @@ export const postAd = (userId, formData) => (dispatch) => {
     fetch(`${baseUrl}ads/upload`, {
         method: 'POST',
         headers: {
-            // 'Accept': 'application/json',
+            'Accept': 'gzip, deflate, br',
             'Content-Type': 'multipart/form-data',
         },
         body: data
@@ -501,11 +501,74 @@ export const fetchChatUser = (userId) => (dispatch) => {
                 return errmess
             })
         .then((response) => { return response.json() })
-        .then(response => {dispatch(addChatUser(response))})
+        .then(response => { dispatch(addChatUser(response)) })
         .catch(error => dispatch(userFailed(error)))
 }
 
 export const addChatUser = (user) => ({
     type: ActionTypes.ADD_CHAT_USER,
     payload: user
+})
+
+export const postChatMsg = (msg) => (dispatch) => {
+    console.log('msg', msg[0])
+    return fetch(`${baseUrl}chat`, {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(msg[0])
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then(response => dispatch(fetchChats(msg[0].from_user_id, msg[0].user._id)))
+        .catch(error => dispatch(chatFailed(error)))
+}
+
+export const fetchChats = (from_user, to_user) => (dispatch) => {
+    console.log('fetch', from_user, to_user)
+    return fetch(`${baseUrl}chat/${from_user}/${to_user}`, {
+        mode: 'no-cors',
+        method: 'GET',
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { dispatch(addChats(response)); console.log(response) })
+        .catch(error => dispatch(chatFailed(error)))
+}
+
+export const addChats = (chats) => ({
+    type: ActionTypes.ADD_CHATS,
+    payload: chats
+})
+
+export const chatFailed = (err) => ({
+    type: ActionTypes.CHAT_FAILED,
+    payload: err
 })

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, NativeModules } from 'react-native';
 import { SearchBar, Icon, Card, Image, ListItem, Input } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntIcon from 'react-native-vector-icons/AntDesign'
@@ -11,6 +11,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { Loading } from '../LoadingComponent';
 import { Divider, Button } from 'react-native-paper'
 import { Picker } from '@react-native-community/picker'
+var RNUploader = NativeModules.RNUploader
+// import RNUploader from 'react-native-uploader'
+import { baseUrl } from '../../shared/baseUrl';
 
 const mapStateToProps = state => {
     return {
@@ -42,8 +45,29 @@ class AddLocation extends Component {
             userId: '',
         }
     }
+    doUpload(form) {
+        let opts = {
+            url: `${baseUrl}ads/upload`,
+            files: form.img,
+            method: 'POST',                             // optional: POST or PUT
+            headers: { 'Accept': 'application/json' },  // optional
+            params: { 'user_id': this.state.userId },   // optional
+        };
+        RNUploader.upload(opts, (err, response) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            let status = response.status;
+            let responseString = response.data;
+            let json = JSON.parse(responseString);
+
+            console.log('upload complete with status ' + status)
+        })
+    }
 
     handleSubmit(form) {
+
         if (this.state.form.province == '') {
             this.setState({ errprovince: 'Province Required' })
             errprovince = 'Province Required'
@@ -141,7 +165,7 @@ class AddLocation extends Component {
                 </ScrollView>
                 <View style={styles.formButton} >
                     <Button mode="contained" color='black'
-                        onPress={() => this.handleSubmit(form)}
+                        onPress={() => this.doUpload(form)}
                         buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
                 </View>
             </SafeAreaView>

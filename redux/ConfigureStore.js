@@ -3,12 +3,13 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { persistStore, persistCombineReducers } from 'redux-persist'
 import AsyncStorage from '@react-native-community/async-storage'
-import {ads} from './ads'
-import {categories} from './categories'
-import {subcategories} from './subCategories'
-import {loc} from './location'
-import {users} from './users'
-import {favorites} from './favorites'
+import { ads } from './ads'
+import { categories } from './categories'
+import { subcategories } from './subCategories'
+import { loc } from './location'
+import { users } from './users'
+import { favorites } from './favorites'
+import { chats } from './chat'
 
 export const configureStore = () => {
     const config = {
@@ -18,13 +19,14 @@ export const configureStore = () => {
     }
 
     const store = createStore(
-        persistCombineReducers( config, {
+        persistCombineReducers(config, {
             ads,
             categories,
             subcategories,
             loc,
             users,
-            favorites
+            favorites,
+            chats
         }),
         compose(
             applyMiddleware(thunk)
