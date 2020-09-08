@@ -511,7 +511,7 @@ export const addChatUser = (user) => ({
 })
 
 export const postChatMsg = (msg) => (dispatch) => {
-    console.log('msg', msg[0])
+    // console.log('msg', msg[0])
     return fetch(`${baseUrl}chat`, {
         mode: 'no-cors',
         method: 'POST',
@@ -539,7 +539,7 @@ export const postChatMsg = (msg) => (dispatch) => {
 }
 
 export const fetchChats = (from_user, to_user) => (dispatch) => {
-    console.log('fetch', from_user, to_user)
+    // console.log('fetch', from_user, to_user)
     return fetch(`${baseUrl}chat/${from_user}/${to_user}`, {
         mode: 'no-cors',
         method: 'GET',
@@ -559,7 +559,7 @@ export const fetchChats = (from_user, to_user) => (dispatch) => {
                 return errmess
             })
         .then((response) => { return response.json() })
-        .then(response => { dispatch(addChats(response)); console.log(response) })
+        .then(response => { dispatch(addChats(response)) })
         .catch(error => dispatch(chatFailed(error)))
 }
 

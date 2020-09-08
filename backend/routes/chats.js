@@ -62,7 +62,7 @@ Chats.get('/:from_user/:to_user', (req, res) => {
                 result[i].user = {}
                 result[i].user._id = result[i].to_user_id
             }
-            console.log("res: ", result);
+            // console.log("res: ", result);
             res.send(result)
         }
     })

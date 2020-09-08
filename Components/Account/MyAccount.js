@@ -8,7 +8,7 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
-import { postComment } from '../../redux/Actions'
+import { postComment, fetchUser } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';

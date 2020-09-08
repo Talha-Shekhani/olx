@@ -6,7 +6,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { connect } from 'react-redux'
 import { postChatMsg, fetchChats } from '../../redux/Actions'
-import { chats } from '../../redux/chat';
+var W3CWebSocket = require('websocket').w3cwebsocket
+
+const client = new W3CWebSocket('wss://10.0.2.2:8000')
 
 const mapStateToProps = state => ({
   user: state.users,
@@ -37,7 +39,8 @@ class Chat extends Component {
         //     avatar: 'https://placeimg.com/140/140/any',
         //   },
         // },
-      ]
+      ],
+      abc: false
     }
   }
 
@@ -52,24 +55,32 @@ class Chat extends Component {
         }
       })
       .catch((err) => console.log('Cannot find user info' + err))
+    console.log('object')
+    // if ("WebSocket" in Platform.OS)
+    //   console.log(("WebSocket is supported by your Browser!")
+    console.log(client.readyState)
+    client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    }
+    client.onerror = err => {
+      console.log('socketerr ', err)
+    }
+    // client.close()
+    client.onclose = () => {
+      console.log('close')
+    }
   }
 
   handleSend(msg = []) {
     console.log(this.state.userId)
     console.log(msg[0].user._id)
     msg[0].from_user_id = this.state.userId;
-    // let dat = new Date().getTime()
-    // console.log(dat)
-    // msg[0].createdAt = dat
     this.props.postChatMsg(msg)
-    // this.props.fetchChats(this.state.userId, this.props.route.params.userId)
-    this.forceUpdate()
-    // this.setState({ msgs: GiftedChat.append(this.state.msgs, msg) });
-    // console.log(this.props)
   }
 
   render() {
     const { userId } = this.props.route.params
+    // console.log('msgs', this.state.msgs)
     return (
       <GiftedChat
         // renderUsernameOnMessage={true}
@@ -77,9 +88,10 @@ class Chat extends Component {
         messagesContainerStyle={styles.container}
         text={this.state.msg}
         onInputTextChanged={(msg) => this.setState({ msg: msg })}
-        messages={this.state.msgs}
+        messages={this.props.chats}
         onSend={msg => this.handleSend(msg)}
         isTyping={true}
+        // renderMessageImage={() => }
         // renderMessage={() => {
         // }}
         // renderSend={() => {

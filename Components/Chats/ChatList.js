@@ -43,22 +43,29 @@ class ChatList extends Component {
         //     return (<Text>Network Error</Text>)
         // }
         // else
-        return (
-            // <View></View>
-            this.props.user.users
-                .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
-                .map((item, index) => {
-                    console.log(item.name)
-                    return (
-                        <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id })}
-                            title={item.name}
-                            subtitle='subtitle'
-                            chevron={true}
-                            leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }} />} >
-                        </ListItem>
-                    )
-                })
-        )
+        if (Array.isArray(this.props.chatUser) != false)
+            return (
+                // <View></View>
+                this.props.user.users
+                    .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
+                    .map((item, index) => {
+                        console.log(item.name)
+                        return (
+                            <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id })}
+                                title={item.name}
+                                subtitle='subtitle'
+                                chevron={true}
+                                leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }} />} >
+                            </ListItem>
+                        )
+                    })
+            )
+    }
+
+    componentDidUpdate() {
+        if (this.state.userId == 0) {
+            this.props.navigation.navigate('firstpage')
+        }
     }
 
     UNSAFE_componentWillMount() {
@@ -67,9 +74,8 @@ class ChatList extends Component {
                 if (userdata) {
                     let userinfo = JSON.parse(userdata)
                     this.setState({ userId: userinfo.userId })
-                    this.props.fetchChatUser(this.state.userId)
                     this.props.fetchUser('')
-
+                    this.props.fetchChatUser(this.state.userId)
                 }
                 else this.setState({ userId: 0 })
             })
@@ -80,7 +86,7 @@ class ChatList extends Component {
     render() {
         // const { catId, subcatId } = this.props.route.params
         // console.log(this.state)
-        console.log(this.props.chatUser)
+        console.log(this.props)
         if (this.state.userId != '')
             return (
                 <SafeAreaView >

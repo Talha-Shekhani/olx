@@ -43,61 +43,61 @@ const mapDispatchToProps = dispatch => ({
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator()
-const tabNavigation = () => {
-  return (
-    <Tab.Navigator initialRouteName="Explore"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused }) => {
-          let iconName1, iconName2, iconName3, iconName4, iconName5
-          if (route.name === 'Explore') {
-            iconName1 = focused ? 'home-variant' : 'home-outline'
-          }
-          else if (route.name === 'Chats') {
-            iconName2 = focused ? 'chat-bubble' : 'chat-bubble-outline';
-          }
-          else if (route.name === 'Sell') {
-            iconName3 = 'camera';
-          }
-          else if (route.name === 'MyAds') {
-            iconName4 = focused ? 'newspaper-variant-multiple' : 'newspaper-variant-multiple-outline';
-          }
-          else if (route.name === 'MyAccount') {
-            iconName5 = focused ? 'user' : 'user-o';
-          }
-          return (
-            <Text>
-              <IconMat name={iconName1} size={focused ? 26 : 24} color={focused ? 'black' : 'grey'} />
-              <MatIcon name={iconName2} size={focused ? 26 : 24} color={focused ? 'black' : 'grey'} />
-              <SimIcon name={iconName3} size={focused ? 26 : 24} color={'black'} />
-              <IconMat name={iconName4} size={focused ? 26 : 24} color={focused ? 'black' : 'grey'} />
-              <FontIcon name={iconName5} size={focused ? 26 : 24} color={focused ? 'black' : 'grey'} />
-            </Text>
-          )
-        },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'white',
-        inactiveTintColor: 'white',
-      }}
-      inactiveColor="grey"
-      barStyle={{ backgroundColor: '#ddd' }}>
-      <Tab.Screen name="Explore" component={Home} />
-      <Tab.Screen name="Chats" component={ChatList} />
-      <Tab.Screen name="Sell" component={SellCategories} />
-      <Tab.Screen name="MyAds" component={tabMyAds} />
-      <Tab.Screen name="MyAccount" component={MyAccount} />
-    </Tab.Navigator>
-  )
-}
 
 class Main extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
       userId: '',
     }
   }
+  tabNavigation = () => {
+    return (
+      <Tab.Navigator initialRouteName="Explore"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused }) => {
+            let iconName1, iconName2, iconName3, iconName4, iconName5
+            if (route.name === 'Explore') {
+              iconName1 = focused ? 'home-variant' : 'home-outline'
+            }
+            else if (route.name === 'Chats') {
+              iconName2 = focused ? 'chat-bubble' : 'chat-bubble-outline';
+            }
+            else if (route.name === 'Sell') {
+              iconName3 = 'camera';
+            }
+            else if (route.name === 'MyAds') {
+              iconName4 = focused ? 'newspaper-variant-multiple' : 'newspaper-variant-multiple-outline';
+            }
+            else if (route.name === 'MyAccount') {
+              iconName5 = focused ? 'user' : 'user-o';
+            }
+            return (
+              <Text style={{ width: '100%' }} >
+                <IconMat name={iconName1} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
+                <MatIcon name={iconName2} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
+                <SimIcon name={iconName3} size={focused ? 24 : 22} color={'white'} />
+                <IconMat name={iconName4} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
+                <FontIcon name={iconName5} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
+              </Text>
+            )
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'white',
+          inactiveTintColor: 'white',
+        }}
+        inactiveColor="grey"
+        barStyle={{ backgroundColor: '#ddd', width: '100%' }}>
+        <Tab.Screen name="Explore" component={Home} />
+        <Tab.Screen name="Chats" component={ChatList} />
+        <Tab.Screen name="Sell" component={SellCategories} />
+        <Tab.Screen name="MyAds" component={tabMyAds} />
+        <Tab.Screen name="MyAccount" component={MyAccount} />
+      </Tab.Navigator>
+    )
+  }
+
   UNSAFE_componentWillMount() {
     AsyncStorage.getItem('userdata')
       .then((userdata) => {
@@ -126,7 +126,7 @@ class Main extends Component {
         <SafeAreaProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute} >
-              <Stack.Screen name="root" component={tabNavigation} options={{ headerShown: false }} />
+              <Stack.Screen name="root" component={this.tabNavigation} options={{ headerShown: false }} />
               <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
               <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
               <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />

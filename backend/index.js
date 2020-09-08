@@ -4,6 +4,7 @@ const http = require('http')
 const morgan = require('morgan')
 const con = require("./connection");
 const bodyParser = require('body-parser')
+const webSocketServer = require('websocket').server;
 const Ads = require('./routes/ads')
 const Cat = require('./routes/categories')
 const Subcat = require('./routes/subCategories')
@@ -13,7 +14,7 @@ const favorites = require('./routes/favorites');
 const Chats = require('./routes/chats');
 
 // const hostname = '192.168.0.105'
-const hostname = 'localhost'
+const hostname = '127.0.0.1'
 const port = 3000
 // const port = 8080
 
@@ -72,4 +73,28 @@ const server = http.createServer(app)
 
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}`)
+})
+
+const webSocketsServerPort = 8000;
+// const webSocketServer = require('websocket').server;
+// const http = require('http');
+// Spinning the http server and the websocket server.
+const serve = http.createServer();
+let hstname = '127.0.0.1'
+serve.listen(webSocketsServerPort, hstname, () => {
+    // console.log(`Server running at http://${hostname}:${port}`)
+    console.log(`Server running at wss://${hstname}:${webSocketsServerPort}`)
+})
+const wsServer = new webSocketServer({
+    httpServer: serve
+});
+
+// const wsServer = new webSocketServer({
+//     httpServer: server
+// });
+
+wsServer.on('connect', (req) => {
+    console.log(req)
+    // const conn = req.accept(null, req.origin)
+    // console.log(conn)
 })
