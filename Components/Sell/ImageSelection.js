@@ -96,8 +96,37 @@ class ImageSelection extends Component {
     handleSubmit(form) {
         if (!isEmpty(this.state.selectedImage)) {
             form = Object.assign(form, { img: this.state.selectedImage })
-            console.log('form', form)
-            this.props.navigation.navigate('pricePage', { form: form })
+            console.log('form', form.img)
+            async function uploadData() {
+                var data = new FormData()
+                data.append('img', form.img)
+                return await fetch(`${baseUrl}ads/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: data
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response
+                        }
+                        else {
+                            var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                            error.response = response
+                            return error
+                        }
+                    },
+                        error => {
+                            var errmess = new Error(error.message)
+                            return errmess
+                        })
+                    // .then((response) => { return response.json() })
+                    .then(response => console.log(response))
+                    .catch(error => console.log(error))
+            }
+            uploadData()
+            // this.props.navigation.navigate('pricePage', { form: form })
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }

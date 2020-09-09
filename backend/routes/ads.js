@@ -10,11 +10,6 @@ Ads.use(bodyParser.urlencoded({ extended: true }))
 Ads.use(bodyParser.json())
 
 Ads.route('/')
-    .all((req, res, next) => {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        next()
-    })
     .get((req, res, next) => {
         con.query("SELECT * FROM ads", (err, result) => {
             if (err) {
@@ -23,7 +18,8 @@ Ads.route('/')
                 res.send(err)
             }
             else {
-                // console.log("ads: ", result);
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json')
                 res.send(result)
             }
         })
@@ -37,7 +33,20 @@ Ads.route('/')
         res.end(`PUT operation not supported on /dishes`)
     })
     .delete((req, res, next) => {
-        res.end(`Deleting all the dishes!`)
+        console.log(req.body)
+        con.query(`DELETE FROM ads where id = ${req.body.adId}`, (err, result) => {
+            if (err) {
+                console.log("error: ", err);
+                res.statusCode = 403
+                res.send(err)
+            }
+            else {
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json')
+                console.log('result: ', result)
+                res.send({success: true, result: result})
+            }
+        })
     })
 
 Ads.route('/:userId/form')

@@ -99,7 +99,6 @@ class adDetail extends Component {
   }
 
   renderAd(adId, userId) {
-    console.log(this.state)
     if (this.props.ad.isLoading) {
       return (
         <Loading />
@@ -114,7 +113,8 @@ class adDetail extends Component {
           let val = ''
           {
             val = this.props.fav.favorites
-              .filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) })
+              .filter(itm => item.id == itm.ad_id && itm.user_id == userId)
+              .map((item, index) => { return (item.ad_id) })
           }
           var dat = new Date(item.created_date)
           return (
@@ -142,9 +142,11 @@ class adDetail extends Component {
                   <Text>
                     <MatIcon name="map-marker" size={11} />
                     <Text style={styles.locText}>
-                      {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
-                        return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
-                      })}</Text> </Text>
+                      {this.props.loc.loc
+                        .filter(itm => itm.id == item.area_id)
+                        .map((itm, index) => {
+                          return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                        })}</Text> </Text>
                   <Text style={styles.dateText}>{dat.toUTCString().slice(5, 12)}</Text>
                 </View>
               </View>
@@ -156,22 +158,21 @@ class adDetail extends Component {
                 <Text style={styles.desc} >{item.description}</Text>
               </View>
               <View style={styles.separator}>
-                {this.props.user.users.map((item, index) => {
-                  return (
-                    <View>
-                      <Image source={{ uri: baseUrl + item.img }} />
+                {this.props.user.user
+                  .filter(itm => item.user_id == itm.id)
+                  .map((item, index) => {
+                    let dat = new Date(item.updated_at)
+                    console.log(item)
+                    return (
                       <View>
-                        <Text>{item.name}</Text>
-                        {/* {date = new Date(item.created_at)} */}
-                        <Text>Member since {dat.toUTCString().slice(7, 16)} </Text>
-                        {/* {new Intl.DateTimeFormat('en-US').format(date).then((str) => {
-                          console.log(str)
-                        })} */}
-                        {/* <FormattedDate value={new Date(1459832991883)}  year="numeric"  month="long" day="2-digit" /> */}
+                        <Image source={{ uri: baseUrl + item.img }} />
+                        <View>
+                          <Text>{item.name}</Text>
+                          <Text>Member since {dat.toUTCString().slice(7, 16)} </Text>
+                        </View>
                       </View>
-                    </View>
-                  )
-                })}
+                    )
+                  })}
               </View>
               <View style={styles.separator}>
                 <Text style={styles.detailTitle} >Ad ID: {item.id}</Text>

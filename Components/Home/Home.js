@@ -98,10 +98,7 @@ class Home extends Component {
                     this.props.delFav(userId, item.id)
                   else
                     this.props.postFav(userId, item.id)
-                }
-
-                }
-
+                }}
                   type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
                 <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
                   <View style={styles.imageConatiner}>

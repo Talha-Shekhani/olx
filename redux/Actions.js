@@ -45,6 +45,36 @@ export const addAllAds = (ads) => ({
     payload: ads
 })
 
+export const delAd = (adId) => (dispatch) => {
+    console.log(adId)
+    return fetch(`${baseUrl}ads`, {
+        mode: 'no-cors',
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ adId: adId })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return JSON.stringify(error)
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return JSON.stringify(errmess)
+            })
+        .then((response) => { return response.json() })
+        .then(response => { console.log(response); if (response.success == true) dispatch(fetchAds()) })
+        .catch(error => console.log(error))
+}
+
+
 export const fetchCategories = () => (dispatch) => {
     // dispatch(catLoading(true))
     async function fetchData() {
@@ -400,7 +430,6 @@ export const postAd = (userId, formData) => (dispatch) => {
     fetch(`${baseUrl}ads/upload`, {
         method: 'POST',
         headers: {
-            'Accept': 'gzip, deflate, br',
             'Content-Type': 'multipart/form-data',
         },
         body: data

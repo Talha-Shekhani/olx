@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon, Image } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import IconMat from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -87,6 +87,7 @@ class Main extends Component {
           activeTintColor: 'white',
           inactiveTintColor: 'white',
         }}
+        // style={{backgroundColor: 'red', }}
         inactiveColor="grey"
         barStyle={{ backgroundColor: '#ddd', width: '100%' }}>
         <Tab.Screen name="Explore" component={Home} />

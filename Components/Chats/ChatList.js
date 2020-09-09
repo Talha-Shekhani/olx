@@ -86,7 +86,6 @@ class ChatList extends Component {
     render() {
         // const { catId, subcatId } = this.props.route.params
         // console.log(this.state)
-        console.log(this.props)
         if (this.state.userId != '')
             return (
                 <SafeAreaView >

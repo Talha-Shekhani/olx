@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const con = require("./connection");
 const bodyParser = require('body-parser')
 const webSocketServer = require('websocket').server;
+const wsClient = require('websocket').w3cwebsocket;
 const Ads = require('./routes/ads')
 const Cat = require('./routes/categories')
 const Subcat = require('./routes/subCategories')
@@ -84,17 +85,38 @@ let hstname = '127.0.0.1'
 serve.listen(webSocketsServerPort, hstname, () => {
     // console.log(`Server running at http://${hostname}:${port}`)
     console.log(`Server running at wss://${hstname}:${webSocketsServerPort}`)
+    console.log(serve.address())
 })
 const wsServer = new webSocketServer({
     httpServer: serve
-});
+})
 
 // const wsServer = new webSocketServer({
 //     httpServer: server
 // });
-
-wsServer.on('connect', (req) => {
-    console.log(req)
-    // const conn = req.accept(null, req.origin)
-    // console.log(conn)
+wsServer.on('request', (request) => {
+    console.log('req')
+    const conn = request.accept(null, null)
+    console.log(conn)
+    conn.on('message', (msg) => {
+        console.log('msg')
+    })
 })
+wsServer.on('connect', (req) => {
+    console.log('connect')
+    // const conn = req.accept(null, '*')
+    // console.log(conn)
+    // conn.on('message', (msg) => {
+    //     console.log(msg)
+    // })
+})
+wsServer.on('close', (conn, reason, desc) => {
+    console.log('close')
+})
+
+// setInterval(() => {
+//     var sock = new wsClient('ws://127.0.0.1:8000')
+//     sock.onopen = () => console.log('open')
+//     sock.onerror = (err) => console.log('err')
+//     sock.onclose = (event) => console.log('close: ', event.reason, event.code, event.wasClean)
+// }, 3000);

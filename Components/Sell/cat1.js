@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   inputContainer: {
-    height: 30
+    height: 33
   },
   input: {
     paddingHorizontal: 10

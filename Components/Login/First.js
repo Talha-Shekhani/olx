@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList, BackHandler } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,6 +18,12 @@ import { Button } from 'react-native-paper';
 class FirstPage extends Component {
   constructor(props) {
     super(props)
+    // BackHandler.addEventListener('hardwareBackPress', () => {
+    //   if (props.route.params.preventGoBack) {
+    //     return true
+    //   }
+    //   return false
+    // })
   }
 
   render() {
@@ -26,7 +32,7 @@ class FirstPage extends Component {
         <View>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('root')} style={styles.cancelBtn} ><FeatIcon name='x' size={20} /></TouchableOpacity>
         </View>
-        <View style={{height: '60%'}} >
+        <View style={{ height: '60%' }} >
           <Image source={{ uri: baseUrl + 'OLX_BLUE_LOGO.png' }} resizeMode='contain' style={styles.img} />
         </View>
         <View style={styles.bottomContainer}>
@@ -78,7 +84,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginHorizontal: 5,
-    
+
   }
 })
 

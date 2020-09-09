@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ToastAndroid, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,7 +7,7 @@ import IconMat from 'react-native-vector-icons/MaterialCommunityIcons'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import { putStatus } from '../../redux/Actions'
+import { putStatus, delAd } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
@@ -22,7 +22,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  putStatus: (userId, adId, active) => dispatch(putStatus(userId, adId, active))
+  putStatus: (userId, adId, active) => dispatch(putStatus(userId, adId, active)),
+  delAd: (adId) => dispatch(delAd(adId))
 })
 
 class MyAds extends Component {
@@ -59,19 +60,29 @@ class MyAds extends Component {
               { var dat = new Date(item.created_date) }
               return (
                 <Card containerStyle={styles.productCardColumn} key={index} >
-                  <View style={styles.btnFlow} >
-                    <Button style={styles.btnactive}
+                  <View style={styles.btnFlowActive} >
+                    <Button style={styles.btnFloatText}
                       mode={"contained"}
                       labelStyle={{ fontSize: 12, textTransform: "none" }}
                       contentStyle={{ margin: -6 }} color='#00a6ff'
-                      onPress={() => {ToastAndroid.show("Others can't see your ad", ToastAndroid.SHORT); item.active ? console.log('active') : console.log('disbale'); this.props.putStatus(this.state.userId, item.id, item.active)}} >{item.active == 'true' ? 'Disable ?' : 'Active ?'}</Button>
+                      onPress={() => { ToastAndroid.show("Others can't see your ad", ToastAndroid.SHORT); item.active ? console.log('active') : console.log('disbale'); this.props.putStatus(this.state.userId, item.id, item.active) }} >{item.active == 'true' ? 'Disable ?' : 'Active ?'}</Button>
                   </View>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} onLongPress={() => {console.log(this.render())}}  >
+                  <View style={styles.btnFlowDelete}>
+                    <Button style={styles.btnFloatText}
+                      mode={"contained"}
+                      labelStyle={{ fontSize: 12, textTransform: "none" }}
+                      contentStyle={{ margin: -6 }} color='#00a6ff'
+                      onPress={() => Alert.alert('Pakka?', 'sachi, delete krdu?', [
+                        { text: 'Cancel', style: "destructive" },
+                        { text: 'OK', style: 'default', onPress: () =>  this.props.delAd(item.id)}
+                      ], { cancelable: true })}>Delete Ad</Button>
+                  </View>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} onLongPress={() => { console.log(this.render()) }}  >
                     <View style={styles.product} >
                       <View style={styles.imageConatiner}>
                         <Image containerStyle={styles.cardImage}
                           resizeMethod="scale"
-                          resizeMode="stretch"
+                          resizeMode="contain"
                           source={{ uri: baseUrl + item.img1 }}
                         />
                       </View>
@@ -159,13 +170,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%'
   },
-  btnFlow: {
+  btnFlowActive: {
     position: "absolute",
     top: 2,
     right: 2,
     zIndex: 1,
+    padding: 2,
+    width: 88
   },
-  btnactive: {
+  btnFlowDelete: {
+    position: "absolute",
+    top: 26,
+    right: 2,
+    zIndex: 1,
+    padding: 2,
+    width: 88
+  },
+  btnFloatText: {
     fontSize: 10,
     textTransform: "none",
   }

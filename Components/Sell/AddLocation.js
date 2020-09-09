@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { Loading } from '../LoadingComponent';
 import { Divider, Button } from 'react-native-paper'
 import { Picker } from '@react-native-community/picker'
-var RNUploader = NativeModules.RNUploader
+
 // import RNUploader from 'react-native-uploader'
 import { baseUrl } from '../../shared/baseUrl';
 
