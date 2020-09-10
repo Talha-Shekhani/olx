@@ -87,17 +87,26 @@ user.route('/:email/:password')
 
 user.route('/chat/user/:userId')
     .get((req, res) => {
-        con.query(`SELECT * FROM chatlist where user_id = '${req.params.userId}'`, (err, result) => {
+        con.query(`SELECT DISTINCT from_user_id, to_user_id FROM chats WHERE from_user_id = ${req.params.userId} ORDER BY createdAt DESC`, (err, result) => {
             if (err) {
                 console.log("error: ", err)
                 res.statusCode = 403
                 res.send(err)
             }
             else {
-                res.statusCode = 200
-                res.setHeader('Content-Type', 'application/json')
-                console.log(result)
-                res.send(result)
+                // res.statusCode = 200
+                // res.setHeader('Content-Type', 'application/json')
+                for (var i in result) {
+                    console.log(result[i].from_user_id)
+                    con.query(`SELECT * FROM chats where from_user_id = ${result[i].from_user_id} AND to_user_id = ${result[i].to_user_id} ORDER BY createdAt DESC LIMIT 1`, (err, reslt) => {
+                        if (err) console.log(err)
+                        else {
+                            console.log(reslt)
+                            // .set({'Content-Type': 'application/json'})
+                            res.send(reslt)
+                        }
+                    })
+                }
             }
         })
     })

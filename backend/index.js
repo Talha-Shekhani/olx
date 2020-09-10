@@ -66,8 +66,8 @@ setInterval(() => {
 app.use((req, res, next) => {
     console.log(req.headers)
     res.statusCode = 200
-    res.setHeader('Content-Type', 'text/html')
-    res.end(`<html><body><h1>This is an Express Server</h1></body></html>`)
+    res.setHeader('Content-Type', 'application/json')
+    res.send({data: 'not found'})
 })
 
 const server = http.createServer(app)
@@ -97,9 +97,9 @@ const wsServer = new webSocketServer({
 wsServer.on('request', (request) => {
     console.log('req')
     const conn = request.accept(null, null)
-    console.log(conn)
+    // console.log(conn)
     conn.on('message', (msg) => {
-        console.log('msg')
+        console.log(msg)
     })
 })
 wsServer.on('connect', (req) => {

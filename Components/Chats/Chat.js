@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { postChatMsg, fetchChats } from '../../redux/Actions'
 import { baseUrl } from '../../shared/baseUrl';
 var W3CWebSocket = require('websocket').w3cwebsocket
-var client = ''
+var client = '', myInterval = ''
 
 const mapStateToProps = state => ({
   user: state.users,
@@ -73,6 +73,10 @@ class Chat extends Component {
     console.log('readyupdate ', client.readyState)
     client.onopen = () => {
       console.log('WebSocket Client Connected')
+      // myInterval = setInterval(() => {
+      //   console.log('run')
+      //   this.props.fetchChats(this.state.userId, this.props.route.params.userId)
+      // }, 2000)
     }
     client.onerror = err => {
       console.log('socketerr ', err)
@@ -80,13 +84,12 @@ class Chat extends Component {
     // client.close()
     client.onclose = () => {
       console.log('close')
-    }
-    client.onmessage = () => {
-      console.log(this.state.msg)
+      // clearInterval(myInterval)
     }
   }
   componentWillUnmount() {
     client.close()
+    clearInterval(myInterval)
   }
 
   handleSend(msg = []) {

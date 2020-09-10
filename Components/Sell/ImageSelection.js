@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, ScrollView, ToastAndroid, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image, ListItem, Input, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import AntIcon from 'react-native-vector-icons/AntDesign'
-import SimIcon from 'react-native-vector-icons/SimpleLineIcons'
-import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import FeatIcon from 'react-native-vector-icons/Feather'
 import { fetchSubCategories } from '../../redux/Actions'
 import { connect } from 'react-redux';
 // import ImagePicker from 'react-native-customized-image-picker'
@@ -35,6 +33,7 @@ class ImageSelection extends Component {
     }
 
     componentDidMount() {
+        images = []
         this.processImage()
     }
 
@@ -42,9 +41,12 @@ class ImageSelection extends Component {
         return (
             images.map((item, index) => {
                 return (
-                    <TouchableOpacity onPress={() => {
-                        item.filename = item.uri.slice(item.uri.lastIndexOf('/') + 1)
+                    <TouchableOpacity containerStyle={styles.gridView} onPress={() => {
+                        // item.filename = item.uri.slice(item.uri.lastIndexOf('/') + 1)
                         item.originalname = item.filename
+                        item.path = item.uri.replace('file://', '')
+                        item.uri = Platform.OS === "android" ? item.uri : item.uri.replace("file://", "")
+                        item.playableDuration = ''
                         this.setState({
                             selectedImage: this.state.selectedImage.includes(item) ? this.state.selectedImage.filter(el => el != item) : this.state.selectedImage.concat(item)
                         })
@@ -63,7 +65,7 @@ class ImageSelection extends Component {
         request("android.permission.CAMERA").then((results) => {
             switch (results) {
                 case RESULTS.GRANTED: {
-                    CameraRoll.getPhotos({ first: 100000, assetType: "Photos" }).then((res) => {
+                    CameraRoll.getPhotos({ first: 10, groupTypes: "All", assetType: "Photos", include: ["fileSize", "filename", "imageSize"] }).then((res) => {
                         return (
                             res.edges.map((item, index) => {
                                 images = images.concat(item.node.image)
@@ -96,16 +98,22 @@ class ImageSelection extends Component {
     handleSubmit(form) {
         if (!isEmpty(this.state.selectedImage)) {
             form = Object.assign(form, { img: this.state.selectedImage })
-            console.log('form', form.img)
+            console.log('form', this.state.selectedImage)
+            var formData = new FormData()
+            formData._parts[0] = ['img', this.state.selectedImage[0], this.state.selectedImage[0].path]
             async function uploadData() {
-                var data = new FormData()
-                data.append('img', form.img)
+                console.log(formData)
                 return await fetch(`${baseUrl}ads/upload`, {
                     method: 'POST',
+                    mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        Accept: 'application/json',
+                        'Content-Type': 'multipart/form-data;',
+                        // 'Content-Type': 'application/json'
+                        // 'accept-encoding': 'gzip, deflate, br',
                     },
-                    body: data
+                    body: formData
+                    // files: formData
                 })
                     .then(response => {
                         if (response.ok) {
@@ -114,7 +122,7 @@ class ImageSelection extends Component {
                         else {
                             var error = new Error('Error ' + response.status + ': ' + response.statusText)
                             error.response = response
-                            return error
+                            return error    
                         }
                     },
                         error => {
@@ -151,8 +159,8 @@ class ImageSelection extends Component {
                     {/* <Text>{JSON.stringify(this.state.selectedImage)}</Text> */}
                     <View style={styles.imageCont} >
                         <TouchableOpacity onPress={() => this.openCamera()}
-                            style={styles.gridView} >
-                            <Image source={{ uri: baseUrl + 'camera.png' }} style={styles.image} />
+                            containerStyle={styles.gridView} >
+                            <FeatIcon name='camera' size={46} style={[styles.image, { margin: '25%' }]} />
                         </TouchableOpacity>
                         {this.renderImages()}
                     </View>
@@ -169,14 +177,18 @@ class ImageSelection extends Component {
 
 const styles = StyleSheet.create({
     image: {
-        width: 90,
-        height: 90,
-        margin: 1
+        width: '100%',
+        height: '100%',
     },
     imageCont: {
         width: '100%',
         flexDirection: 'row',
         flexWrap: "wrap"
+    },
+    gridView: {
+        width: '24.4%',
+        height: 100,
+        margin: 1
     },
     checkBox: {
         position: "absolute",
@@ -200,6 +212,8 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         margin: 20,
         bottom: 0,
+        padding: 0,
+        marginVertical: 10
     },
 })
 

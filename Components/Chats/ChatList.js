@@ -39,27 +39,41 @@ class ChatList extends Component {
         //         <Loading />
         //     )
         // }
-        // else if (this.props.ads.errMess) {
-        //     return (<Text>Network Error</Text>)
-        // }
-        // else
-        if (Array.isArray(this.props.chatUser) != false)
-            return (
-                // <View></View>
-                this.props.user.users
-                    .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
-                    .map((item, index) => {
-                        console.log(item.name)
-                        return (
-                            <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id })}
-                                title={item.name}
-                                subtitle='subtitle'
-                                chevron={true}
-                                leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }} />} >
-                            </ListItem>
-                        )
-                    })
-            )
+        // else 
+        if (this.props.user.errMess) {
+            return (<Text>Network Error</Text>)
+        }
+        else
+            if (Array.isArray(this.props.chatUser) != false)
+                return (
+                    // <View></View>
+                    this.props.user.users
+                        .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
+                        .map((item, index) => {
+                            let subtitle = '', dat = new Date()
+                            this.props.chatUser
+                                .filter(itm => itm.to_user_id == item.id)
+                                .map((itm, indx) => {
+                                    console.log(itm)
+                                    subtitle = itm.text
+                                    dat = new Date(itm.createdAt)
+                                })
+                            console.log(item.name)
+                            return (
+                                <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id })}
+                                    title={item.name}
+                                    subtitle={subtitle}
+                                    containerStyle={{ height: 74 }}
+                                    // chevron={true}
+                                    rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
+                                    rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
+                                    leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }}
+
+                                    />} >
+                                </ListItem>
+                            )
+                        })
+                )
     }
 
     componentDidUpdate() {
@@ -141,8 +155,6 @@ const styles = StyleSheet.create({
     cardContainer: {
         backgroundColor: 'white',
         marginTop: 5,
-        padding: 10,
-        paddingBottom: 15
     },
 })
 

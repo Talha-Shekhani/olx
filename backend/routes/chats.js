@@ -50,7 +50,7 @@ Chats.route('/')
     })
 
 Chats.get('/:from_user/:to_user', (req, res) => {
-    console.log(`SELECT * FROM chats where from_user_id IN (${req.params.from_user}, ${req.params.to_user}) AND to_user_id IN (${req.params.from_user}, ${req.params.to_user}) order by createdAt desc`)
+    // console.log(`SELECT * FROM chats where from_user_id IN (${req.params.from_user}, ${req.params.to_user}) AND to_user_id IN (${req.params.from_user}, ${req.params.to_user}) order by createdAt desc`)
     con.query(`SELECT * FROM chats where from_user_id IN (${req.params.from_user}, ${req.params.to_user}) AND to_user_id IN (${req.params.from_user}, ${req.params.to_user}) order by createdAt desc`, (err, result) => {
         if (err) {
             console.log("error: ", err);

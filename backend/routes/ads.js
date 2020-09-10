@@ -129,9 +129,11 @@ const upload = multer({ storage: storage })
 
 Ads.post('/upload', upload.array('img', 3), (req, res) => {
     // if (err) console.log('err ', err)
-    for (var i in req.files) {
-        req.files[i].path = req.files[i].destination + req.files[i].originalname
-    }
+    // for (var i in req.files) {
+    //     req.files[i].path = req.files[i].destination + req.files[i].originalname
+    // }
+    console.log(JSON.stringify(req.body))
+    console.log(req.headers)
     console.log(req.files)
     res.send(req.files)
 })
