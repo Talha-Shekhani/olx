@@ -72,7 +72,7 @@ class Favorites extends Component {
             // <Text>{JSON.stringify(this.props.fav.favorites[0].ad_id) + ' '+ x}</Text>
             this.props.fav.favorites.map((itm, indx) => {
               return (
-                this.props.ads.ads.filter(item => item.id == itm.ad_id).map((item, index) => {
+                this.props.ads.ads.filter(item => item.id == itm.ad_id && itm.user_id == this.state.userId).map((item, index) => {
                   var dat = new Date(item.created_date)
                   return (
                     <Card containerStyle={styles.productCardColumn} key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}>

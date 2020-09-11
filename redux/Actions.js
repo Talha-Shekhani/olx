@@ -601,3 +601,63 @@ export const chatFailed = (err) => ({
     type: ActionTypes.CHAT_FAILED,
     payload: err
 })
+
+export const postReview = (userId, adId, rating, review) => (dispatch) => {
+    return fetch(`${baseUrl}review`, {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: userId,
+            adId: adId,
+            rating: rating,
+            review: review
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}
+
+export const fetchReviewByAd = (adId) => (dispatch) => {
+    return fetch(`${baseUrl}review/${adId}`, {
+        mode: 'no-cors',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}

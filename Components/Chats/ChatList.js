@@ -12,6 +12,7 @@ import { baseUrl } from '../../shared/baseUrl';
 import NumberFormat from 'react-number-format';
 import { Loading } from '../LoadingComponent';
 import { fetchChatUser, fetchUser } from '../../redux/Actions'
+import { InteractionManager } from 'react-native';
 
 const mapStateToProps = state => ({
     loc: state.loc,
@@ -83,18 +84,20 @@ class ChatList extends Component {
     }
 
     UNSAFE_componentWillMount() {
-        AsyncStorage.getItem('userdata')
-            .then((userdata) => {
-                if (userdata) {
-                    let userinfo = JSON.parse(userdata)
-                    this.setState({ userId: userinfo.userId })
-                    this.props.fetchUser('')
-                    this.props.fetchChatUser(this.state.userId)
-                }
-                else this.setState({ userId: 0 })
-            })
-            // .then(() => this.props.fetchFav(this.state.userId))
-            .catch((err) => console.log('Cannot find user info' + err))
+        InteractionManager.runAfterInteractions(() => {
+            AsyncStorage.getItem('userdata')
+                .then((userdata) => {
+                    if (userdata) {
+                        let userinfo = JSON.parse(userdata)
+                        this.setState({ userId: userinfo.userId })
+                        this.props.fetchUser('')
+                        this.props.fetchChatUser(this.state.userId)
+                    }
+                    else this.setState({ userId: 0 })
+                })
+                // .then(() => this.props.fetchFav(this.state.userId))
+                .catch((err) => console.log('Cannot find user info' + err))
+        })
     }
 
     render() {

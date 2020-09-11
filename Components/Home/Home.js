@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList, InteractionManager } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -37,15 +37,17 @@ class Home extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    const userdata = AsyncStorage.getItem('userdata')
-      .then((userdata) => {
-        if (userdata) {
-          let userinfo = JSON.parse(userdata)
-          this.setState({ userId: userinfo.userId })
-        }
-      })
-      .then(() => this.props.fetchFav(this.state.userId))
-      .catch((err) => console.log('Cannot find user info' + err))
+    InteractionManager.runAfterInteractions(() => {
+      const userdata = AsyncStorage.getItem('userdata')
+        .then((userdata) => {
+          if (userdata) {
+            let userinfo = JSON.parse(userdata)
+            this.setState({ userId: userinfo.userId })
+          }
+        })
+        .then(() => this.props.fetchFav(this.state.userId))
+        .catch((err) => console.log('Cannot find user info' + err))
+    })
   }
 
   renderCat() {
@@ -128,6 +130,7 @@ class Home extends Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <SafeAreaView>
         <ScrollView>

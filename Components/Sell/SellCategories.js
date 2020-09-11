@@ -18,7 +18,7 @@ const mapStateToProps = state => {
     cat: state.categories
   }
 }
-
+var userId = ''
 class SellCategories extends Component {
   constructor(props) {
     super(props)
@@ -27,7 +27,7 @@ class SellCategories extends Component {
     }
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     AsyncStorage.getItem('userdata')
       .then((userdata) => {
         if (userdata) {
@@ -68,6 +68,7 @@ class SellCategories extends Component {
   }
 
   render() {
+    console.log(this.state)
     // if (this.state.userId == 0)
     //   data = this.props.navigation.navigate('firstpage')
     // else data = this.renderItem()

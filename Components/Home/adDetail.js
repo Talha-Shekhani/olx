@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, Linking } from 'react-native';
-import { Icon, Card, Image } from 'react-native-elements';
+import { StyleSheet, Text, View, Platform, ScrollView, Linking, InteractionManager } from 'react-native';
+import { Icon, Card, Image, Rating, Input, Button } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
-import { postComment, postFav, delFav, fetchFav } from '../../redux/Actions'
+import { postComment, postFav, delFav, fetchFav, postReview, fetchReviewByAd } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { fetchUser } from '../../redux/Actions'
 import { SliderBox } from 'react-native-image-slider-box'
 import NumberFormat from 'react-number-format';
-import { Button } from 'react-native-paper';
+// import { Button } from 'react-native-paper';
 
 const mapStateToProps = state => ({
   ad: state.ads,
@@ -26,29 +26,46 @@ const mapDispatchToProps = dispatch => ({
   delFav: (userId, adId) => dispatch(delFav(userId, adId)),
   fetchFav: (userId) => dispatch(fetchFav(userId)),
   postFav: (userId, adId) => dispatch(postFav(userId, adId)),
-  fetchUser: (userId) => dispatch(fetchUser(userId))
+  fetchUser: (userId) => dispatch(fetchUser(userId)),
+  postReview: (userId, adId, rating, review) => dispatch(postReview(userId, adId, rating, review)),
+  fetchReviewByAd: (adId) => dispatch(fetchReviewByAd(adId))
 })
+
+var errReview = ''
 
 class adDetail extends Component {
   constructor(props) {
     super(props)
     this.state = {
       search: '',
-      userId: ''
+      userId: '',
+      review: '',
+      rating: 0,
+      reviews: []
     }
   }
 
   UNSAFE_componentWillMount() {
-    this.props.fetchUser(this.props.route.params.userId)
-    const userdata = AsyncStorage.getItem('userdata')
-      .then((userdata) => {
-        if (userdata) {
-          let userinfo = JSON.parse(userdata)
-          this.setState({ userId: userinfo.userId })
-        }
-      })
-      .then(() => this.props.fetchFav(this.state.userId))
-      .catch((err) => console.log('Cannot find user info' + err))
+    InteractionManager.runAfterInteractions(() => {
+      const userdata = AsyncStorage.getItem('userdata')
+        .then((userdata) => {
+          if (userdata) {
+            let userinfo = JSON.parse(userdata)
+            this.setState({ userId: userinfo.userId })
+            this.props.fetchUser(this.props.route.params.userId)
+
+          }
+        })
+        .then(() => this.props.fetchFav(this.state.userId))
+        .then(() => this.props.fetchReviewByAd(this.props.route.params.adId)
+          .then((res) => {
+            console.log(res)
+            if (res.success) this.setState({ reviews: res.result })
+            else this.setState({ reviews: ["Error: Network Issue!"] })
+            console.log(this.state.reviews)
+          }))
+        .catch((err) => console.log('Cannot find user info' + err))
+    })
   }
 
   renderRelatedAds(catId, id) {
@@ -64,6 +81,7 @@ class adDetail extends Component {
       return (
         // <Text>{JSON.stringify(props.props)}</Text>
         this.props.ad.ads.filter(item => item.active === 'true' && item.category_id == catId && item.id != id).map((item, index) => {
+          console.log(this.props.user.users)
           return (
             <Card containerStyle={styles.productCardColumn} key={index}>
               <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
@@ -89,28 +107,43 @@ class adDetail extends Component {
       )
   }
 
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    console.log(prevProps, prevState)
-    return prevProps, prevState
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log(snapshot)
+  handleSubmit(userId, adId, rating, review) {
+    if (this.state.review.length != '') {
+      this.props.postReview(userId, adId, rating, review)
+        .then((res) => {
+          if (res.success == true) {
+            this.setState({ rating: 0, review: '' })
+          }
+        })
+        .then(() => {
+          this.props.fetchReviewByAd(this.props.route.params.adId)
+            .then((res) => {
+              console.log(res)
+              if (res.success) this.setState({ reviews: res.result })
+              else this.setState({ reviews: ["Error: Network Issue!"] })
+              console.log(this.state.reviews)
+            })
+        })
+    } else {
+      errReview = 'Review is Required!'
+    }
   }
 
   renderAd(adId, userId) {
-    if (this.props.ad.isLoading) {
-      return (
-        <Loading />
-      )
-    }
-    else if (this.props.ad.errMess) {
+    // if (this.props.ad.isLoading) {
+    //   return (
+    //     <Loading />
+    //   )
+    // }
+    // else 
+    if (this.props.ad.errMess) {
       return (<Text>Network Error</Text>)
     }
     else
       return (
         this.props.ad.ads.filter(item => item.id == adId).map((item, index) => {
           let val = ''
+          let adId = item.id
           {
             val = this.props.fav.favorites
               .filter(itm => item.id == itm.ad_id && itm.user_id == userId)
@@ -131,9 +164,9 @@ class adDetail extends Component {
                   <NumberFormat value={item.price} displayType={'text'} thousandSeparator={true} prefix={'Rs '} renderText={formattedValue => <Text style={styles.priceText} >{formattedValue}</Text>} />
                   <Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
                     if (val == item.id)
-                      this.props.delFav(userId, item.id)
+                      this.props.delFav(this.state.userId, item.id)
                     else
-                      this.props.postFav(userId, item.id)
+                      this.props.postFav(this.state.userId, item.id)
                   }}
                     type="font-awesome" style={styles.iconHeart} color={'red'} />
                 </View>
@@ -158,24 +191,56 @@ class adDetail extends Component {
                 <Text style={styles.desc} >{item.description}</Text>
               </View>
               <View style={styles.separator}>
+                <Text style={styles.detailTitle} >Ad ID: {item.id}</Text>
+              </View>
+              <View style={styles.separator}>
                 {this.props.user.user
                   .filter(itm => item.user_id == itm.id)
                   .map((item, index) => {
                     let dat = new Date(item.updated_at)
-                    console.log(item)
                     return (
-                      <View>
-                        <Image source={{ uri: baseUrl + item.img }} />
-                        <View>
-                          <Text>{item.name}</Text>
-                          <Text>Member since {dat.toUTCString().slice(7, 16)} </Text>
+                      <>
+                        <View style={styles.userDetail} >
+                          <Image source={{ uri: baseUrl + item.img }} style={styles.userImage} />
+                          <View>
+                            <Text style={styles.textStyle}>{item.name}</Text>
+                            <Text style={styles.textStyle} >Member since {dat.toUTCString().slice(7, 16)} </Text>
+                            <Text style={styles.seeProfile} >See Profile</Text>
+                          </View>
                         </View>
-                      </View>
+                        <View>
+                          <Text style={{ fontSize: 18, fontWeight: 'bold', margin: 5, marginTop: 10 }}>Review User</Text>
+                          <Rating ratingCount={5} count={1} imageSize={22}
+                            startingValue={this.state.rating} onFinishRating={(rating) => this.setState({ rating: rating })}
+                            style={styles.rating} />
+                          <Input placeholder='Type a review...' maxLength={100} onChangeText={(val) => this.setState({ review: val })}
+                            multiline keyboardType="default" renderErrorMessage={true}
+                            errorMessage={errReview} value={this.state.review} />
+                          <Button style={{ width: '80%', alignSelf: 'center' }}
+                            buttonStyle={styles.btnReview} onPress={() => this.handleSubmit(this.state.userId, adId, this.state.rating, this.state.review)}
+                            title='Review' />
+                        </View>
+                        <View style={styles.reviewMainCont}>
+                          {this.state.reviews.map((item, index) => {
+                            let dat = new Date(item.date_time)
+                            return (
+                              <View style={styles.reviewCont} >
+                                <View style={styles.reviewRow} >
+                                  <Image source={{ uri: baseUrl + item.img }} style={styles.reviewUserImage} />
+                                  <Text>{item.name}</Text>
+                                </View>
+                                <View style={styles.reviewRow} >
+                                  <Rating readonly startingValue={item.rating} imageSize={10} style={styles.reviewRating} />
+                                  <Text style={styles.textDate}>{dat.toDateString().slice(4)}</Text>
+                                </View>
+                                <Text style={styles.reviewText} >{item.review}</Text>
+                              </View>
+                            )
+                          })}
+                        </View>
+                      </>
                     )
                   })}
-              </View>
-              <View style={styles.separator}>
-                <Text style={styles.detailTitle} >Ad ID: {item.id}</Text>
               </View>
               <View style={styles.separator}>
                 <Text style={styles.detailTitle} >Related Ads</Text>
@@ -197,18 +262,18 @@ class adDetail extends Component {
     return (
       <SafeAreaView>
         <View style={styles.footer}>
-          <Button style={styles.footerBtn} contentStyle={styles.footerBtnCont}
-            labelStyle={styles.footerBtnLabel}
+          <Button buttonStyle={styles.footerBtn} title='Chat'
+            titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='message-circle' type='feather' color='white' />}
-            onPress={() => this.props.navigation.navigate('chat')} >Chat</Button>
-          <Button style={styles.footerBtn} contentStyle={styles.footerBtnCont}
-            labelStyle={styles.footerBtnLabel}
+            onPress={() => this.props.navigation.navigate('chat')} />
+          <Button buttonStyle={styles.footerBtn} title='SMS'
+            titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='envelope-o' type='font-awesome' color='white' />}
-            onPress={() => { var sms = ''; sms = Platform.OS == 'android' ? 'sms:${0123}' : 'smsprompt:${0123}'; Linking.openURL(sms) }} > SMS</Button>
-          <Button style={styles.footerBtn} contentStyle={styles.footerBtnCont}
-            labelStyle={styles.footerBtnLabel}
+            onPress={() => { var sms = ''; sms = Platform.OS == 'android' ? 'sms:${0123}' : 'smsprompt:${0123}'; Linking.openURL(sms) }} />
+          <Button buttonStyle={styles.footerBtn} title='Call'
+            titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='phone' type='feather' color='white' />}
-            onPress={() => { var phn = ''; phn = Platform.OS == 'android' ? 'tel:${0123}' : 'telprompt:${0123}'; Linking.openURL(phn) }} > Call</Button>
+            onPress={() => { var phn = ''; phn = Platform.OS == 'android' ? 'tel:${0123}' : 'telprompt:${0123}'; Linking.openURL(phn) }} />
         </View>
         <ScrollView>
           <View style={styles.container}>
@@ -332,6 +397,65 @@ const styles = StyleSheet.create({
   loc: {
     marginTop: 10
   },
+  userDetail: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  userImage: {
+    width: 40,
+    height: 40,
+    marginHorizontal: 20
+  },
+  seeProfile: {
+    fontStyle: 'italic',
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+    lineHeight: 16
+  },
+  rating: {
+    justifyContent: 'flex-start'
+  },
+  btnReview: {
+    backgroundColor: 'black',
+    width: '94%',
+    alignSelf: 'center'
+  },
+  textStyle: {
+    lineHeight: 16
+  },
+  reviewMainCont: {
+    marginTop: 10,
+    marginLeft: 10,
+    width: '90%',
+    alignContent: 'flex-start'
+  },
+  reviewCont: {
+  },
+  reviewRow: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center'
+  },
+  reviewUserImage: {
+    width: 25,
+    height: 25,
+    margin: 5,
+    marginRight: 10
+  },
+  reviewRating: {
+    marginLeft: 5
+  },
+  textDate: {
+    marginLeft: 10,
+    fontSize: 12,
+    color: 'grey'
+  },
+  reviewText: {
+    margin: 5,
+    color: 'grey',
+    minHeight: 2
+  },
   footer: {
     zIndex: 2,
     position: 'absolute',
@@ -345,19 +469,22 @@ const styles = StyleSheet.create({
     elevation: 22,
     shadowColor: 'grey',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
 
   },
   footerBtn: {
     backgroundColor: 'black',
     alignSelf: 'center',
-    height: '70%'
+    height: '70%',
+    margin: 8,
+    width: '55%'
   },
   footerBtnLabel: {
     color: 'white',
     alignSelf: 'center',
     justifyContent: 'center',
-    fontSize: 16
+    fontSize: 16,
+    margin: 6
   }
 })
 

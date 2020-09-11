@@ -13,11 +13,11 @@ const loc = require('./routes/location')
 const user = require('./routes/users')
 const favorites = require('./routes/favorites');
 const Chats = require('./routes/chats');
+const rev = require('./routes/review');
 
 // const hostname = '192.168.0.105'
 const hostname = '127.0.0.1'
 const port = 3000
-// const port = 8080
 
 const app = express()
 app.use(morgan('dev'))
@@ -30,6 +30,7 @@ app.use('/loc', loc)
 app.use('/users', user)
 app.use('/favorite', favorites)
 app.use('/chat', Chats)
+app.use('/review', rev)
 app.put('/setStatus', (req, res) => {
     console.log(req.body)
     let stat = req.body.active == 'true' ? 'false' : 'true'
@@ -76,11 +77,8 @@ server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}`)
 })
 
-const webSocketsServerPort = 8000;
-// const webSocketServer = require('websocket').server;
-// const http = require('http');
-// Spinning the http server and the websocket server.
-const serve = http.createServer();
+const webSocketsServerPort = 8000
+const serve = http.createServer()
 let hstname = '127.0.0.1'
 serve.listen(webSocketsServerPort, hstname, () => {
     // console.log(`Server running at http://${hostname}:${port}`)
