@@ -39,7 +39,7 @@ class Favorites extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.props.fav)
+    // console.log(this.props.fav)
   }
 
   UNSAFE_componentWillMount() {

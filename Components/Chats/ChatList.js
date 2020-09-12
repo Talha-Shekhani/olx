@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, ScrollView } from 'react-native';
 import { SearchBar, Icon, Image, ListItem, Avatar } from 'react-native-elements';
 import { Card, List } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, TabActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -30,7 +30,7 @@ class ChatList extends Component {
         super(props)
         this.state = {
             search: '',
-            userId: ''
+            userId: 0
         }
     }
 
@@ -55,13 +55,11 @@ class ChatList extends Component {
                             this.props.chatUser
                                 .filter(itm => itm.to_user_id == item.id)
                                 .map((itm, indx) => {
-                                    console.log(itm)
                                     subtitle = itm.text
                                     dat = new Date(itm.createdAt)
                                 })
-                            console.log(item.name)
                             return (
-                                <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id })}
+                                <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id, title: item.name })}
                                     title={item.name}
                                     subtitle={subtitle}
                                     containerStyle={{ height: 74 }}
@@ -81,34 +79,39 @@ class ChatList extends Component {
         if (this.state.userId == 0) {
             this.props.navigation.navigate('firstpage')
         }
+        console.log(this.state.userId)
     }
 
-    UNSAFE_componentWillMount() {
+    componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
             AsyncStorage.getItem('userdata')
                 .then((userdata) => {
                     if (userdata) {
                         let userinfo = JSON.parse(userdata)
                         this.setState({ userId: userinfo.userId })
-                        this.props.fetchUser('')
-                        this.props.fetchChatUser(this.state.userId)
                     }
                     else this.setState({ userId: 0 })
+                    this.props.navigation.addListener('focus', () => {
+                        if (this.state.userId == 0) {
+                            this.props.navigation.navigate('firstpage')
+                        }
+                        console.log(this.state.userId)
+                    })
                 })
-                // .then(() => this.props.fetchFav(this.state.userId))
+                .then(() => {
+                    this.props.fetchUser('')
+                    this.props.fetchChatUser(this.state.userId)
+                })
                 .catch((err) => console.log('Cannot find user info' + err))
         })
     }
 
     render() {
-        // const { catId, subcatId } = this.props.route.params
-        // console.log(this.state)
+
         if (this.state.userId != '')
             return (
                 <SafeAreaView >
                     <ScrollView >
-                        {/* <Text>{JSON.stringify(this.props)}</Text> */}
-                        {/* <Text>{catId + ' ' + subcatId}</Text> */}
                         <View style={styles.container}>
                             <SearchBar containerStyle={styles.searchBar}
                                 inputContainerStyle={styles.inputContainerStyle}
@@ -130,7 +133,6 @@ class ChatList extends Component {
 
 const styles = StyleSheet.create({
     container: {
-
     },
     inputContainerStyle: {
         height: 24,

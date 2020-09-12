@@ -27,6 +27,13 @@ class SellCategories extends Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.state.userId == 0) {
+      this.props.navigation.navigate('firstpage')
+    }
+    console.log(this.state.userId)
+  }
+
   UNSAFE_componentWillMount() {
     AsyncStorage.getItem('userdata')
       .then((userdata) => {
@@ -35,6 +42,12 @@ class SellCategories extends Component {
           this.setState({ userId: userinfo.userId })
         }
         else this.setState({ userId: 0 })
+        this.props.navigation.addListener('focus', () => {
+          if (this.state.userId == 0) {
+            this.props.navigation.navigate('firstpage')
+          }
+          console.log(this.state.userId)
+        })
       })
       // .then(() => this.props.fetchFav(this.state.userId))
       .catch((err) => console.log('Cannot find user info' + err))
@@ -68,7 +81,6 @@ class SellCategories extends Component {
   }
 
   render() {
-    console.log(this.state)
     // if (this.state.userId == 0)
     //   data = this.props.navigation.navigate('firstpage')
     // else data = this.renderItem()

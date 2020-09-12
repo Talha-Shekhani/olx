@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, ScrollView, FlatList } from 'react-native';
-import { SearchBar, Icon, Card, Image } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
+import { SearchBar, Icon, Card, Image, ListItem } from 'react-native-elements';
+import { NavigationContainer, NavigationAction, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -12,7 +12,7 @@ import { postComment, fetchUser } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Button } from 'react-native-paper'
+import { Button, Divider } from 'react-native-paper'
 
 const mapStateToProps = state => ({
     user: state.users
@@ -38,47 +38,56 @@ class MyAccount extends Component {
                 if (userdata) {
                     let userinfo = JSON.parse(userdata)
                     this.setState({ userId: userinfo.userId })
-                    this.props.fetchUser(this.state.userId)
                     console.log(userinfo)
                 }
                 else this.setState({ userId: 0 })
             })
+            .then(() => this.props.fetchUser(this.state.userId))
             .catch((err) => console.log('Cannot find user info' + err))
     }
 
     displayContent(isLogin) {
         if (isLogin)
             return (
-                <Button
-                    onPress={() => {
+                <View>
+                    <Divider style={{ height: 2 }} />
+                    <ListItem title='Review' chevron onPress={() => {
+                        this.props.navigation.navigate('reviews', { userId: this.state.userId })
+                    }} />
+                    <Divider style={{ height: 2 }} />
+                    <ListItem title='LogOut' chevron onPress={() => {
                         AsyncStorage.removeItem('userdata');
                         this.props.navigation.navigate('firstpage')
-                    }}
-                    mode='outlined' >LogOut
-                </Button>
+                    }} />
+                    <Divider style={{ height: 2 }} />
+                </View>
+
             )
         else
             return (
-                <Button
-                    onPress={() => {
-                        this.props.navigation.navigate('firstpage')
-                    }}
-                    mode='outlined' >LogIn
-                </Button>
+                <View>
+                    <Divider style={{ height: 2 }} />
+                    <ListItem title='LogIn' chevron onPress={() => {
+                        this.props.navigation.dispatch(StackActions.replace('firstpage'))
+                    }} />
+                    <Divider style={{ height: 2 }} />
+                </View>
             )
     }
 
     render() {
+        console.log(this.props.user)
         let isLogin = false
         if (this.state.userId != 0)
             isLogin = true
+        console.log(isLogin)
         return (
             <SafeAreaView style={{ backgroundColor: 'white' }}>
                 <ScrollView style={styles.container}  >
                     <View style={styles.header} >
                         <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
                         <View style={styles.subHead} >
-                            <Text style={styles.username} >{isLogin ? this.props.user.users[0].name : 'Username'}</Text>
+                            <Text style={styles.username} >{isLogin === true ? this.props.user.users[0].name : 'Username'}</Text>
                             <Text style={styles.username} >UserName</Text>
                         </View>
                     </View>
@@ -91,11 +100,12 @@ class MyAccount extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        margin: 25,
+        // margin: 25,
         backgroundColor: 'white',
         height: '100%'
     },
     header: {
+        margin: 25,
         flexDirection: 'row'
     },
     username: {
@@ -104,7 +114,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     subHead: {
-        // justifyContent: ''
+        justifyContent: 'center'
     },
 
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, ScrollView, FlatList, Alert } from 'react-native';
 import { Icon, Input, Image, Button } from 'react-native-elements';
 import { TextValidator, Form } from 'react-native-validator-form'
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -69,7 +69,7 @@ class Password extends Component {
                         if (check != false)
                             AsyncStorage.setItem('userdata',
                                 JSON.stringify({ email: this.state.email, password: this.state.password, userId: this.state.userId }))
-                                .then(() => this.props.navigation.navigate('root'))
+                                .then(() => this.props.navigation.dispatch(StackActions.replace('root')))
                                 .catch((err) => console.log('Could not save user info', err))
                         else this.setState({ errmsg: 'password not Matched' })
                     })

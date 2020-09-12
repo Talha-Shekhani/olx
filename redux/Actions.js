@@ -661,3 +661,30 @@ export const fetchReviewByAd = (adId) => (dispatch) => {
         .then(response => { return response })
         .catch(error => { return error })
 }
+
+export const fetchReviewByUser = (userId) => (dispatch) => {
+    return fetch(`${baseUrl}review/user/${userId}`, {
+        mode: 'no-cors',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}

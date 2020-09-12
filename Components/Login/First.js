@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, ScrollView, FlatList, BackHandler } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FontIcon from 'react-native-vector-icons/FontAwesome'
@@ -18,19 +18,16 @@ import { Button } from 'react-native-paper';
 class FirstPage extends Component {
   constructor(props) {
     super(props)
-    // BackHandler.addEventListener('hardwareBackPress', () => {
-    //   if (props.route.params.preventGoBack) {
-    //     return true
-    //   }
-    //   return false
-    // })
   }
 
   render() {
     return (
       <SafeAreaView style={styles.container}>
         <View>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('root')} style={styles.cancelBtn} ><FeatIcon name='x' size={20} /></TouchableOpacity>
+          <TouchableOpacity onPress={() =>
+            this.props.navigation.dispatch(StackActions.replace('root'))} style={styles.cancelBtn} >
+            <FeatIcon name='x' size={20} />
+          </TouchableOpacity>
         </View>
         <View style={{ height: '60%' }} >
           <Image source={{ uri: baseUrl + 'OLX_BLUE_LOGO.png' }} resizeMode='contain' style={styles.img} />

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, Linking, InteractionManager } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, Linking, InteractionManager, BackHandler } from 'react-native';
 import { Icon, Card, Image, Rating, Input, Button } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -12,6 +12,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { fetchUser } from '../../redux/Actions'
 import { SliderBox } from 'react-native-image-slider-box'
 import NumberFormat from 'react-number-format';
+import { StackActions } from '@react-navigation/native';
 // import { Button } from 'react-native-paper';
 
 const mapStateToProps = state => ({
@@ -31,7 +32,7 @@ const mapDispatchToProps = dispatch => ({
   fetchReviewByAd: (adId) => dispatch(fetchReviewByAd(adId))
 })
 
-var errReview = ''
+var errReview = '', username = ''
 
 class adDetail extends Component {
   constructor(props) {
@@ -39,10 +40,15 @@ class adDetail extends Component {
     this.state = {
       search: '',
       userId: '',
+      username: '',
       review: '',
       rating: 0,
       reviews: []
     }
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      this.props.navigation.dispatch(StackActions.pop(1))
+      return true
+    })
   }
 
   UNSAFE_componentWillMount() {
@@ -59,10 +65,8 @@ class adDetail extends Component {
         .then(() => this.props.fetchFav(this.state.userId))
         .then(() => this.props.fetchReviewByAd(this.props.route.params.adId)
           .then((res) => {
-            console.log(res)
             if (res.success) this.setState({ reviews: res.result })
             else this.setState({ reviews: ["Error: Network Issue!"] })
-            console.log(this.state.reviews)
           }))
         .catch((err) => console.log('Cannot find user info' + err))
     })
@@ -81,7 +85,6 @@ class adDetail extends Component {
       return (
         // <Text>{JSON.stringify(props.props)}</Text>
         this.props.ad.ads.filter(item => item.active === 'true' && item.category_id == catId && item.id != id).map((item, index) => {
-          console.log(this.props.user.users)
           return (
             <Card containerStyle={styles.productCardColumn} key={index}>
               <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
@@ -118,10 +121,8 @@ class adDetail extends Component {
         .then(() => {
           this.props.fetchReviewByAd(this.props.route.params.adId)
             .then((res) => {
-              console.log(res)
               if (res.success) this.setState({ reviews: res.result })
               else this.setState({ reviews: ["Error: Network Issue!"] })
-              console.log(this.state.reviews)
             })
         })
     } else {
@@ -198,6 +199,7 @@ class adDetail extends Component {
                   .filter(itm => item.user_id == itm.id)
                   .map((item, index) => {
                     let dat = new Date(item.updated_at)
+                    username = item.name
                     return (
                       <>
                         <View style={styles.userDetail} >
@@ -205,7 +207,7 @@ class adDetail extends Component {
                           <View>
                             <Text style={styles.textStyle}>{item.name}</Text>
                             <Text style={styles.textStyle} >Member since {dat.toUTCString().slice(7, 16)} </Text>
-                            <Text style={styles.seeProfile} >See Profile</Text>
+                            <Text style={styles.seeProfile} onPress={() => this.props.navigation.navigate('MyAccount')} >See Profile</Text>
                           </View>
                         </View>
                         <View>
@@ -265,7 +267,7 @@ class adDetail extends Component {
           <Button buttonStyle={styles.footerBtn} title='Chat'
             titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='message-circle' type='feather' color='white' />}
-            onPress={() => this.props.navigation.navigate('chat')} />
+            onPress={() => this.props.navigation.navigate('chat', {userId: userId, title: username})} />
           <Button buttonStyle={styles.footerBtn} title='SMS'
             titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='envelope-o' type='font-awesome' color='white' />}

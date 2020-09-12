@@ -29,6 +29,7 @@ import FirstPage from './Login/First'
 import pricePage from './Sell/price'
 import AddLocation from './Sell/AddLocation';
 import ChatList from './Chats/ChatList';
+import Reviews from './Account/Reviews';
 
 const mapStateToProps = state => {
   return {
@@ -76,7 +77,7 @@ class Main extends Component {
               <Text style={{ width: '100%' }} >
                 <IconMat name={iconName1} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
                 <MatIcon name={iconName2} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
-                <SimIcon name={iconName3} size={focused ? 24 : 22} color={'white'} />
+                <SimIcon name={iconName3} size={focused ? 24 : 22} color={'black'} />
                 <IconMat name={iconName4} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
                 <FontIcon name={iconName5} size={focused ? 24 : 22} color={focused ? 'black' : 'grey'} />
               </Text>
@@ -139,7 +140,8 @@ class Main extends Component {
               <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
               <Stack.Screen name="pricePage" component={pricePage} options={{ headerShown: false }} />
               <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
-              <Stack.Screen name="chat" component={Chat} />
+              <Stack.Screen name="chat" component={Chat} options={({ route }) => ({ title: route.params.title, headerStyle: { backgroundColor: '#eee' } })} />
+              <Stack.Screen name='reviews' component={Reviews} options={{ title: 'Reviews' }} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList, InteractionManager } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList, InteractionManager, BackHandler, NativeModules, AppState } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions, TabActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -11,8 +11,8 @@ import { Loading } from '../LoadingComponent';
 import { postFav, delFav, fetchFav } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
-import { TouchableOpacity, State } from 'react-native-gesture-handler';
-import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
+import { TouchableOpacity, State } from 'react-native-gesture-handler'
+import { isEmpty } from 'react-native-validator-form/lib/ValidationRules'
 
 const mapStateToProps = state => ({
   ads: state.ads.ads,
@@ -43,7 +43,7 @@ class Home extends Component {
           if (userdata) {
             let userinfo = JSON.parse(userdata)
             this.setState({ userId: userinfo.userId })
-          }
+          } else this.setState({ userId: 0 })
         })
         .then(() => this.props.fetchFav(this.state.userId))
         .catch((err) => console.log('Cannot find user info' + err))
@@ -130,7 +130,15 @@ class Home extends Component {
   }
 
   render() {
-    console.log(this.state)
+    // BackHandler.addEventListener('hardwareBackPress', () => {
+    //   BackHandler.exitApp()
+    //   AppState.addEventListener('change', () => {
+    //     console.log(AppState.currentState)
+    //   })
+    //   return true
+    // })
+    
+    // console.log(this.state)
     return (
       <SafeAreaView>
         <ScrollView>

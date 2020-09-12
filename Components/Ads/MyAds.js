@@ -65,7 +65,7 @@ class MyAds extends Component {
                       mode={"contained"}
                       labelStyle={{ fontSize: 12, textTransform: "none" }}
                       contentStyle={{ margin: -6 }} color='#00a6ff'
-                      onPress={() => { ToastAndroid.show("Others can't see your ad", ToastAndroid.SHORT); item.active ? console.log('active') : console.log('disbale'); this.props.putStatus(this.state.userId, item.id, item.active) }} >{item.active == 'true' ? 'Disable ?' : 'Active ?'}</Button>
+                      onPress={() => { ToastAndroid.show("Others can't see your ad", ToastAndroid.SHORT); this.props.putStatus(this.state.userId, item.id, item.active) }} >{item.active == 'true' ? 'Disable ?' : 'Active ?'}</Button>
                   </View>
                   <View style={styles.btnFlowDelete}>
                     <Button style={styles.btnFloatText}
@@ -77,7 +77,7 @@ class MyAds extends Component {
                         { text: 'OK', style: 'default', onPress: () =>  this.props.delAd(item.id)}
                       ], { cancelable: true })}>Delete Ad</Button>
                   </View>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} onLongPress={() => { console.log(this.render()) }}  >
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
                     <View style={styles.product} >
                       <View style={styles.imageConatiner}>
                         <Image containerStyle={styles.cardImage}
