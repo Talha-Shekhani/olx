@@ -58,13 +58,28 @@ rev.get('/:adId', (req, res) => {
 })
 
 rev.get('/user/:userId', (req, res) => {
-    con.query(`SELECT r.ad_id, a.title, u.name, u.img, r.rating, r.review, r.date_time FROM review r, users u, ads a WHERE r.user_id = u.id AND a.id = r.ad_id AND r.user_id = ${req.params.userId}`, (err, result) => {
+    con.query(`SELECT r.ad_id, a.title, u.name, u.img, r.rating, r.review, r.date_time FROM review r, users u, ads a WHERE a.id = r.ad_id AND a.user_id = u.id AND a.user_id = ${req.params.userId}`, (err, result) => {
         if (err) {
             console.log("error: ", err);
             res.send({ err: err })
         }
         else {
-            console.log("result ", result);
+            // console.log("result ", result);
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.send({ success: true, result: result })
+        }
+    })
+})
+
+rev.get('/userReview/:userId', (req, res) => {
+    con.query(`SELECT SUM(rating) AS sum, COUNT(rating) AS num, SUM(rating) / COUNT(rating) AS rating FROM review r, ads a WHERE r.ad_id = a.id AND a.user_id = ${req.params.userId}`, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            res.send({ err: err })
+        }
+        else {
+            // console.log("result ", result);
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json')
             res.send({ success: true, result: result })

@@ -14,6 +14,7 @@ const user = require('./routes/users')
 const favorites = require('./routes/favorites');
 const Chats = require('./routes/chats');
 const rev = require('./routes/review');
+const feature = require('./routes/featured');
 
 // const hostname = '192.168.0.105'
 const hostname = '127.0.0.1'
@@ -31,6 +32,7 @@ app.use('/users', user)
 app.use('/favorite', favorites)
 app.use('/chat', Chats)
 app.use('/review', rev)
+app.use('/feature', feature)
 app.put('/setStatus', (req, res) => {
     console.log(req.body)
     let stat = req.body.active == 'true' ? 'false' : 'true'

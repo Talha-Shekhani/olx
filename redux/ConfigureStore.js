@@ -10,6 +10,7 @@ import { loc } from './location'
 import { users } from './users'
 import { favorites } from './favorites'
 import { chats } from './chat'
+import { featured } from './featured'
 
 export const configureStore = () => {
     const config = {
@@ -26,7 +27,8 @@ export const configureStore = () => {
             loc,
             users,
             favorites,
-            chats
+            chats,
+            featured
         }),
         compose(
             applyMiddleware(thunk)

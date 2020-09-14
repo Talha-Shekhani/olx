@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ToastAndroid, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import IconMat from 'react-native-vector-icons/MaterialCommunityIcons'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
@@ -74,10 +74,10 @@ class MyAds extends Component {
                       contentStyle={{ margin: -6 }} color='#00a6ff'
                       onPress={() => Alert.alert('Pakka?', 'sachi, delete krdu?', [
                         { text: 'Cancel', style: "destructive" },
-                        { text: 'OK', style: 'default', onPress: () =>  this.props.delAd(item.id)}
+                        { text: 'OK', style: 'default', onPress: () => this.props.delAd(item.id) }
                       ], { cancelable: true })}>Delete Ad</Button>
                   </View>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
+                  <TouchableOpacity onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id }))} >
                     <View style={styles.product} >
                       <View style={styles.imageConatiner}>
                         <Image containerStyle={styles.cardImage}
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   btnFlowDelete: {
     position: "absolute",
-    top: 26,
+    top: 30,
     right: 2,
     zIndex: 1,
     padding: 2,

@@ -30,6 +30,7 @@ import pricePage from './Sell/price'
 import AddLocation from './Sell/AddLocation';
 import ChatList from './Chats/ChatList';
 import Reviews from './Account/Reviews';
+import UserAccount from './Home/UserAccount';
 
 const mapStateToProps = state => {
   return {
@@ -142,6 +143,7 @@ class Main extends Component {
               <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
               <Stack.Screen name="chat" component={Chat} options={({ route }) => ({ title: route.params.title, headerStyle: { backgroundColor: '#eee' } })} />
               <Stack.Screen name='reviews' component={Reviews} options={{ title: 'Reviews' }} />
+              <Stack.Screen name='useraccount' component={UserAccount} options={{headerShown: false}} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

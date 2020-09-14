@@ -1,6 +1,5 @@
 import * as ActionTypes from './ActionTypes'
 import { baseUrl } from '../shared/baseUrl'
-import { act } from 'react-test-renderer'
 
 export const fetchAds = () => (dispatch) => {
     // dispatch(adsLoading(true))
@@ -46,7 +45,6 @@ export const addAllAds = (ads) => ({
 })
 
 export const delAd = (adId) => (dispatch) => {
-    console.log(adId)
     return fetch(`${baseUrl}ads`, {
         mode: 'no-cors',
         method: 'DELETE',
@@ -70,7 +68,7 @@ export const delAd = (adId) => (dispatch) => {
                 return JSON.stringify(errmess)
             })
         .then((response) => { return response.json() })
-        .then(response => { console.log(response); if (response.success == true) dispatch(fetchAds()) })
+        .then(response => { if (response.success == true) dispatch(fetchAds()) })
         .catch(error => console.log(error))
 }
 
@@ -365,7 +363,6 @@ export const addFav = (fav) => ({
 })
 
 export const delFav = (userId, adId) => (dispatch) => {
-    console.log(userId, adId)
     return fetch(`${baseUrl}favorite/${userId}/${adId}`, {
         mode: 'no-cors',
         method: 'DELETE'
@@ -481,7 +478,6 @@ export const postAd = (userId, formData) => (dispatch) => {
 }
 
 export const putStatus = (userId, adId, active) => (dispatch) => {
-    console.log({ 'userId': userId, 'adId': adId, 'active': active })
     return fetch(`${baseUrl}setStatus`, {
         mode: 'no-cors',
         method: 'PUT',
@@ -687,4 +683,87 @@ export const fetchReviewByUser = (userId) => (dispatch) => {
         .then((response) => { return response.json() })
         .then(response => { return response })
         .catch(error => { return error })
+}
+
+export const getOverallReview = (userId) => (dispatch) => {
+    return fetch(`${baseUrl}review/userReview/${userId}`, {
+        mode: 'no-cors',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}
+
+export const postFeatured = (userId, catId) => (dispatch) => {
+    return fetch(`${baseUrl}feature`, {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: userId, catId: catId, dat: new Date() })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}
+
+export const fetchFeat = (userId) => (dispatch) => {
+    // dispatch(adsLoading(true))
+    async function fetchData() {
+        return await fetch(`${baseUrl}feature/${userId}`, {
+            mode: 'no-cors',
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response
+                }
+                else {
+                    var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                    error.response = response
+                    return error
+                }
+            },
+                error => {
+                    var errmess = new Error(error.message)
+                    return errmess
+                })
+            .then((response) => { return response.json() })
+            .then(response => dispatch({ type: ActionTypes.ADD_FEAT, payload: response }))
+            .catch(error => dispatch({ type: ActionTypes.FEAT_FAILED, payload: error }))
+    }
+    fetchData()
 }

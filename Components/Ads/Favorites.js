@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Icon, Card, Image } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import IconMat from 'react-native-vector-icons/MaterialCommunityIcons'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
@@ -75,9 +75,9 @@ class Favorites extends Component {
                 this.props.ads.ads.filter(item => item.id == itm.ad_id && itm.user_id == this.state.userId).map((item, index) => {
                   var dat = new Date(item.created_date)
                   return (
-                    <Card containerStyle={styles.productCardColumn} key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}>
+                    <Card containerStyle={styles.productCardColumn} key={index} >
                       <View style={styles.iconHBack} ><Icon name='heart' onPress={() => this.props.delFav(item.user_id, item.id)} type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-                      <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })}  >
+                      <TouchableOpacity onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id }))}  >
                         <View style={styles.product} >
                           <View style={styles.imageConatiner}>
                             <Image containerStyle={styles.cardImage}

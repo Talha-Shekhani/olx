@@ -6,13 +6,13 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
-import { postComment, postFav, delFav, fetchFav, postReview, fetchReviewByAd } from '../../redux/Actions'
+import { postComment, postFav, delFav, fetchFav, postReview, fetchReviewByAd, postFeatured } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { fetchUser } from '../../redux/Actions'
 import { SliderBox } from 'react-native-image-slider-box'
 import NumberFormat from 'react-number-format';
-import { StackActions } from '@react-navigation/native';
+import { StackActions, CommonActions } from '@react-navigation/native';
 // import { Button } from 'react-native-paper';
 
 const mapStateToProps = state => ({
@@ -29,7 +29,8 @@ const mapDispatchToProps = dispatch => ({
   postFav: (userId, adId) => dispatch(postFav(userId, adId)),
   fetchUser: (userId) => dispatch(fetchUser(userId)),
   postReview: (userId, adId, rating, review) => dispatch(postReview(userId, adId, rating, review)),
-  fetchReviewByAd: (adId) => dispatch(fetchReviewByAd(adId))
+  fetchReviewByAd: (adId) => dispatch(fetchReviewByAd(adId)),
+  postfeature: (userId, catId) => dispatch(postFeatured(userId, catId))
 })
 
 var errReview = '', username = ''
@@ -45,10 +46,6 @@ class adDetail extends Component {
       rating: 0,
       reviews: []
     }
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      this.props.navigation.dispatch(StackActions.pop(1))
-      return true
-    })
   }
 
   UNSAFE_componentWillMount() {
@@ -59,7 +56,11 @@ class adDetail extends Component {
             let userinfo = JSON.parse(userdata)
             this.setState({ userId: userinfo.userId })
             this.props.fetchUser(this.props.route.params.userId)
-
+            console.log(this.props.route.params.userId, this.props.route.params.catId)
+            this.props.postfeature(this.state.userId, this.props.route.params.catId)
+            .then((res) => {
+              console.log(res)
+            })
           }
         })
         .then(() => this.props.fetchFav(this.state.userId))
@@ -87,7 +88,7 @@ class adDetail extends Component {
         this.props.ad.ads.filter(item => item.active === 'true' && item.category_id == catId && item.id != id).map((item, index) => {
           return (
             <Card containerStyle={styles.productCardColumn} key={index}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
+              <TouchableOpacity onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id }))} >
                 <View style={styles.imageConatiner}>
                   <Image containerStyle={styles.cardImage}
                     resizeMethod="scale"
@@ -207,7 +208,7 @@ class adDetail extends Component {
                           <View>
                             <Text style={styles.textStyle}>{item.name}</Text>
                             <Text style={styles.textStyle} >Member since {dat.toUTCString().slice(7, 16)} </Text>
-                            <Text style={styles.seeProfile} onPress={() => this.props.navigation.navigate('MyAccount')} >See Profile</Text>
+                            <Text style={styles.seeProfile} onPress={() => this.props.navigation.navigate('useraccount', { userId: item.id })} >See Profile</Text>
                           </View>
                         </View>
                         <View>
@@ -260,14 +261,14 @@ class adDetail extends Component {
   }
 
   render() {
-    const { adId, userId } = this.props.route.params
+    const { adId, userId, catId } = this.props.route.params
     return (
       <SafeAreaView>
         <View style={styles.footer}>
           <Button buttonStyle={styles.footerBtn} title='Chat'
             titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='message-circle' type='feather' color='white' />}
-            onPress={() => this.props.navigation.navigate('chat', {userId: userId, title: username})} />
+            onPress={() => this.props.navigation.navigate('chat', { userId: userId, title: username })} />
           <Button buttonStyle={styles.footerBtn} title='SMS'
             titleStyle={styles.footerBtnLabel}
             icon={() => <Icon name='envelope-o' type='font-awesome' color='white' />}

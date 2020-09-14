@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList, InteractionManager, BackHandler, NativeModules, AppState } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList, InteractionManager } from 'react-native';
 import { SearchBar, Icon, Card, Image } from 'react-native-elements';
 import { NavigationContainer, StackActions, TabActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,23 +8,25 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
-import { postFav, delFav, fetchFav } from '../../redux/Actions'
+import { postFav, delFav, fetchFav, fetchFeat } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity, State } from 'react-native-gesture-handler'
 import { isEmpty } from 'react-native-validator-form/lib/ValidationRules'
 
 const mapStateToProps = state => ({
-  ads: state.ads.ads,
+  ads: state.ads,
   cat: state.categories,
   loc: state.loc,
-  fav: state.favorites
+  fav: state.favorites,
+  feat: state.featured
 })
 
 const mapDispatchToProps = dispatch => ({
   delFav: (userId, adId) => dispatch(delFav(userId, adId)),
   fetchFav: (userId) => dispatch(fetchFav(userId)),
   postFav: (userId, adId) => dispatch(postFav(userId, adId)),
+  fetchFeat: (userId) => dispatch(fetchFeat(userId))
 })
 
 class Home extends Component {
@@ -45,7 +47,10 @@ class Home extends Component {
             this.setState({ userId: userinfo.userId })
           } else this.setState({ userId: 0 })
         })
-        .then(() => this.props.fetchFav(this.state.userId))
+        .then(() => {
+          this.props.fetchFav(this.state.userId)
+          this.props.fetchFeat(this.state.userId)
+        })
         .catch((err) => console.log('Cannot find user info' + err))
     })
   }
@@ -72,73 +77,73 @@ class Home extends Component {
       )
   }
 
-  renderAds(userId) {
+  renderAds(userId, type) {
+    // console.log(this.props.ads.premiumAds)
     if (this.props.ads.isLoading || this.props.fav.isLoading) {
       return (
         <Loading />
       )
     }
-    else if (this.props.ads.errMess || this.props.fav.errMess) {
-      return (<Text>Network Error</Text>)
-    }
     else
-      // if (!isEmpty(this.props.fav.favorites))
-      return (
-        // <Text>{JSON.stringify(this.props)}</Text>
-        // item => item.title.toLowerCase().includes(this.state.search) ||
-        this.props.ads.filter(item => item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
-          this.props.cat.categories.filter(el => el.title.toLowerCase().includes(this.state.search)).find(el => el.cat_id == item.category_id) != undefined)
-        )
-          .map((item, index) => {
-            let val = ''
-            { val = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
-            return (
-              <Card containerStyle={styles.productCardColumn} key={index} >
-                {/* <Text>{JSON.stringify(val, props.userId)}</Text> */}
-                <View style={styles.iconHBack} ><Icon name={val == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
-                  if (val == item.id)
-                    this.props.delFav(userId, item.id)
-                  else
-                    this.props.postFav(userId, item.id)
-                }}
-                  type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-                <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('addetail', { adId: item.id, userId: item.user_id })} >
-                  <View style={styles.imageConatiner}>
-                    <Image containerStyle={styles.cardImage}
-                      resizeMethod="scale"
-                      resizeMode="contain"
-                      source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
-                    />
-                  </View>
-                  <View>
-                    <Text style={styles.priceText}> Rs {item.price}</Text>
-                    <Text >{item.title}</Text>
-                    <Text style={styles.loc} >
-                      <MatIcon name="map-marker" size={10} />
-                      <Text style={styles.locText}>
-                        {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
-                          return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
-                        })}
-                      </Text>
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </Card>
+      if (this.props.ads.errMess || this.props.fav.errMess) {
+        return (<Text>Network Error</Text>)
+      }
+      else
+        // if (!isEmpty(this.props.fav.favorites))
+        return (
+          this.props.ads.ads
+            .filter(item => item.type == type && item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
+              this.props.cat.categories
+                .filter(el => el.title.toLowerCase().includes(this.state.search))
+                .find(el => el.cat_id == item.category_id) != undefined)
             )
-          })
-      )
+            .map((item, index) => {
+              let fav = '', feat = ''
+              { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
+              { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == userId).map((item, index) => { return (item.cat_id) }) }
+              return (
+                <Card containerStyle={styles.productCardColumn} key={index} >
+                  {feat == item.category_id && item.type != 'premium' ? <View style={styles.featuredTag} >
+                    <Text style={styles.featuredText}>Featured</Text>
+                  </View> : <></>}
+                  {item.type == 'premium' ? <View style={styles.premiumTag} >
+                    <Text style={styles.premiumText}>Premium</Text>
+                  </View> : <></>}
+                  <View style={styles.iconHBack} ><Icon name={fav == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
+                    if (fav == item.id)
+                      this.props.delFav(userId, item.id)
+                    else
+                      this.props.postFav(userId, item.id)
+                  }}
+                    type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
+                  <TouchableOpacity key={index} onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id, catId: item.category_id }))} >
+                    <View style={styles.imageConatiner}>
+                      <Image containerStyle={styles.cardImage}
+                        resizeMethod="scale"
+                        resizeMode="contain"
+                        source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                      />
+                    </View>
+                    <View>
+                      <Text style={styles.priceText}> Rs {item.price}</Text>
+                      <Text numberOfLines={1} > {item.title}</Text>
+                      <Text style={styles.loc} >
+                        <MatIcon name="map-marker" size={10} />
+                        <Text style={styles.locText}>
+                          {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                            return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                          })}
+                        </Text>
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </Card>
+              )
+            })
+        )
   }
 
   render() {
-    // BackHandler.addEventListener('hardwareBackPress', () => {
-    //   BackHandler.exitApp()
-    //   AppState.addEventListener('change', () => {
-    //     console.log(AppState.currentState)
-    //   })
-    //   return true
-    // })
-    
-    // console.log(this.state)
     return (
       <SafeAreaView>
         <ScrollView>
@@ -156,16 +161,66 @@ class Home extends Component {
                 {this.renderCat()}
               </View>
             </View>
-            {/* <View style={styles.cardContainer} >
-              <View style={styles.row}><Text>More on Land & Plots</Text><Text style={styles.link}>View more</Text></View>
+            <View style={styles.cardContainer} >
+              <View style={styles.row}><Text>More on </Text><Text style={styles.link}>View more</Text></View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}
               >
+                {this.props.ads.ads
+                  .filter(item => item.type == type && item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
+                    this.props.cat.categories
+                      .filter(el => el.title.toLowerCase().includes(this.state.search))
+                      .find(el => el.cat_id == item.category_id) != undefined)
+                  )
+                  .map((item, index) => {
+                    let fav = '', feat = ''
+                    { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
+                    { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == userId).map((item, index) => { return (item.cat_id) }) }
+                    return (
+                      <Card containerStyle={styles.productCardColumn} key={index} >
+                        {feat == item.category_id && item.type != 'premium' ? <View style={styles.featuredTag} >
+                          <Text style={styles.featuredText}>Featured</Text>
+                        </View> : <></>}
+                        {item.type == 'premium' ? <View style={styles.premiumTag} >
+                          <Text style={styles.premiumText}>Premium</Text>
+                        </View> : <></>}
+                        <View style={styles.iconHBack} ><Icon name={fav == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
+                          if (fav == item.id)
+                            this.props.delFav(userId, item.id)
+                          else
+                            this.props.postFav(userId, item.id)
+                        }}
+                          type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
+                        <TouchableOpacity key={index} onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id, catId: item.category_id }))} >
+                          <View style={styles.imageConatiner}>
+                            <Image containerStyle={styles.cardImage}
+                              resizeMethod="scale"
+                              resizeMode="contain"
+                              source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                            />
+                          </View>
+                          <View>
+                            <Text style={styles.priceText}> Rs {item.price}</Text>
+                            <Text numberOfLines={1} > {item.title}</Text>
+                            <Text style={styles.loc} >
+                              <MatIcon name="map-marker" size={10} />
+                              <Text style={styles.locText}>
+                                {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                                  return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                                })}
+                              </Text>
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      </Card>
+                    )
+                  })}
               </ScrollView>
-            </View> */}
+            </View>
             <View style={styles.cardContainer} >
               <View style={styles.row}><Text>Fresh Recommendations</Text></View>
               <View style={styles.cardColumn} >
-                {this.renderAds(this.state.userId)}
+                {this.renderAds(this.state.userId, 'premium')}
+                {this.renderAds(this.state.userId, 'basic')}
               </View>
             </View>
           </View>
@@ -258,9 +313,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   imageConatiner: {
-    width: '94%',
+    width: '98%',
     height: '62%',
-    margin: 5
+    margin: 2
   },
   cardImage: {
     alignSelf: 'center',
@@ -275,7 +330,7 @@ const styles = StyleSheet.create({
   },
   productCardColumn: {
     width: '47%',
-    height: 250,
+    height: 230,
     padding: 5,
     marginHorizontal: 4,
     borderColor: 'grey',
@@ -291,7 +346,30 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   loc: {
-    marginTop: 10
+    marginTop: 18
+  },
+  featuredTag: {
+    backgroundColor: '#fff200',
+    width: 80,
+    position: 'absolute',
+    zIndex: 1,
+    padding: 1,
+    margin: 2
+  },
+  featuredText: {
+    alignSelf: 'center'
+  },
+  premiumTag: {
+    backgroundColor: '#00e5ff',
+    width: 80,
+    position: 'absolute',
+    zIndex: 1,
+    padding: 1,
+    margin: 4,
+    elevation: 2
+  },
+  premiumText: {
+    alignSelf: 'center'
   }
 })
 
