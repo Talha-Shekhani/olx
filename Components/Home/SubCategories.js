@@ -27,17 +27,18 @@ class SubCategories extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    if (this.props.subcat.subcategories == [])
-      this.props.fetchSubCategories()
+    // if (this.props.subcat.subcategories == [])
+    this.props.fetchSubCategories()
   }
 
   renderItem(catId, sell) {
-    if (this.props.subcat.isLoading) {
-      return (
-        <Loading />
-      )
-    }
-    else if (this.props.subcat.errMess) {
+    // if (this.props.subcat.isLoading) {
+    //   return (
+    //     <Loading />
+    //   )
+    // }
+    // else 
+    if (this.props.subcat.errMess) {
       return (<Text>Network Error</Text>)
     }
     else

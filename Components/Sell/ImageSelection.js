@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, ToastAndroid, Alert } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image, ListItem, Input, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FeatIcon from 'react-native-vector-icons/Feather'
@@ -44,6 +44,9 @@ class ImageSelection extends Component {
                     <TouchableOpacity containerStyle={styles.gridView} onPress={() => {
                         // item.filename = item.uri.slice(item.uri.lastIndexOf('/') + 1)
                         item.originalname = item.filename
+                        item.name = item.filename
+                        item.type = 'image/jpeg'
+                        item.size = item.fileSize
                         item.path = item.uri.replace('file://', '')
                         item.uri = Platform.OS === "android" ? item.uri : item.uri.replace("file://", "")
                         item.playableDuration = ''
@@ -98,22 +101,22 @@ class ImageSelection extends Component {
     handleSubmit(form) {
         if (!isEmpty(this.state.selectedImage)) {
             form = Object.assign(form, { img: this.state.selectedImage })
-            console.log('form', this.state.selectedImage)
+            console.log('form', this.state.selectedImage[0], this.state.selectedImage[0].path)
             var formData = new FormData()
-            formData._parts[0] = ['img', this.state.selectedImage[0], this.state.selectedImage[0].path]
+            for (let i = 0; i < this.state.selectedImage.length; i++)
+                formData.append('img', this.state.selectedImage[i], this.state.selectedImage[i].path)
+            // formData._parts = ['img', this.state.selectedImage[0], this.state.selectedImage[0].path]
             async function uploadData() {
-                console.log(formData)
+                console.log(formData, JSON.stringify(formData))
                 return await fetch(`${baseUrl}ads/upload`, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'multipart/form-data;',
-                        // 'Content-Type': 'application/json'
-                        // 'accept-encoding': 'gzip, deflate, br',
+                        'Accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
                     },
-                    body: formData
-                    // files: formData
+                    body: formData,
+                    redirect: 'follow',
                 })
                     .then(response => {
                         if (response.ok) {
@@ -122,19 +125,19 @@ class ImageSelection extends Component {
                         else {
                             var error = new Error('Error ' + response.status + ': ' + response.statusText)
                             error.response = response
-                            return error    
+                            return error
                         }
                     },
                         error => {
-                            var errmess = new Error(error.message)
+                            var errmess = new Error(error)
                             return errmess
                         })
                     // .then((response) => { return response.json() })
                     .then(response => console.log(response))
                     .catch(error => console.log(error))
             }
-            uploadData()
-            // this.props.navigation.navigate('pricePage', { form: form })
+            // uploadData()
+            this.props.navigation.navigate('pricePage', { form: form })
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }

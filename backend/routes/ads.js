@@ -44,7 +44,7 @@ Ads.route('/')
                 res.statusCode = 200
                 res.setHeader('Content-Type', 'application/json')
                 console.log('result: ', result)
-                res.send({success: true, result: result})
+                res.send({ success: true, result: result })
             }
         })
     })
@@ -132,8 +132,10 @@ Ads.post('/upload', upload.array('img', 3), (req, res) => {
     // for (var i in req.files) {
     //     req.files[i].path = req.files[i].destination + req.files[i].originalname
     // }
-    console.log(JSON.stringify(req.body))
+    // console.log(req)
+    // console.log(JSON.stringify(req.body))
     console.log(req.headers)
+    // console.log(req.file)
     console.log(req.files)
     res.send(req.files)
 })

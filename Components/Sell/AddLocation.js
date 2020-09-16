@@ -45,26 +45,6 @@ class AddLocation extends Component {
             userId: '',
         }
     }
-    doUpload(form) {
-        let opts = {
-            url: `${baseUrl}ads/upload`,
-            files: form.img,
-            method: 'POST',                             // optional: POST or PUT
-            headers: { 'Accept': 'application/json' },  // optional
-            params: { 'user_id': this.state.userId },   // optional
-        };
-        RNUploader.upload(opts, (err, response) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            let status = response.status;
-            let responseString = response.data;
-            let json = JSON.parse(responseString);
-
-            console.log('upload complete with status ' + status)
-        })
-    }
 
     handleSubmit(form) {
 
@@ -88,12 +68,6 @@ class AddLocation extends Component {
             console.log(form)
             this.props.postAd(this.state.userId, form)
         }
-        // if (this.state.errPrice == ' ') {
-        //     form = Object.assign(form, { price: this.state.price })
-        //     // console.log(form)
-        //     // console.log(JSON.stringify(this.props))
-        //     this.props.postAd(this.state.userId, form)
-        // }
     }
 
     UNSAFE_componentWillMount() {
@@ -165,7 +139,7 @@ class AddLocation extends Component {
                 </ScrollView>
                 <View style={styles.formButton} >
                     <Button mode="contained" color='black'
-                        onPress={() => this.doUpload(form)}
+                        onPress={() => this.handleSubmit(form)}
                         buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
                 </View>
             </SafeAreaView>

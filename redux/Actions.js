@@ -423,13 +423,17 @@ export const postFavorite = (fav) => ({
 export const postAd = (userId, formData) => (dispatch) => {
     console.log('val', formData)
     var data = new FormData()
-    data.append('img', formData.img)
+    for (let i = 0; i < formData.img.length; i++)
+        data.append('img', formData.img[i], formData.img[i].path)
+    console.log('data', JSON.stringify(data))
     fetch(`${baseUrl}ads/upload`, {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'multipart/form-data',
         },
-        body: data
+        body: data,
+        redirect: 'follow',
     })
         .then(response => {
             if (response.ok) {
@@ -442,7 +446,7 @@ export const postAd = (userId, formData) => (dispatch) => {
             }
         },
             error => {
-                var errmess = new Error(error.message)
+                var errmess = new Error(error)
                 return errmess
             })
         // .then((response) => { return response.json() })

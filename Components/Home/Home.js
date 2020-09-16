@@ -13,6 +13,7 @@ import { ads } from '../../redux/ads'
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity, State } from 'react-native-gesture-handler'
 import { isEmpty } from 'react-native-validator-form/lib/ValidationRules'
+import { Button } from 'react-native-paper';
 
 const mapStateToProps = state => ({
   ads: state.ads,
@@ -146,6 +147,7 @@ class Home extends Component {
   render() {
     return (
       <SafeAreaView>
+        <Button onPress={() => this.props.navigation.dispatch(StackActions.push('addpkg'))} >Development Shortcut</Button>
         <ScrollView>
           <View style={styles.container} >
             <SearchBar containerStyle={styles.searchBar}
@@ -161,22 +163,22 @@ class Home extends Component {
                 {this.renderCat()}
               </View>
             </View>
+
             <View style={styles.cardContainer} >
               <View style={styles.row}><Text>More on </Text><Text style={styles.link}>View more</Text></View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}
+              // style={{width: 100}}
               >
                 {this.props.ads.ads
-                  .filter(item => item.type == type && item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
-                    this.props.cat.categories
-                      .filter(el => el.title.toLowerCase().includes(this.state.search))
-                      .find(el => el.cat_id == item.category_id) != undefined)
-                  )
+                  .filter(item => item.type == 'basic' && item.active === 'true' && item.category_id == this.props.feat.featured
+                    .filter(itm => item.category_id == itm.cat_id && itm.user_id == this.state.userId)
+                    .map((item, index) => { return (item.cat_id) }))
                   .map((item, index) => {
                     let fav = '', feat = ''
-                    { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
-                    { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == userId).map((item, index) => { return (item.cat_id) }) }
+                    { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == this.state.userId).map((item, index) => { return (item.ad_id) }) }
+                    { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == this.state.userId).map((item, index) => { return (item.cat_id) }) }
                     return (
-                      <Card containerStyle={styles.productCardColumn} key={index} >
+                      <Card containerStyle={styles.productCardColumnScroll} key={index} >
                         {feat == item.category_id && item.type != 'premium' ? <View style={styles.featuredTag} >
                           <Text style={styles.featuredText}>Featured</Text>
                         </View> : <></>}
@@ -330,6 +332,15 @@ const styles = StyleSheet.create({
   },
   productCardColumn: {
     width: '47%',
+    height: 230,
+    padding: 5,
+    marginHorizontal: 4,
+    borderColor: 'grey',
+    borderRadius: 5,
+    marginVertical: 8
+  },
+  productCardColumnScroll: {
+    width: 160,
     height: 230,
     padding: 5,
     marginHorizontal: 4,

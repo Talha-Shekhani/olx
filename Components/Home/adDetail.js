@@ -49,18 +49,19 @@ class adDetail extends Component {
   }
 
   UNSAFE_componentWillMount() {
+    console.log(this.props.user)
     InteractionManager.runAfterInteractions(() => {
       const userdata = AsyncStorage.getItem('userdata')
         .then((userdata) => {
           if (userdata) {
             let userinfo = JSON.parse(userdata)
             this.setState({ userId: userinfo.userId })
-            this.props.fetchUser(this.props.route.params.userId)
+            this.props.fetchUser('')
             console.log(this.props.route.params.userId, this.props.route.params.catId)
             this.props.postfeature(this.state.userId, this.props.route.params.catId)
-            .then((res) => {
-              console.log(res)
-            })
+              .then((res) => {
+                console.log(res)
+              })
           }
         })
         .then(() => this.props.fetchFav(this.state.userId))
@@ -152,11 +153,15 @@ class adDetail extends Component {
               .map((item, index) => { return (item.ad_id) })
           }
           var dat = new Date(item.created_date)
+          let img = []
+          if (item.img1 != '') img[0] = baseUrl + item.img1
+          if (item.img2 != '') img[1] = baseUrl + item.img2
+          if (item.img3 != '') img[2] = baseUrl + item.img3
           return (
             <View key={index} style={styles.container} >
               <View style={styles.imgConatiner}>
                 <SliderBox
-                  images={[baseUrl + item.img1, baseUrl + item.img1]}
+                  images={img}
                   resizeMode='contain'
                   style={styles.sliderImg}
                 />
@@ -196,7 +201,7 @@ class adDetail extends Component {
                 <Text style={styles.detailTitle} >Ad ID: {item.id}</Text>
               </View>
               <View style={styles.separator}>
-                {this.props.user.user
+                {this.props.user.users
                   .filter(itm => item.user_id == itm.id)
                   .map((item, index) => {
                     let dat = new Date(item.updated_at)
