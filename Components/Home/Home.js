@@ -145,9 +145,10 @@ class Home extends Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <SafeAreaView>
-        <Button onPress={() => this.props.navigation.dispatch(StackActions.push('addpkg'))} >Development Shortcut</Button>
+        <Button onPress={() => this.props.navigation.dispatch(StackActions.push('easypaisa'))} >Development Shortcut</Button>
         <ScrollView>
           <View style={styles.container} >
             <SearchBar containerStyle={styles.searchBar}

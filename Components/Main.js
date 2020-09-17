@@ -32,6 +32,7 @@ import ChatList from './Chats/ChatList';
 import Reviews from './Account/Reviews';
 import UserAccount from './Home/UserAccount';
 import AddPackage from './Sell/AddPackage';
+import EasyPaisa from './Sell/EasyPaisa';
 
 const mapStateToProps = state => {
   return {
@@ -146,6 +147,7 @@ class Main extends Component {
               <Stack.Screen name='reviews' component={Reviews} options={{ title: 'Reviews' }} />
               <Stack.Screen name='useraccount' component={UserAccount} options={{headerShown: false}} />
               <Stack.Screen name='addpkg' component={AddPackage} options={{headerShown: false}} />
+              <Stack.Screen name='easypaisa' component={EasyPaisa} options={{headerShown: false}} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

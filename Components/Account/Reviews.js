@@ -58,7 +58,7 @@ class Reviews extends Component {
         console.log(this.state.reviews)
         return (
             <ScrollView style={styles.container} >
-                {this.props.user.user
+                {this.props.user.users
                     .filter(itm => itm.id == this.state.userId)
                     .map((item, index) => {
                         let dat = new Date(item.updated_at)

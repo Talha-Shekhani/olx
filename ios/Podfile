@@ -17,6 +17,8 @@ target 'olx' do
 
   pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'olxTests' do
     inherit! :complete
     # Pods for testing
