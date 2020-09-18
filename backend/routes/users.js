@@ -54,8 +54,16 @@ user.route('/:userKey')
         })
     })
     .post((req, res, next) => {
-        res.statusCode = 403
-        res.end(`POST operation not supported on /dishes/${req.params.dishId}`)
+        con.query(`INSERT INTO users(name, email, password, created_at, updated_at) 
+        VALUES 
+        ('${req.params.userKey.slice(0, req.params.userKey.indexOf('@') )}',
+        '${req.params.userKey}',
+        '${req.body.password}',
+        '${new Date()}',
+        '${new Date()}')`, (err, result) => {
+            if (err) res.send(err)
+            else res.send(result)
+        } )
     })
     .put((req, res, next) => {
         res.write(`Will updating the dish: ${req.params.dishId}\n`)

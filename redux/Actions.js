@@ -423,8 +423,10 @@ export const postFavorite = (fav) => ({
 export const postAd = (userId, formData) => (dispatch) => {
     console.log('val', formData)
     var data = new FormData()
-    for (let i = 0; i < formData.img.length; i++)
-        data.append('img', formData.img[i], formData.img[i].path)
+    for (let i = 0; i < formData.img.length; i++) {
+        data.append('img', formData.img[i])
+        console.log(formData.img[i].path, formData.img.length)
+    }
     console.log('data', JSON.stringify(data))
     fetch(`${baseUrl}ads/upload`, {
         method: 'POST',
@@ -453,32 +455,32 @@ export const postAd = (userId, formData) => (dispatch) => {
         .then(response => console.log(response))
         .catch(error => console.log(error))
 
-    return fetch(`${baseUrl}ads/${userId}/form`, {
-        mode: 'no-cors',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData),
-    })
-        .then(response => {
-            if (response.ok) {
-                return response
-            }
-            else {
-                var error = new Error('Error ' + response.status + ': ' + response.statusText)
-                error.response = response
-                return error
-            }
-        },
-            error => {
-                var errmess = new Error(error.message)
-                return errmess
-            })
-        .then((response) => { return response.json() })
-        .then(response => dispatch(fetchAds()))
-        .catch(error => dispatch(adsFailed(error)))
+    // return fetch(`${baseUrl}ads/${userId}/form`, {
+    //     mode: 'no-cors',
+    //     method: 'POST',
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(formData),
+    // })
+    //     .then(response => {
+    //         if (response.ok) {
+    //             return response
+    //         }
+    //         else {
+    //             var error = new Error('Error ' + response.status + ': ' + response.statusText)
+    //             error.response = response
+    //             return error
+    //         }
+    //     },
+    //         error => {
+    //             var errmess = new Error(error.message)
+    //             return errmess
+    //         })
+    //     .then((response) => { return response.json() })
+    //     .then(response => dispatch(fetchAds()))
+    //     .catch(error => dispatch(adsFailed(error)))
 }
 
 export const putStatus = (userId, adId, active) => (dispatch) => {

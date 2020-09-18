@@ -14,6 +14,7 @@ import { Picker } from '@react-native-community/picker'
 
 // import RNUploader from 'react-native-uploader'
 import { baseUrl } from '../../shared/baseUrl';
+import { StackActions } from '@react-navigation/native';
 
 const mapStateToProps = state => {
     return {
@@ -47,7 +48,6 @@ class AddLocation extends Component {
     }
 
     handleSubmit(form) {
-
         if (this.state.form.province == '') {
             this.setState({ errprovince: 'Province Required' })
             errprovince = 'Province Required'
@@ -66,7 +66,8 @@ class AddLocation extends Component {
         if (errprovince == ' ' && errcity == ' ' && errLoc == ' ') {
             form = Object.assign(form, { province: this.state.form.province, city: this.state.form.city, loc: this.state.form.loc })
             console.log(form)
-            this.props.postAd(this.state.userId, form)
+            this.props.navigation.dispatch(StackActions.push('addpkg', {form: form}))
+            // this.props.postAd(this.state.userId, form)
         }
     }
 

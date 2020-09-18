@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, FlatList, Alert } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, FlatList, Alert, Linking } from 'react-native';
 import { Icon, Input, Image, Button } from 'react-native-elements';
 import { TextValidator, Form } from 'react-native-validator-form'
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, Link } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -46,16 +46,16 @@ class Login extends Component {
                         if (!isEmpty(this.props.user.users[0])) {
                             if (this.state.email == this.props.user.users[0].email) {
                                 // _removeStoreData = async () => {
-                                    AsyncStorage.removeItem('userdata')
-                                        .then(() => {
-                                            // _StoreData = async () => {
-                                                AsyncStorage.setItem('userdata',
-                                                    JSON.stringify({ email: this.state.email, userId: this.props.user.users[0].id }))
-                                                    .then(() => console.log(this.state.email))
-                                                    .then(() => this.props.navigation.navigate('password'))
-                                                    .catch((err) => console.log('Could not save user info', err))
-                                            // }
-                                        })
+                                AsyncStorage.removeItem('userdata')
+                                    .then(() => {
+                                        // _StoreData = async () => {
+                                        AsyncStorage.setItem('userdata',
+                                            JSON.stringify({ email: this.state.email, userId: this.props.user.users[0].id }))
+                                            .then(() => console.log(this.state.email))
+                                            .then(() => this.props.navigation.navigate('password'))
+                                            .catch((err) => console.log('Could not save user info', err))
+                                        // }
+                                    })
                                 // }
                             }
                             else this.setState({ errmsg: 'Email not Matched' })
@@ -89,6 +89,13 @@ class Login extends Component {
                             onChangeText={(email) => this.setState({ email: email })}
                             value={this.state.email}
                         />
+                        <Text style={{ textDecorationLine: 'underline', color: 'blue', alignSelf: 'center', fontSize: 16 }}
+                            onPress={() => { let code = Math.floor(1000 + Math.random() * 9000);
+                            this.props.navigation.navigate('code', {code: code, email: this.state.email}) }}
+                        // Linking.openURL(`mailto:${this.state.email}&subject=any&body=any`) } 
+                        >
+                            Sign-up?
+                        </Text>
                     </View>
                 </ScrollView>
                 <View style={styles.formButton} >

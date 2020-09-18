@@ -15,8 +15,8 @@ const mapStateToProps = state => {
     // subcat: state.subcategories
   }
 }
-var errTransId = '', errDate = '', errBillNo = '', errAmount = ''
-class EasyPaisa extends Component {
+var errTransId = '', errDate = '', errBillNo = '', errAmount = '', errImg = ''
+class Payment extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -31,6 +31,7 @@ class EasyPaisa extends Component {
       errDate: '',
       errBillNo: '',
       errAmount: '',
+      errImg: '',
       showDate: false
     }
   }
@@ -39,7 +40,7 @@ class EasyPaisa extends Component {
     // this.setState({ form: { ...this.state.form, catId: this.props.route.params.catId, subcatId: this.props.route.params.subcatId } })
   }
 
-  getPhoto() {
+  getPhotoByCamera() {
     ImagePicker.launchCamera({ allowsEditing: true, mediaType: "photo", storageOptions: { cameraRoll: true } }, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -54,32 +55,62 @@ class EasyPaisa extends Component {
       }
     })
   }
+  getPhotoByGallery() {
+    ImagePicker.launchImageLibrary({ allowsEditing: true, mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        console.log(response)
+        this.setState({ form: { ...this.state.form, img: response } })
+      }
+    })
+  }
 
   handleSubmit() {
-    // console.log()
     // console.log(JSON.stringify(this.state.form))
     if (this.state.form.transactionId == '') {
       this.setState({ errTransId: 'Transaction Id Required' })
       errTransId = 'Transaction Id Required'
-    }
-    else if (this.state.form.transactionId.length < 5) {
+    } else if (this.state.form.transactionId.length < 5) {
       console.log(this.state.form.transactionId.length)
       this.setState({ errTransId: 'A minimum length of 5 digits is required.' })
       errTransId = 'A minimum length of 5 digits is required.'
-    }
-    else errTransId = ' '
+    } else errTransId = ' '
+    
     if (this.state.form.amount == '') {
       this.setState({ errAmount: 'Amount Required' })
       errAmount = 'Amount Required'
-    }
-    else if (this.state.form.amount.length < 2) {
+    } else if (this.state.form.amount.length < 2) {
       this.setState({ errAmount: 'A minimum length of 2 digits is required.' })
       errAmount = 'A minimum length of 2 digits is required.'
+    } else errAmount = ' '
+
+    if (this.props.route.params.payment == 'bank') {
+      if (this.state.form.billNo == '') {
+        this.setState({ billNo: 'Bill number Required' })
+        errBillNo = 'Bill number Required'
+      } else if (this.state.form.billNo.length < 5) {
+        this.setState({ errBillNo: 'A minimum length of 5 digits is required.' })
+        errBillNo = 'A minimum length of 5 digits is required.'
+      } else errBillNo = ' '
     }
-    else errAmount = ' '
-    // if (errCond == ' ' && errDesc == ' ' && errTitle == ' ' && errType == ' ')
-    //     this.props.navigation.navigate('imageselection', { form: this.state.form })
-    this.forceUpdate()
+
+    if (this.state.form.img.length < 1) {
+      this.setState({ errImg: 'Image of transaction is required!' })
+      errImg = 'Image of transaction is required!'
+    } else errImg = ' '
+    if (this.props.route.params.payment == 'bank') {
+      if (errTransId == ' ' && errAmount == ' ' && errImg == ' ' && errBillNo == ' ')
+        console.log('object')
+    }
+    else if (errTransId == ' ' && errAmount == ' ' && errImg == ' ')
+      //     this.props.navigation.navigate('imageselection', { form: this.state.form })
+      console.log(this.state.form)
+    // this.forceUpdate()
   }
 
   toggleDatePicker() {
@@ -94,7 +125,7 @@ class EasyPaisa extends Component {
   }
 
   render() {
-    // const { payment } = this.props.route.params
+    const { payment } = this.props.route.params
     return (
       <SafeAreaView style={{ backgroundColor: 'white' }} >
         <ScrollView style={{ height: '88%', backgroundColor: 'white' }}  >
@@ -131,14 +162,35 @@ class EasyPaisa extends Component {
                 form: { ...this.state.form, amount: amount }
               })}
             />
+            {payment == 'bank' &&
+              <View>
+                <Text style={styles.textTitle} >Bill *</Text>
+                <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
+                  inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
+                  keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errBillNo}
+                  onChangeText={(billNo) => this.setState({
+                    form: { ...this.state.form, billNo: billNo }
+                  })}
+                />
+              </View>}
             <View >
-              <Text style={[styles.textTitle, { marginBottom: 10 }]} >ScreenShot of Transaction *
-              <Button onPress={() => this.setState({ form: { ...this.state.form, img: [] } })}>Clear</Button></Text>
-              {this.state.form.img == '' && <TouchableOpacity onPress={this.getPhoto.bind(this)}
-                style={{ position: 'absolute', marginHorizontal: '44%', marginVertical: '52%', backgroundColor: 'white', zIndex: 5, borderRadius: 5 }} >
-                <Image source={require('../../assets/camera.png')}
-                  style={{ width: 30, height: 30, margin: 5 }} />
-              </TouchableOpacity>}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
+                <Text style={[styles.textTitle, { marginBottom: 10 }]} >ScreenShot of Transaction *</Text>
+                <Button onPress={() => this.setState({ form: { ...this.state.form, img: [] } })}
+                  contentStyle={{ margin: 8 }} color='black' mode='outlined' >
+                  Clear
+              </Button>
+              </View>
+              <Text style={styles.errText}>{errImg}</Text>
+              {this.state.form.img == '' && <View style={{ position: 'absolute', marginHorizontal: '44%', marginVertical: '52%', backgroundColor: 'white', zIndex: 5, borderRadius: 5 }} >
+                <TouchableOpacity onPress={this.getPhotoByCamera.bind(this)} >
+                  <Image source={require('../../assets/camera.png')}
+                    style={{ width: 30, height: 30, margin: 5 }} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.getPhotoByGallery.bind(this)}>
+                  <Image source={require('../../assets/addGall.png')}
+                    style={{ width: 30, height: 30, margin: 5 }} />
+                </TouchableOpacity></View>}
               <Image style={{ width: '100%', height: 320 }} source={{ uri: this.state.form.img.uri }} />
             </View>
 
@@ -157,7 +209,7 @@ class EasyPaisa extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    marginVertical: '15%',
+    marginVertical: '4%',
     marginHorizontal: 20
   },
   textCond: {
@@ -188,7 +240,7 @@ const styles = StyleSheet.create({
   formButton: {
     width: '90%',
     justifyContent: 'flex-end',
-    margin: 20,
+    margin: 25,
     bottom: 0,
   },
   inputCont: {
@@ -221,4 +273,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps)(EasyPaisa)
+export default connect(mapStateToProps)(Payment)

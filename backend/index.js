@@ -56,7 +56,7 @@ setInterval(() => {
     const dat = new Date()
     dat.setHours(24, 0, 0, 0)
     dat.setDate(dat.getDate() + 30)
-    con.query(`DELETE FROM ads where updated_date = '${dat.toISOString().slice(0, 10)}'`, (err, result) => {
+    con.query(`DELETE FROM ads where updated_date = '${dat.toISOString().slice(0, 10)}' AND type = 'basic'`, (err, result) => {
         if (err) {
             console.log("error: ", err);
             console.log(err)

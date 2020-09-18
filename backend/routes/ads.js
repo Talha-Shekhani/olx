@@ -83,7 +83,7 @@ Ads.route('/:userId/form')
         // res.send(req.body)
 
         con.query(`INSERT INTO ads 
-        (user_id, title, description, price, category_id, sub_category_id, area_id, img1, img2, img3, created_date, updated_date, active) 
+        (user_id, title, description, price, category_id, sub_category_id, area_id, img1, img2, img3, created_date, updated_date, active, type, paid) 
         values (${req.params.userId}, 
             '${req.body.title}', 
             '${req.body.description}', 
@@ -96,7 +96,9 @@ Ads.route('/:userId/form')
             '${img3}',
             '${dat.toISOString()}', 
             '${dat.toISOString()}',
-            'true') `, (err, result) => {
+            'true',
+            '${req.body.type}',
+            '${req.body.paid}') `, (err, result) => {
             if (err) {
                 console.log("error: ", err);
                 res.statusCode = 403

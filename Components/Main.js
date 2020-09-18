@@ -32,7 +32,8 @@ import ChatList from './Chats/ChatList';
 import Reviews from './Account/Reviews';
 import UserAccount from './Home/UserAccount';
 import AddPackage from './Sell/AddPackage';
-import EasyPaisa from './Sell/EasyPaisa';
+import Payment from './Sell/Payment';
+import Code from './Login/Code';
 
 const mapStateToProps = state => {
   return {
@@ -134,6 +135,7 @@ class Main extends Component {
               <Stack.Screen name="root" component={this.tabNavigation} options={{ headerShown: false }} />
               <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
               <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="code" component={Code} options={{ headerShown: false }} />
               <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />
               <Stack.Screen name='categories' component={Categories} />
               <Stack.Screen name='subcategories' component={SubCategories} />
@@ -145,9 +147,9 @@ class Main extends Component {
               <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
               <Stack.Screen name="chat" component={Chat} options={({ route }) => ({ title: route.params.title, headerStyle: { backgroundColor: '#eee' } })} />
               <Stack.Screen name='reviews' component={Reviews} options={{ title: 'Reviews' }} />
-              <Stack.Screen name='useraccount' component={UserAccount} options={{headerShown: false}} />
-              <Stack.Screen name='addpkg' component={AddPackage} options={{headerShown: false}} />
-              <Stack.Screen name='easypaisa' component={EasyPaisa} options={{headerShown: false}} />
+              <Stack.Screen name='useraccount' component={UserAccount} options={{ headerShown: false }} />
+              <Stack.Screen name='addpkg' component={AddPackage} options={{ headerShown: false }} />
+              <Stack.Screen name='payment' component={Payment} options={{ headerShown: false }} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

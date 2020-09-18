@@ -8,22 +8,42 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
-import { postComment } from '../../redux/Actions'
+import AsyncStorage from '@react-native-community/async-storage'
+import { postAd } from '../../redux/Actions'
 import { ToggleButton, Button, RadioButton, Divider } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const mapStateToProps = state => ({
 })
 
+const mapDispatchToProps = dispatch => ({
+  postAd: (userId, formData) => dispatch(postAd(userId, formData))
+})
+
 class AddPackage extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      userId: 0,
       selectedIndex: 0,
       paymentMethod: 'easypaisa'
     }
     // this.updateIndex = this.updateIndex.bind(this)
   }
+
+  UNSAFE_componentWillMount() {
+    AsyncStorage.getItem('userdata')
+      .then((userdata) => {
+        if (userdata) {
+          let userinfo = JSON.parse(userdata)
+          this.setState({ userId: userinfo.userId })
+        }
+        else this.setState({ userId: 0 })
+      })
+      // .then(() => this.props.fetchFav(this.state.userId))
+      .catch((err) => console.log('Cannot find user info' + err))
+  }
+
 
   updateIndex(index) {
     this.setState({ selectedIndex: index })
@@ -67,17 +87,27 @@ class AddPackage extends Component {
     else return (<></>)
   }
 
-  handleNavigate() {
-    if (this.state.selectedIndex == 0)
-      this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'root' }] }))
-    else if (this.state.selectedIndex == 1)
-      if (this.state.paymentMethod == 'easypaisa')
-        console.log('easy')
-      else if (this.state.paymentMethod == 'bank')
-        console.log('bank')
+  handleNavigate(form) {
+    form = Object.assign(form, { type: this.state.selectedIndex == 0 ? 'basic' : 'premium' })
+    if (this.state.selectedIndex == 0) {
+      form = Object.assign(form, { paid: '' })
+      console.log(form.img[0].path)
+      this.props.postAd(this.state.userId, form)
+      // this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'root' }] }))
+    }
+    else if (this.state.selectedIndex == 1) {
+      console.log(form)
+      if (this.state.paymentMethod == 'easypaisa') {
+        this.props.navigation.dispatch(StackActions.push('payment', { payment: 'easypaisa' }))
+      }
+      else if (this.state.paymentMethod == 'bank') {
+        this.props.navigation.dispatch(StackActions.push('payment', { payment: 'bank' }))
+      }
+    }
   }
 
   render() {
+    const { form } = this.props.route.params
     return (
       <SafeAreaView style={styles.container} >
         <View style={styles.innerContainer} >
@@ -110,7 +140,7 @@ class AddPackage extends Component {
         </View>
         <View style={styles.formButton} >
           <Button mode="contained" color='black'
-            onPress={this.handleNavigate.bind(this)}
+            onPress={this.handleNavigate.bind(this, form)}
             buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
         </View>
       </SafeAreaView>
@@ -194,4 +224,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default connect(mapStateToProps)(AddPackage)
+export default connect(mapStateToProps, mapDispatchToProps)(AddPackage)

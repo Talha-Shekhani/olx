@@ -79,7 +79,7 @@ class Home extends Component {
   }
 
   renderAds(userId, type) {
-    // console.log(this.props.ads.premiumAds)
+    console.log(this.props.ads)
     if (this.props.ads.isLoading || this.props.fav.isLoading) {
       return (
         <Loading />
@@ -93,7 +93,7 @@ class Home extends Component {
         // if (!isEmpty(this.props.fav.favorites))
         return (
           this.props.ads.ads
-            .filter(item => item.type == type && item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
+            .filter(item => type == 'premium' ? item.paid == 'y' : item.paid == '' && item.active === 'true' && (item.title.toLowerCase().includes(this.state.search) ||
               this.props.cat.categories
                 .filter(el => el.title.toLowerCase().includes(this.state.search))
                 .find(el => el.cat_id == item.category_id) != undefined)
@@ -145,10 +145,10 @@ class Home extends Component {
   }
 
   render() {
-    console.log(this.state)
+    // console.log(this.state)
     return (
       <SafeAreaView>
-        <Button onPress={() => this.props.navigation.dispatch(StackActions.push('easypaisa'))} >Development Shortcut</Button>
+        <Button onPress={() => this.props.navigation.dispatch(StackActions.push('addpkg', {payment: 'bank'}))} >Development Shortcut</Button>
         <ScrollView>
           <View style={styles.container} >
             <SearchBar containerStyle={styles.searchBar}
@@ -188,9 +188,9 @@ class Home extends Component {
                         </View> : <></>}
                         <View style={styles.iconHBack} ><Icon name={fav == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
                           if (fav == item.id)
-                            this.props.delFav(userId, item.id)
+                            this.props.delFav(this.state.userId, item.id)
                           else
-                            this.props.postFav(userId, item.id)
+                            this.props.postFav(this.state.userId, item.id)
                         }}
                           type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
                         <TouchableOpacity key={index} onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id, catId: item.category_id }))} >
@@ -329,7 +329,8 @@ const styles = StyleSheet.create({
   cardColumn: {
     overflow: "scroll",
     flexWrap: "wrap",
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginBottom: 40
   },
   productCardColumn: {
     width: '47%',

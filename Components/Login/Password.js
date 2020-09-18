@@ -37,7 +37,7 @@ class Password extends Component {
         }
     }
 
-    componentDidMount() {
+    UNSAFE_componentWillMount() {
         // async function retrieveData() {
         const userdata = AsyncStorage.getItem('userdata')
             .then((userdata) => {
