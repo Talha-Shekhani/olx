@@ -41,6 +41,7 @@ class ChatList extends Component {
         //     )
         // }
         // else 
+        // console.log(this.props.user.users)
         if (this.props.user.errMess) {
             return (<Text>Network Error</Text>)
         }
@@ -49,8 +50,16 @@ class ChatList extends Component {
                 return (
                     // <View></View>
                     this.props.user.users
-                        .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
+                        // .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
                         .map((item, index) => {
+                            let toUserId
+                            {
+                                for (let i in this.props.chatUser)
+                                    if (item.id == this.props.chatUser[i].to_user_id)
+                                        toUserId = item.id
+                                console.log(toUserId)
+                            }
+                            // console.log(item)
                             let subtitle = '', dat = new Date()
                             this.props.chatUser
                                 .filter(itm => itm.to_user_id == item.id)
@@ -58,19 +67,20 @@ class ChatList extends Component {
                                     subtitle = itm.text
                                     dat = new Date(itm.createdAt)
                                 })
-                            return (
-                                <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id, title: item.name })}
-                                    title={item.name}
-                                    subtitle={subtitle}
-                                    containerStyle={{ height: 74 }}
-                                    // chevron={true}
-                                    rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
-                                    rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
-                                    leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }}
+                            if (toUserId != undefined)
+                                return (
+                                    <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id, title: item.name })}
+                                        title={item.name}
+                                        subtitle={subtitle}
+                                        containerStyle={{ height: 74 }}
+                                        // chevron={true}
+                                        rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
+                                        rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
+                                        leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }}
 
-                                    />} >
-                                </ListItem>
-                            )
+                                        />} >
+                                    </ListItem>
+                                )
                         })
                 )
     }
@@ -79,10 +89,10 @@ class ChatList extends Component {
         if (this.state.userId == 0) {
             this.props.navigation.navigate('firstpage')
         }
-        console.log(this.state.userId)
+        // console.log(this.state.userId)
     }
 
-    componentDidMount() {
+    UNSAFE_componentWillMount() {
         InteractionManager.runAfterInteractions(() => {
             AsyncStorage.getItem('userdata')
                 .then((userdata) => {
@@ -95,7 +105,7 @@ class ChatList extends Component {
                         if (this.state.userId == 0) {
                             this.props.navigation.navigate('firstpage')
                         }
-                        console.log(this.state.userId)
+                        // console.log(this.state.userId)
                     })
                 })
                 .then(() => {
@@ -105,9 +115,12 @@ class ChatList extends Component {
                 .catch((err) => console.log('Cannot find user info' + err))
         })
     }
+    shouldComponentUpdate() {
+        return true
+    }
 
     render() {
-
+        // console.log(this.props.chatUser)
         if (this.state.userId != '')
             return (
                 <SafeAreaView >

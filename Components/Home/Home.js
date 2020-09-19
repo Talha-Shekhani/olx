@@ -47,8 +47,7 @@ class Home extends Component {
             let userinfo = JSON.parse(userdata)
             this.setState({ userId: userinfo.userId })
           } else this.setState({ userId: 0 })
-        })
-        .then(() => {
+          console.log(this.state.userId)
           this.props.fetchFav(this.state.userId)
           this.props.fetchFeat(this.state.userId)
         })
@@ -79,7 +78,7 @@ class Home extends Component {
   }
 
   renderAds(userId, type) {
-    console.log(this.props.ads)
+    // console.log(this.props.ads)
     if (this.props.ads.isLoading || this.props.fav.isLoading) {
       return (
         <Loading />
@@ -100,8 +99,8 @@ class Home extends Component {
             )
             .map((item, index) => {
               let fav = '', feat = ''
-              { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
-              { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == userId).map((item, index) => { return (item.cat_id) }) }
+              { if (this.state.userId != 0) fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == userId).map((item, index) => { return (item.ad_id) }) }
+              { if (this.state.userId != 0) feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == userId).map((item, index) => { return (item.cat_id) }) }
               return (
                 <Card containerStyle={styles.productCardColumn} key={index} >
                   {feat == item.category_id && item.type != 'premium' ? <View style={styles.featuredTag} >
@@ -145,91 +144,92 @@ class Home extends Component {
   }
 
   render() {
-    // console.log(this.state)
-    return (
-      <SafeAreaView>
-        <Button onPress={() => this.props.navigation.dispatch(StackActions.push('addpkg', {payment: 'bank'}))} >Development Shortcut</Button>
-        <ScrollView>
-          <View style={styles.container} >
-            <SearchBar containerStyle={styles.searchBar}
-              inputContainerStyle={styles.inputContainerStyle}
-              inputStyle={styles.inputStyle}
-              placeholder=""
-              value={this.state.search}
-              onChangeText={(val) => this.setState({ search: val })}
-              platform='android' />
-            <View style={styles.cardContainer}>
-              <View style={styles.row}><Text>Browse Categories</Text><Text style={styles.link} onPress={() => this.props.navigation.navigate('categories')} >See all</Text></View>
-              <View style={styles.categories}>
-                {this.renderCat()}
+    if (this.state.userId != undefined || 0 || '')
+      return (
+        <SafeAreaView>
+          {/* <Button onPress={() => this.props.navigation.dispatch(StackActions.push('addpkg', { payment: 'bank' }))} >Development Shortcut</Button> */}
+          <ScrollView>
+            <View style={styles.container} >
+              <SearchBar containerStyle={styles.searchBar}
+                inputContainerStyle={styles.inputContainerStyle}
+                inputStyle={styles.inputStyle}
+                placeholder=""
+                value={this.state.search}
+                onChangeText={(val) => this.setState({ search: val })}
+                platform='android' />
+              <View style={styles.cardContainer}>
+                <View style={styles.row}><Text>Browse Categories</Text><Text style={styles.link} onPress={() => this.props.navigation.navigate('categories')} >See all</Text></View>
+                <View style={styles.categories}>
+                  {this.renderCat()}
+                </View>
               </View>
-            </View>
 
-            <View style={styles.cardContainer} >
-              <View style={styles.row}><Text>More on </Text><Text style={styles.link}>View more</Text></View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}
-              // style={{width: 100}}
-              >
-                {this.props.ads.ads
-                  .filter(item => item.type == 'basic' && item.active === 'true' && item.category_id == this.props.feat.featured
-                    .filter(itm => item.category_id == itm.cat_id && itm.user_id == this.state.userId)
-                    .map((item, index) => { return (item.cat_id) }))
-                  .map((item, index) => {
-                    let fav = '', feat = ''
-                    { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == this.state.userId).map((item, index) => { return (item.ad_id) }) }
-                    { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == this.state.userId).map((item, index) => { return (item.cat_id) }) }
-                    return (
-                      <Card containerStyle={styles.productCardColumnScroll} key={index} >
-                        {feat == item.category_id && item.type != 'premium' ? <View style={styles.featuredTag} >
-                          <Text style={styles.featuredText}>Featured</Text>
-                        </View> : <></>}
-                        {item.type == 'premium' ? <View style={styles.premiumTag} >
-                          <Text style={styles.premiumText}>Premium</Text>
-                        </View> : <></>}
-                        <View style={styles.iconHBack} ><Icon name={fav == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
-                          if (fav == item.id)
-                            this.props.delFav(this.state.userId, item.id)
-                          else
-                            this.props.postFav(this.state.userId, item.id)
-                        }}
-                          type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
-                        <TouchableOpacity key={index} onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id, catId: item.category_id }))} >
-                          <View style={styles.imageConatiner}>
-                            <Image containerStyle={styles.cardImage}
-                              resizeMethod="scale"
-                              resizeMode="contain"
-                              source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
-                            />
-                          </View>
-                          <View>
-                            <Text style={styles.priceText}> Rs {item.price}</Text>
-                            <Text numberOfLines={1} > {item.title}</Text>
-                            <Text style={styles.loc} >
-                              <MatIcon name="map-marker" size={10} />
-                              <Text style={styles.locText}>
-                                {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
-                                  return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
-                                })}
+              <View style={styles.cardContainer} >
+                <View style={styles.row}><Text>More on </Text><Text style={styles.link}>View more</Text></View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}
+                // style={{width: 100}}
+                >
+                  {this.props.ads.ads
+                    .filter(item => item.type == 'basic' && item.active === 'true' && item.category_id == this.props.feat.featured
+                      .filter(itm => item.category_id == itm.cat_id && itm.user_id == this.state.userId)
+                      .map((item, index) => { return (item.cat_id) }))
+                    .map((item, index) => {
+                      let fav = '', feat = ''
+                      { fav = this.props.fav.favorites.filter(itm => item.id == itm.ad_id && itm.user_id == this.state.userId).map((item, index) => { return (item.ad_id) }) }
+                      { feat = this.props.feat.featured.filter(itm => item.category_id == itm.cat_id && itm.user_id == this.state.userId).map((item, index) => { return (item.cat_id) }) }
+                      return (
+                        <Card containerStyle={styles.productCardColumnScroll} key={index} >
+                          {feat == item.category_id && item.type != 'premium' ? <View style={styles.featuredTag} >
+                            <Text style={styles.featuredText}>Featured</Text>
+                          </View> : <></>}
+                          {item.type == 'premium' ? <View style={styles.premiumTag} >
+                            <Text style={styles.premiumText}>Premium</Text>
+                          </View> : <></>}
+                          <View style={styles.iconHBack} ><Icon name={fav == item.id ? 'heart' : 'heart-o'} type='font-awesome' onPress={() => {
+                            if (fav == item.id)
+                              this.props.delFav(this.state.userId, item.id)
+                            else
+                              this.props.postFav(this.state.userId, item.id)
+                          }}
+                            type="font-awesome" style={styles.iconHeart} color={'red'} /></View>
+                          <TouchableOpacity key={index} onPress={() => this.props.navigation.dispatch(StackActions.push('addetail', { adId: item.id, userId: item.user_id, catId: item.category_id }))} >
+                            <View style={styles.imageConatiner}>
+                              <Image containerStyle={styles.cardImage}
+                                resizeMethod="scale"
+                                resizeMode="contain"
+                                source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                              />
+                            </View>
+                            <View>
+                              <Text style={styles.priceText}> Rs {item.price}</Text>
+                              <Text numberOfLines={1} > {item.title}</Text>
+                              <Text style={styles.loc} >
+                                <MatIcon name="map-marker" size={10} />
+                                <Text style={styles.locText}>
+                                  {this.props.loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                                    return (<Text key={index}>  {itm.area}, {itm.city}</Text>)
+                                  })}
+                                </Text>
                               </Text>
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </Card>
-                    )
-                  })}
-              </ScrollView>
-            </View>
-            <View style={styles.cardContainer} >
-              <View style={styles.row}><Text>Fresh Recommendations</Text></View>
-              <View style={styles.cardColumn} >
-                {this.renderAds(this.state.userId, 'premium')}
-                {this.renderAds(this.state.userId, 'basic')}
+                            </View>
+                          </TouchableOpacity>
+                        </Card>
+                      )
+                    })}
+                </ScrollView>
+              </View>
+              <View style={styles.cardContainer} >
+                <View style={styles.row}><Text>Fresh Recommendations</Text></View>
+                <View style={styles.cardColumn} >
+                  {this.renderAds(this.state.userId, 'premium')}
+                  {this.renderAds(this.state.userId, 'basic')}
+                </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    )
+          </ScrollView>
+        </SafeAreaView>
+      )
+    else return (<></>)
   }
 }
 
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   },
   productCardColumn: {
     width: '47%',
-    height: 230,
+    height: 250,
     padding: 5,
     marginHorizontal: 4,
     borderColor: 'grey',
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   productCardColumnScroll: {
     width: 160,
-    height: 230,
+    height: 250,
     padding: 5,
     marginHorizontal: 4,
     borderColor: 'grey',

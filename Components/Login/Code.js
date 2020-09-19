@@ -51,7 +51,7 @@ class Code extends Component {
                     AsyncStorage.setItem('userdata',
                         JSON.stringify({ email: email }))
                         // .then(() => console.log(this.state.email))
-                        .then(() => this.props.navigation.navigate('password'))
+                        .then(() => this.props.navigation.navigate('password', { newUser: true }))
                         .catch((err) => console.log('Could not save user info', err))
                 })
         }

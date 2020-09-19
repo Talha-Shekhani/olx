@@ -52,7 +52,7 @@ class Login extends Component {
                                         AsyncStorage.setItem('userdata',
                                             JSON.stringify({ email: this.state.email, userId: this.props.user.users[0].id }))
                                             .then(() => console.log(this.state.email))
-                                            .then(() => this.props.navigation.navigate('password'))
+                                            .then(() => this.props.navigation.navigate('password', { newUser: false }))
                                             .catch((err) => console.log('Could not save user info', err))
                                         // }
                                     })
@@ -62,6 +62,17 @@ class Login extends Component {
                         }
                         else this.setState({ errmsg: 'Email not Matched!' })
                     })
+            }
+            else this.setState({ errmsg: 'Not Valid Email' })
+        }
+        else this.setState({ errmsg: 'Email is Required' })
+    }
+
+    handleSignUp() {
+        if (this.state.email != '') {
+            if (isEmail(this.state.email)) {
+                let code = Math.floor(1000 + Math.random() * 9000);
+                this.props.navigation.navigate('code', { code: code, email: this.state.email })
             }
             else this.setState({ errmsg: 'Not Valid Email' })
         }
@@ -90,8 +101,7 @@ class Login extends Component {
                             value={this.state.email}
                         />
                         <Text style={{ textDecorationLine: 'underline', color: 'blue', alignSelf: 'center', fontSize: 16 }}
-                            onPress={() => { let code = Math.floor(1000 + Math.random() * 9000);
-                            this.props.navigation.navigate('code', {code: code, email: this.state.email}) }}
+                            onPress={this.handleSignUp.bind(this)}
                         // Linking.openURL(`mailto:${this.state.email}&subject=any&body=any`) } 
                         >
                             Sign-up?

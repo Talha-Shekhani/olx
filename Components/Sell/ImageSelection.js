@@ -66,6 +66,7 @@ class ImageSelection extends Component {
     processImage() {
         // this.setState({ images: [] })
         request("android.permission.CAMERA").then((results) => {
+            this.forceUpdate()
             switch (results) {
                 case RESULTS.GRANTED: {
                     CameraRoll.getPhotos({ first: 10, groupTypes: "All", assetType: "Photos", include: ["fileSize", "filename", "imageSize"] }).then((res) => {
@@ -105,7 +106,7 @@ class ImageSelection extends Component {
             var formData = new FormData()
             for (let i = 0; i < this.state.selectedImage.length; i++)
                 formData.append('img', this.state.selectedImage[i], this.state.selectedImage[i].path)
-            // formData._parts = ['img', this.state.selectedImage[0], this.state.selectedImage[0].path]
+            // formData._parts[0] = ['img', this.state.selectedImage[0], this.state.selectedImage[0].path]
             async function uploadData() {
                 console.log(formData, JSON.stringify(formData))
                 return await fetch(`${baseUrl}ads/upload`, {
@@ -136,8 +137,8 @@ class ImageSelection extends Component {
                     .then(response => console.log(response))
                     .catch(error => console.log(error))
             }
-            // uploadData()
-            this.props.navigation.navigate('pricePage', { form: form })
+            uploadData()
+            // this.props.navigation.navigate('pricePage', { form: form })
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }

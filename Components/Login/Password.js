@@ -12,7 +12,7 @@ import { Loading } from '../LoadingComponent';
 import { ads } from '../../redux/ads';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { isEmail, matchRegexp } from 'react-native-validator-form/lib/ValidationRules';
-import { fetchUser, checkUser } from '../../redux/Actions';
+import { fetchUser, checkUser, postUser } from '../../redux/Actions';
 import AsyncStorage from '@react-native-community/async-storage'
 // const bcrypt = require('bcrypt');
 // const saltRounds = 10;
@@ -22,7 +22,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    checkUser: (email, password) => dispatch(checkUser(email, password))
+    checkUser: (email, password) => dispatch(checkUser(email, password)),
+    postUser: (email, password) => dispatch(postUser(email, password))
 })
 
 
@@ -44,7 +45,8 @@ class Password extends Component {
                 // Alert.alert(JSON.stringify(userinfo))
                 if (userdata) {
                     let userinfo = JSON.parse(userdata)
-                    this.setState({ email: userinfo.email, userId: userinfo.userId })
+                    this.setState({ email: userinfo.email })
+                    this.setState({ userId: userinfo.userId })
                     console.log(userinfo)
                 }
             })
@@ -57,22 +59,36 @@ class Password extends Component {
         this.forceUpdate()
     }
 
-    handleSubmit() {
+    handleSubmit(newUser) {
         if (this.state.password != '') {
             // Alert.alert(JSON.stringify(this.props.user))
             if (matchRegexp(this.state.password, /^[A-Za-z0-9]\w{7,14}$/)) {
-                let check = false
-                Promise.resolve(this.props.checkUser(this.state.email, this.state.password))
-                    .then((data) => {
-                        check = data
-                    }).then(() => {
-                        if (check != false)
-                            AsyncStorage.setItem('userdata',
-                                JSON.stringify({ email: this.state.email, password: this.state.password, userId: this.state.userId }))
-                                .then(() => this.props.navigation.dispatch(StackActions.replace('root')))
-                                .catch((err) => console.log('Could not save user info', err))
-                        else this.setState({ errmsg: 'password not Matched' })
-                    })
+                this.setState({ errmsg: ' ' })
+                if (newUser) {
+                    this.props.postUser(this.state.email, this.state.password)
+                        .then((res) => {
+                            if (res != null && res.success == true)
+                                AsyncStorage.setItem('userdata',
+                                    JSON.stringify({ email: this.state.email, password: this.state.password, userId: res.userId }))
+                                    // .then(() => console.log(this.state.email, this.state.password, res.userId))
+                                    .then(() => this.props.navigation.dispatch(StackActions.replace('root')))
+                                    .catch((err) => console.log('Could not save user info', err))
+                        })
+                }
+                else if (!newUser) {
+                    let check = false
+                    Promise.resolve(this.props.checkUser(this.state.email, this.state.password))
+                        .then((data) => {
+                            check = data
+                        }).then(() => {
+                            if (check != false)
+                                AsyncStorage.setItem('userdata',
+                                    JSON.stringify({ email: this.state.email, password: this.state.password, userId: this.state.userId }))
+                                    .then(() => this.props.navigation.dispatch(StackActions.replace('root')))
+                                    .catch((err) => console.log('Could not save user info', err))
+                            else this.setState({ errmsg: 'password not Matched' })
+                        })
+                }
             }
             else this.setState({ errmsg: 'Not Valid password' })
         }
@@ -80,6 +96,7 @@ class Password extends Component {
     }
 
     render() {
+        const { newUser } = this.props.route.params
         return (
             <SafeAreaView style={{ backgroundColor: 'white' }}>
                 <ScrollView style={{ height: '90%', backgroundColor: 'white' }}  >
@@ -87,42 +104,27 @@ class Password extends Component {
                         <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
                         <Text style={styles.title}>Enter your Password</Text>
                         <Text style={styles.heading}>Welcome Back {this.state.email}</Text>
-                        <Form
-                            ref="form"
-                            onSubmit={this.handleSubmit}
-                        >
-                            <Input
-                                inputContainerStyle={styles.inputContainer}
-                                containerStyle={styles.formInput}
-                                inputStyle={styles.input}
-                                textContentType="password"
-                                secureTextEntry={true}
-                                keyboardType="default"
-                                name="password"
-                                renderErrorMessage={true}
-                                errorMessage={this.state.errmsg}
-                                placeholder="Password"
-                                type="text"
-                                // keyboardType="email-address"
-                                onChangeText={(password) => this.setState({ password: password })}
-                                value={this.state.password}
-                            />
-                        </Form>
-                        {/* <Input placeholder='Email' inputContainerStyle={styles.inputContainer}
-                            onChangeText={(email) => this.setState({ email: email })}
-                            value={this.state.email}
+                        <Input
                             inputContainerStyle={styles.inputContainer}
-                            inputStyle={styles.input} /> */}
-                        {/* <Input placeholder='Password'
-                            leftIcon={{ type: 'font-awesome', name: 'key' }}
+                            containerStyle={styles.formInput}
+                            inputStyle={styles.input}
+                            textContentType="password"
+                            secureTextEntry={true}
+                            keyboardType="default"
+                            name="password"
+                            renderErrorMessage={true}
+                            errorMessage={this.state.errmsg}
+                            placeholder="Password"
+                            type="text"
+                            // keyboardType="email-address"
                             onChangeText={(password) => this.setState({ password: password })}
                             value={this.state.password}
-                            containerStyle={styles.formInput} /> */}
+                        />
                     </View>
                 </ScrollView>
                 <View style={styles.formButton} >
                     <Button
-                        onPress={() => this.handleSubmit()}
+                        onPress={(this.handleSubmit.bind(this, newUser))}
                         title='Next'
                         buttonStyle={{ backgroundColor: '#232323' }} />
                 </View>

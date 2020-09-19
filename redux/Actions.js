@@ -424,7 +424,7 @@ export const postAd = (userId, formData) => (dispatch) => {
     console.log('val', formData)
     var data = new FormData()
     for (let i = 0; i < formData.img.length; i++) {
-        data.append('img', formData.img[i])
+        data.append('img', formData.img[i], formData.img[i].path)
         console.log(formData.img[i].path, formData.img.length)
     }
     console.log('data', JSON.stringify(data))
@@ -772,4 +772,33 @@ export const fetchFeat = (userId) => (dispatch) => {
             .catch(error => dispatch({ type: ActionTypes.FEAT_FAILED, payload: error }))
     }
     fetchData()
+}
+
+export const postUser = (email, password) => (dispatch) => {
+    return fetch(`${baseUrl}users/${email}`, {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email, password: password })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
 }

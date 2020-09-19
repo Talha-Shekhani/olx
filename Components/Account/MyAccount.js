@@ -43,12 +43,11 @@ class MyAccount extends Component {
                     console.log(userinfo)
                 }
                 else this.setState({ userId: 0 })
-            })
-            .then(() => {
                 this.props.fetchUser(this.state.userId)
                 this.props.getReview(this.state.userId)
                     .then((res) => {
-                        this.setState({ rating: res.result[0].rating })
+                        if (res != undefined)
+                            this.setState({ rating: res.result[0].rating })
                     })
             })
             .catch((err) => console.log('Cannot find user info' + err))
@@ -88,28 +87,31 @@ class MyAccount extends Component {
         let isLogin = false
         if (this.state.userId != 0)
             isLogin = true
-        return (
-            <SafeAreaView style={{ backgroundColor: 'white' }}>
-                <ScrollView style={styles.container}  >
-                    <View style={styles.header} >
-                        <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
-                        <View style={styles.subHead} >
-                            <Text style={styles.username} >
-                                {isLogin === true ? this.props.user.users[0].name : 'Username'}
-                            </Text>
-                            <Text style={styles.username} >UserName</Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Rating startingValue={this.state.rating} readonly count={5} imageSize={18}
-                                    style={{ marginHorizontal: 15 }}
-                                />
-                                <Text style={{ color: '#f1c400', fontWeight: 'bold' }} >{this.state.rating} / 5 </Text>
+        console.log(isLogin)
+        if (this.props.user.users[0].name != undefined)
+            return (
+                <SafeAreaView style={{ backgroundColor: 'white' }}>
+                    <ScrollView style={styles.container}  >
+                        <View style={styles.header} >
+                            <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
+                            <View style={styles.subHead} >
+                                <Text style={styles.username} >
+                                    {isLogin == true ? this.props.user.users[0].name : 'Username'}
+                                </Text>
+                                <Text style={styles.username} >UserName</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Rating startingValue={this.state.rating} readonly count={5} imageSize={18}
+                                        style={{ marginHorizontal: 15 }}
+                                    />
+                                    <Text style={{ color: '#f1c400', fontWeight: 'bold' }} >{this.state.rating} / 5 </Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                    {this.displayContent(isLogin)}
-                </ScrollView>
-            </SafeAreaView >
-        )
+                        {this.displayContent(isLogin)}
+                    </ScrollView>
+                </SafeAreaView >
+            )
+        else return (<></>)
     }
 }
 
