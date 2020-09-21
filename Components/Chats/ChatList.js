@@ -120,6 +120,9 @@ class ChatList extends Component {
     }
 
     render() {
+        // this.props.navigation.addListener('tabPress', () => {
+        //     this.props.fetchChatUser(this.state.userId)
+        // })
         // console.log(this.props.chatUser)
         if (this.state.userId != '')
             return (

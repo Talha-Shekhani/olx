@@ -105,8 +105,22 @@ Ads.route('/:userId/form')
                 res.send(err)
             }
             else {
-                // console.log("cat: ", result);
-                res.send(result)
+                con.query(`INSERT INTO transactions(id, date, user_id, method, amount, bill_no, bank_name) 
+                VALUES (
+                    ${req.body.transactionId},
+                    '${req.body.tDate}',
+                    ${req.params.userId},
+                    '${req.body.type}',
+                    ${req.body.price},
+                    ${req.body.billNo || null},
+                    '${req.body.bankName}')`, (err, result) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        res.statusCode = 403
+                        res.send(err)
+                    }
+                    else res.send(result)
+                })
             }
         })
         // res.send(req.body)

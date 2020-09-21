@@ -93,15 +93,15 @@ class AddPackage extends Component {
       form = Object.assign(form, { paid: '' })
       console.log(form.img[0].path)
       this.props.postAd(this.state.userId, form)
-      // this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'root' }] }))
+      this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'root' }] }))
     }
     else if (this.state.selectedIndex == 1) {
       console.log(form)
       if (this.state.paymentMethod == 'easypaisa') {
-        this.props.navigation.dispatch(StackActions.push('payment', { payment: 'easypaisa' }))
+        this.props.navigation.dispatch(StackActions.push('payment', { payment: 'easypaisa', form: form }))
       }
       else if (this.state.paymentMethod == 'bank') {
-        this.props.navigation.dispatch(StackActions.push('payment', { payment: 'bank' }))
+        this.props.navigation.dispatch(StackActions.push('payment', { payment: 'bank', form: form }))
       }
     }
   }

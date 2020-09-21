@@ -45,7 +45,7 @@ class ImageSelection extends Component {
                         // item.filename = item.uri.slice(item.uri.lastIndexOf('/') + 1)
                         item.originalname = item.filename
                         item.name = item.filename
-                        item.type = 'image/jpeg'
+                        item.type = 'image/*'
                         item.size = item.fileSize
                         item.path = item.uri.replace('file://', '')
                         item.uri = Platform.OS === "android" ? item.uri : item.uri.replace("file://", "")
@@ -72,6 +72,7 @@ class ImageSelection extends Component {
                     CameraRoll.getPhotos({ first: 10, groupTypes: "All", assetType: "Photos", include: ["fileSize", "filename", "imageSize"] }).then((res) => {
                         return (
                             res.edges.map((item, index) => {
+                                // console.log(item.node)
                                 images = images.concat(item.node.image)
                             })
                         )
@@ -105,9 +106,10 @@ class ImageSelection extends Component {
             console.log('form', this.state.selectedImage[0], this.state.selectedImage[0].path)
             var formData = new FormData()
             for (let i = 0; i < this.state.selectedImage.length; i++)
-                formData.append('img', this.state.selectedImage[i], this.state.selectedImage[i].path)
+                formData.append('img', this.state.selectedImage[i])
             // formData._parts[0] = ['img', this.state.selectedImage[0], this.state.selectedImage[0].path]
             async function uploadData() {
+                debugger
                 console.log(formData, JSON.stringify(formData))
                 return await fetch(`${baseUrl}ads/upload`, {
                     method: 'POST',
@@ -137,8 +139,8 @@ class ImageSelection extends Component {
                     .then(response => console.log(response))
                     .catch(error => console.log(error))
             }
-            uploadData()
-            // this.props.navigation.navigate('pricePage', { form: form })
+            // uploadData()
+            this.props.navigation.navigate('pricePage', { form: form })
         }
         else Alert.alert('No images Selected', 'Please select atleast one image')
     }

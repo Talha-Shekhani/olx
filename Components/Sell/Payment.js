@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, TouchableOpacity, Picker } from 'react-native';
 import { SearchBar, Icon, Card, Image, ListItem, Input } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
-import { fetchSubCategories } from '../../redux/Actions'
+import { postAd } from '../../redux/Actions'
+import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { Loading } from '../LoadingComponent';
 import { Divider, Button } from 'react-native-paper'
@@ -15,7 +16,12 @@ const mapStateToProps = state => {
     // subcat: state.subcategories
   }
 }
-var errTransId = '', errDate = '', errBillNo = '', errAmount = '', errImg = ''
+
+const mapDispatchToProps = dispatch => ({
+  postAd: (userId, formData) => dispatch(postAd(userId, formData)),
+})
+
+var errTransId = '', errDate = '', errBillNo = '', errBank = '', errImg = ''
 class Payment extends Component {
   constructor(props) {
     super(props)
@@ -24,20 +30,29 @@ class Payment extends Component {
         transactionId: '',
         date: new Date(),
         billNo: '',
-        amount: '',
-        img: ''
+        img: '',
+        bankName: '',
       },
       errTransId: '',
       errDate: '',
       errBillNo: '',
-      errAmount: '',
+      errBank: '',
       errImg: '',
-      showDate: false
+      showDate: false,
+      userId: 0
     }
   }
 
   UNSAFE_componentWillMount() {
-    // this.setState({ form: { ...this.state.form, catId: this.props.route.params.catId, subcatId: this.props.route.params.subcatId } })
+    AsyncStorage.getItem('userdata')
+      .then((userdata) => {
+        if (userdata) {
+          let userinfo = JSON.parse(userdata)
+          this.setState({ userId: userinfo.userId })
+        }
+        else this.setState({ userId: 0 })
+      })
+      .catch((err) => console.log('Cannot find user info' + err))
   }
 
   getPhotoByCamera() {
@@ -49,6 +64,8 @@ class Payment extends Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
+        response.data = ''
+        response.name = response.fileName
         console.log(response)
         this.setState({ form: { ...this.state.form, img: response } })
         // this.processImage()
@@ -64,38 +81,36 @@ class Payment extends Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
+        response.data = ''
+        response.name = response.fileName
         console.log(response)
         this.setState({ form: { ...this.state.form, img: response } })
       }
     })
   }
 
-  handleSubmit() {
-    // console.log(JSON.stringify(this.state.form))
+  handleSubmit(payment, form) {
+    console.log('handle')
     if (this.state.form.transactionId == '') {
-      this.setState({ errTransId: 'Transaction Id Required' })
       errTransId = 'Transaction Id Required'
+      this.setState({ errTransId: 'Transaction Id Required' })
     } else if (this.state.form.transactionId.length < 5) {
-      console.log(this.state.form.transactionId.length)
-      this.setState({ errTransId: 'A minimum length of 5 digits is required.' })
       errTransId = 'A minimum length of 5 digits is required.'
+      this.setState({ errTransId: 'A minimum length of 5 digits is required.' })
     } else errTransId = ' '
-    
-    if (this.state.form.amount == '') {
-      this.setState({ errAmount: 'Amount Required' })
-      errAmount = 'Amount Required'
-    } else if (this.state.form.amount.length < 2) {
-      this.setState({ errAmount: 'A minimum length of 2 digits is required.' })
-      errAmount = 'A minimum length of 2 digits is required.'
-    } else errAmount = ' '
 
-    if (this.props.route.params.payment == 'bank') {
+    if (this.state.form.bankName == '') {
+      errBank = 'Bank name Required'
+      this.setState({ errBank: 'Bank name Required' })
+    } else errBank = ' '
+
+    if (payment == 'bank') {
       if (this.state.form.billNo == '') {
-        this.setState({ billNo: 'Bill number Required' })
         errBillNo = 'Bill number Required'
+        this.setState({ billNo: 'Bill number Required' })
       } else if (this.state.form.billNo.length < 5) {
-        this.setState({ errBillNo: 'A minimum length of 5 digits is required.' })
         errBillNo = 'A minimum length of 5 digits is required.'
+        this.setState({ errBillNo: 'A minimum length of 5 digits is required.' })
       } else errBillNo = ' '
     }
 
@@ -103,14 +118,32 @@ class Payment extends Component {
       this.setState({ errImg: 'Image of transaction is required!' })
       errImg = 'Image of transaction is required!'
     } else errImg = ' '
-    if (this.props.route.params.payment == 'bank') {
-      if (errTransId == ' ' && errAmount == ' ' && errImg == ' ' && errBillNo == ' ')
-        console.log('object')
+    form = Object.assign(form, {
+      transactionId: this.state.form.transactionId,
+      tDate: this.state.form.date,
+      billNo: this.state.form.billNo,
+      screenshot: this.state.form.img,
+      method: this.props.route.params.payment,
+      bankName: this.state.form.bankName,
+      paid: 'y'
+    })
+    if (payment == 'bank') {
+      console.log('bank')
+      if (errTransId == ' ' && errImg == ' ' && errBillNo == ' ')
+        console.log('form', JSON.stringify(form))
+      this.props.postAd(this.state.userId, form)
     }
-    else if (errTransId == ' ' && errAmount == ' ' && errImg == ' ')
+    else if (errTransId == ' ' && errImg == ' ') {
+      console.log('easypaisa')
       //     this.props.navigation.navigate('imageselection', { form: this.state.form })
-      console.log(this.state.form)
+      console.log('form', JSON.stringify(form))
+      this.props.postAd(this.state.userId, form)
+    }
     // this.forceUpdate()
+  }
+
+  handleSkip(form) {
+    console.log('skip', form)
   }
 
   toggleDatePicker() {
@@ -125,10 +158,10 @@ class Payment extends Component {
   }
 
   render() {
-    const { payment } = this.props.route.params
+    const { payment, form } = this.props.route.params
     return (
       <SafeAreaView style={{ backgroundColor: 'white' }} >
-        <ScrollView style={{ height: '88%', backgroundColor: 'white' }}  >
+        <ScrollView style={{ height: '86%', backgroundColor: 'white' }}  >
           <View style={styles.container} >
             <Text style={styles.textTitle} >Transaction id *</Text>
             <Input maxLength={20} containerStyle={styles.formInput} textContentType="postalCode"
@@ -157,14 +190,14 @@ class Payment extends Component {
             <Text style={styles.textTitle} >Amount *</Text>
             <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
               inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
-              keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errAmount}
-              onChangeText={(amount) => this.setState({
-                form: { ...this.state.form, amount: amount }
-              })}
+              keyboardType="decimal-pad" editable={false} value={form.price}
+            // onChangeText={(amount) => this.setState({
+            //   form: { ...this.state.form, amount: amount }
+            // })}
             />
             {payment == 'bank' &&
               <View>
-                <Text style={styles.textTitle} >Bill *</Text>
+                <Text style={styles.textTitle} >Bill # *</Text>
                 <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
                   inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
                   keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errBillNo}
@@ -172,6 +205,16 @@ class Payment extends Component {
                     form: { ...this.state.form, billNo: billNo }
                   })}
                 />
+                <Text style={styles.textTitle} >Bank name # *</Text>
+                <Picker style={styles.inputCont} selectedValue={this.state.form.bankName} onValueChange={(item) => this.setState({ form: { ...this.state.form, bankName: item } })} >
+                  <Picker.Item label='Bank' value='' />
+                  <Picker.Item label='Habaib Bank Limited' value='HBL' />
+                  <Picker.Item label='United Bank Limited' value='UBL' />
+                  <Picker.Item label='National Bank of Pakistan' value='NBP' />
+                  <Picker.Item label='Allied' value='Allied' />
+                  <Picker.Item label='Alfalah' value='Alfalah' />
+                </Picker>
+                <Text style={styles.errText}>{errBank}</Text>
               </View>}
             <View >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
@@ -198,10 +241,13 @@ class Payment extends Component {
         </ScrollView>
         <View style={styles.formButton} >
           <Button mode="contained" color='black'
-            onPress={() => { this.handleSubmit() }}
+            onPress={this.handleSkip.bind(this, form)} style={{marginVertical: 5}}
+            buttonStyle={{ backgroundColor: '#232323' }} >Skip & Post Ad</Button>
+          <Button mode="contained" color='black' style={{marginVertical: 5}}
+            onPress={this.handleSubmit.bind(this, payment, form)}
             buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
         </View>
-      </SafeAreaView>
+      </SafeAreaView >
     )
   }
 }
@@ -239,8 +285,8 @@ const styles = StyleSheet.create({
   },
   formButton: {
     width: '90%',
-    justifyContent: 'flex-end',
-    margin: 25,
+    alignSelf: 'center',
+    marginVertical: 0,
     bottom: 0,
   },
   inputCont: {
@@ -273,4 +319,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps)(Payment)
+export default connect(mapStateToProps, mapDispatchToProps)(Payment)

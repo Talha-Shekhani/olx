@@ -117,15 +117,16 @@ class cat1 extends Component {
             <Input
               maxLength={4096}
               containerStyle={styles.formInput}
-              inputContainerStyle={styles.inputContainer}
+              // inputContainerStyle={styles.inputContainer}
+              multiline={true}
               inputStyle={styles.input}
               keyboardType="default"
               name="desc"
               renderErrorMessage={true}
               errorMessage={errDesc}
               onChangeText={(desc) => this.setState({ form: { ...this.state.form, description: desc } })}
-              rightIcon={<Text style={styles.counterText} >{this.state.form.description.length}/4096</Text>}
             />
+            <Text style={styles.counterTextLast} >{this.state.form.description.length}/4096</Text>
           </View>
         </ScrollView>
         <View style={styles.formButton} >
@@ -197,6 +198,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     color: 'grey',
     top: 45,
+  },
+  counterTextLast: {
+    alignSelf: 'flex-end',
+    margin: 0,
+    fontSize: 12,
+    color: 'grey',
   },
   errText: {
     color: 'red',
