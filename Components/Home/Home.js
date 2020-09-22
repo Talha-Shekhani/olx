@@ -65,7 +65,9 @@ class Home extends Component {
         this.props.cat.categories.map((item, index) => {
           while (index < 9)
             return (
-              <TouchableOpacity key={index} style={styles.categoryLink}
+              <TouchableOpacity key={index}
+                // style={styles.categoryLink} 
+                containerStyle={styles.categoryLink}
                 onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })} >
                 <View style={styles.iconBack}>
                   <Image style={{ width: 40, height: 40 }} source={{ uri: baseUrl + item.img }} />
@@ -144,11 +146,11 @@ class Home extends Component {
   }
 
   render() {
-    if (this.state.userId != undefined || 0 || '')
+    if (this.state.userId != '' && Array.isArray(this.props.feat.featured))
       return (
         <SafeAreaView>
           {/* <Button onPress={() => this.props.navigation.dispatch(StackActions.push('addpkg', { payment: 'bank' }))} >Development Shortcut</Button> */}
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false} >
             <View style={styles.container} >
               <SearchBar containerStyle={styles.searchBar}
                 inputContainerStyle={styles.inputContainerStyle}
@@ -271,16 +273,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   categoryLink: {
-    width: 120,
-    minWidth: 95,
-    margin: '0%',
+    width: '33%',
     marginVertical: 12,
     justifyContent: 'center',
     alignSelf: 'center'
   },
   iconBack: {
     borderRadius: 50,
-    // width: '100%',
     height: 40,
     alignSelf: 'center',
     justifyContent: 'center',

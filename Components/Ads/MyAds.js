@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { baseUrl } from '../../shared/baseUrl';
 import NumberFormat from 'react-number-format';
-import { Button } from 'react-native-paper';
+import { Button, Colors } from 'react-native-paper';
 
 const mapStateToProps = state => {
   return {
@@ -34,7 +34,7 @@ class MyAds extends Component {
     }
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     // async function retrieveData() {
     const userdata = AsyncStorage.getItem('userdata')
       .then((userdata) => {
@@ -93,6 +93,11 @@ class MyAds extends Component {
                           prefix={'Rs '}
                           renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
                         <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: Colors.white, backgroundColor: Colors.lightBlue500, padding: 1, paddingHorizontal: 5, width: 60, margin: 1 }}>{item.type}</Text>
+                        {item.type != 'basic' &&
+                          <Text style={{ color: 'grey', fontSize: 12 }} >
+                            Status: {item.paid == 'y' ? 'Paid' : 'Not-Paid'}
+                          </Text>}
                         <View style={styles.rightBottom} >
                           <Text style={styles.productLoc}>
                             <IconMat name="map-marker" size={10} />
@@ -140,7 +145,7 @@ const styles = StyleSheet.create({
   rightBottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 35,
+    marginTop: 5,
   },
   productLoc: {
     fontSize: 10,

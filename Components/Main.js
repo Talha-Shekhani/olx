@@ -21,7 +21,7 @@ import Login from './Login/Login'
 import AsyncStorage from '@react-native-community/async-storage'
 import Password from './Login/Password'
 import SellCategories from './Sell/SellCategories'
-import tabMyAds from './Ads/TabMyAds'
+import tabMyAds from './Ads/tabMyAds'
 import MyAccount from './Account/MyAccount';
 import cat1 from './Sell/cat1';
 import ImageSelection from './Sell/ImageSelection';
@@ -131,26 +131,28 @@ class Main extends Component {
       return (
         <SafeAreaProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialRoute} >
-              <Stack.Screen name="root" component={this.tabNavigation} options={{ headerShown: false }} />
-              <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
-              <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
-              <Stack.Screen name="code" component={Code} options={{ headerShown: false }} />
-              <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />
-              <Stack.Screen name='categories' component={Categories} />
-              <Stack.Screen name='subcategories' component={SubCategories} />
-              <Stack.Screen name="productlist" component={productList} options={{ headerShown: false }} />
-              <Stack.Screen name="addetail" component={adDetail} options={{ headerShown: false }} />
-              <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
-              <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
-              <Stack.Screen name="pricePage" component={pricePage} options={{ headerShown: false }} />
-              <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
-              <Stack.Screen name="chat" component={Chat} options={({ route }) => ({ title: route.params.title, headerStyle: { backgroundColor: '#eee' } })} />
-              <Stack.Screen name='reviews' component={Reviews} options={{ title: 'Reviews' }} />
-              <Stack.Screen name='useraccount' component={UserAccount} options={{ headerShown: false }} />
-              <Stack.Screen name='addpkg' component={AddPackage} options={{ headerShown: false }} />
-              <Stack.Screen name='payment' component={Payment} options={{ headerShown: false }} />
-            </Stack.Navigator>
+            <>
+              <Stack.Navigator initialRouteName={initialRoute} >
+                <Stack.Screen name="root" component={this.tabNavigation} options={{ headerShown: false }} />
+                <Stack.Screen name="firstpage" component={FirstPage} options={{ headerShown: false }} />
+                <Stack.Screen name="loginEmail" component={Login} options={{ headerShown: false }} />
+                <Stack.Screen name="code" component={Code} options={{ headerShown: false }} />
+                <Stack.Screen name="password" component={Password} options={{ headerShown: false }} />
+                <Stack.Screen name='categories' component={Categories} />
+                <Stack.Screen name='subcategories' component={SubCategories} />
+                <Stack.Screen name="productlist" component={productList} options={{ headerShown: false }} />
+                <Stack.Screen name="addetail" component={adDetail} options={{ headerShown: false }} />
+                <Stack.Screen name="cat1" component={cat1} options={{ headerShown: false }} />
+                <Stack.Screen name="imageselection" component={ImageSelection} options={{ headerShown: false }} />
+                <Stack.Screen name="pricePage" component={pricePage} options={{ headerShown: false }} />
+                <Stack.Screen name="location" component={AddLocation} options={{ headerShown: false }} />
+                <Stack.Screen name="chat" component={Chat} options={({ route }) => ({ title: route.params.title, headerStyle: { backgroundColor: '#eee' } })} />
+                <Stack.Screen name='reviews' component={Reviews} options={{ title: 'Reviews' }} />
+                <Stack.Screen name='useraccount' component={UserAccount} options={{ headerShown: false }} />
+                <Stack.Screen name='addpkg' component={AddPackage} options={{ headerShown: false }} />
+                <Stack.Screen name='payment' component={Payment} options={{ headerShown: false }} />
+              </Stack.Navigator>
+            </>
           </NavigationContainer>
         </SafeAreaProvider>
       )

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView, TouchableOpacity, Picker } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, TouchableOpacity, Picker, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image, ListItem, Input } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
@@ -7,9 +7,10 @@ import { postAd } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
 import { Loading } from '../LoadingComponent';
-import { Divider, Button } from 'react-native-paper'
+import { Divider, Button, Modal, Provider, Portal } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import ImagePicker from 'react-native-image-picker'
+import { CommonActions, StackActions } from '@react-navigation/native';
 
 const mapStateToProps = state => {
   return {
@@ -39,7 +40,8 @@ class Payment extends Component {
       errBank: '',
       errImg: '',
       showDate: false,
-      userId: 0
+      userId: 0,
+      visible: false
     }
   }
 
@@ -132,18 +134,50 @@ class Payment extends Component {
       if (errTransId == ' ' && errImg == ' ' && errBillNo == ' ')
         console.log('form', JSON.stringify(form))
       this.props.postAd(this.state.userId, form)
+      this.toggleModal()
+      setTimeout(() => {
+        this.props.navigation.dispatch(StackActions.popToTop())
+      }, 1000);
     }
     else if (errTransId == ' ' && errImg == ' ') {
       console.log('easypaisa')
       //     this.props.navigation.navigate('imageselection', { form: this.state.form })
       console.log('form', JSON.stringify(form))
       this.props.postAd(this.state.userId, form)
+      this.toggleModal()
+      setTimeout(() => {
+        this.props.navigation.dispatch(StackActions.popToTop())
+      }, 1000);
     }
     // this.forceUpdate()
   }
 
   handleSkip(form) {
+    Alert.alert('Confirm?', 'Your Ad will be shown others after transaction.', [
+      {
+        text: 'Cancel',
+        style: "destructive"
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          this.props.postAd(this.state.userId, form)
+          this.toggleModal()
+          setTimeout(() => {
+            this.props.navigation.dispatch(StackActions.popToTop())
+          }, 1000);
+        },
+        style: 'default'
+      }
+    ])
+    form = Object.assign(form, {
+      paid: 'n'
+    })
     console.log('skip', form)
+  }
+
+  toggleModal() {
+    this.setState({ visible: !this.state.visible })
   }
 
   toggleDatePicker() {
@@ -160,94 +194,103 @@ class Payment extends Component {
   render() {
     const { payment, form } = this.props.route.params
     return (
-      <SafeAreaView style={{ backgroundColor: 'white' }} >
-        <ScrollView style={{ height: '86%', backgroundColor: 'white' }}  >
-          <View style={styles.container} >
-            <Text style={styles.textTitle} >Transaction id *</Text>
-            <Input maxLength={20} containerStyle={styles.formInput} textContentType="postalCode"
-              inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
-              keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errTransId}
-              onChangeText={(tId) => this.setState({
-                form: { ...this.state.form, transactionId: tId }
-              })}
-            />
-            <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', borderColor: '#999', borderWidth: 1.2, }}
-              onPress={this.toggleDatePicker.bind(this)} >
-              <Text style={{ padding: 5, alignSelf: 'center', color: 'grey' }} >
-                {this.state.form.date.toDateString().slice(3)}</Text>
-              <Image source={require('../../assets/calendar.png')} style={{ width: 22, height: 22, margin: 5 }} />
-            </TouchableOpacity>
-            {this.state.showDate && <DateTimePicker
-              testID="dateTimePicker"
-              value={this.state.form.date}
-              mode="date"
-              // is24Hour={true}
-              onTouchCancel={this.toggleDatePicker()}
-              display="default"
-              maximumDate={new Date()}
-              onChange={this.setDate.bind(this)}
-            />}
-            <Text style={styles.textTitle} >Amount *</Text>
-            <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
-              inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
-              keyboardType="decimal-pad" editable={false} value={form.price}
-            // onChangeText={(amount) => this.setState({
-            //   form: { ...this.state.form, amount: amount }
-            // })}
-            />
-            {payment == 'bank' &&
-              <View>
-                <Text style={styles.textTitle} >Bill # *</Text>
-                <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
+      <Provider>
+        <Portal>
+          <SafeAreaView style={{ backgroundColor: 'white' }} >
+            <ScrollView style={{ height: '86%', backgroundColor: 'white' }}  >
+              <View style={styles.container} >
+                <Text style={styles.textTitle} >Transaction id *</Text>
+                <Input maxLength={20} containerStyle={styles.formInput} textContentType="postalCode"
                   inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
-                  keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errBillNo}
-                  onChangeText={(billNo) => this.setState({
-                    form: { ...this.state.form, billNo: billNo }
+                  keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errTransId}
+                  onChangeText={(tId) => this.setState({
+                    form: { ...this.state.form, transactionId: tId }
                   })}
                 />
-                <Text style={styles.textTitle} >Bank name # *</Text>
-                <Picker style={styles.inputCont} selectedValue={this.state.form.bankName} onValueChange={(item) => this.setState({ form: { ...this.state.form, bankName: item } })} >
-                  <Picker.Item label='Bank' value='' />
-                  <Picker.Item label='Habaib Bank Limited' value='HBL' />
-                  <Picker.Item label='United Bank Limited' value='UBL' />
-                  <Picker.Item label='National Bank of Pakistan' value='NBP' />
-                  <Picker.Item label='Allied' value='Allied' />
-                  <Picker.Item label='Alfalah' value='Alfalah' />
-                </Picker>
-                <Text style={styles.errText}>{errBank}</Text>
-              </View>}
-            <View >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
-                <Text style={[styles.textTitle, { marginBottom: 10 }]} >ScreenShot of Transaction *</Text>
-                <Button onPress={() => this.setState({ form: { ...this.state.form, img: [] } })}
-                  contentStyle={{ margin: 8 }} color='black' mode='outlined' >
-                  Clear
-              </Button>
-              </View>
-              <Text style={styles.errText}>{errImg}</Text>
-              {this.state.form.img == '' && <View style={{ position: 'absolute', marginHorizontal: '44%', marginVertical: '52%', backgroundColor: 'white', zIndex: 5, borderRadius: 5 }} >
-                <TouchableOpacity onPress={this.getPhotoByCamera.bind(this)} >
-                  <Image source={require('../../assets/camera.png')}
-                    style={{ width: 30, height: 30, margin: 5 }} />
+                <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', borderColor: '#999', borderWidth: 1.2, }}
+                  onPress={this.toggleDatePicker.bind(this)} >
+                  <Text style={{ padding: 5, alignSelf: 'center', color: 'grey' }} >
+                    {this.state.form.date.toDateString().slice(3)}</Text>
+                  <Image source={require('../../assets/calendar.png')} style={{ width: 22, height: 22, margin: 5 }} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.getPhotoByGallery.bind(this)}>
-                  <Image source={require('../../assets/addGall.png')}
-                    style={{ width: 30, height: 30, margin: 5 }} />
-                </TouchableOpacity></View>}
-              <Image style={{ width: '100%', height: 320 }} source={{ uri: this.state.form.img.uri }} />
-            </View>
+                {this.state.showDate && <DateTimePicker
+                  testID="dateTimePicker"
+                  value={this.state.form.date}
+                  mode="date"
+                  // is24Hour={true}
+                  onTouchCancel={this.toggleDatePicker()}
+                  display="default"
+                  maximumDate={new Date()}
+                  onChange={this.setDate.bind(this)}
+                />}
+                <Text style={styles.textTitle} >Amount *</Text>
+                <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
+                  inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
+                  keyboardType="decimal-pad" editable={false} value={form.price}
+                // onChangeText={(amount) => this.setState({
+                //   form: { ...this.state.form, amount: amount }
+                // })}
+                />
+                {payment == 'bank' &&
+                  <View>
+                    <Text style={styles.textTitle} >Bill # *</Text>
+                    <Input maxLength={6} containerStyle={styles.formInput} textContentType='postalCode'
+                      inputContainerStyle={styles.inputContainer} inputStyle={styles.input}
+                      keyboardType="decimal-pad" renderErrorMessage={true} errorMessage={errBillNo}
+                      onChangeText={(billNo) => this.setState({
+                        form: { ...this.state.form, billNo: billNo }
+                      })}
+                    />
+                    <Text style={styles.textTitle} >Bank name # *</Text>
+                    <Picker style={styles.inputCont} selectedValue={this.state.form.bankName} onValueChange={(item) => this.setState({ form: { ...this.state.form, bankName: item } })} >
+                      <Picker.Item label='Bank' value='' />
+                      <Picker.Item label='Habaib Bank Limited' value='HBL' />
+                      <Picker.Item label='United Bank Limited' value='UBL' />
+                      <Picker.Item label='National Bank of Pakistan' value='NBP' />
+                      <Picker.Item label='Allied' value='Allied' />
+                      <Picker.Item label='Alfalah' value='Alfalah' />
+                    </Picker>
+                    <Text style={styles.errText}>{errBank}</Text>
+                  </View>}
+                <View >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
+                    <Text style={[styles.textTitle, { marginBottom: 10 }]} >ScreenShot of Transaction *</Text>
+                    <Button onPress={() => this.setState({ form: { ...this.state.form, img: [] } })}
+                      contentStyle={{ margin: 8 }} color='black' mode='outlined' >
+                      Clear
+              </Button>
+                  </View>
+                  <Text style={styles.errText}>{errImg}</Text>
+                  {this.state.form.img == '' && <View style={{ position: 'absolute', marginHorizontal: '44%', marginVertical: '52%', backgroundColor: 'white', zIndex: 5, borderRadius: 5 }} >
+                    <TouchableOpacity onPress={this.getPhotoByCamera.bind(this)} >
+                      <Image source={require('../../assets/camera.png')}
+                        style={{ width: 30, height: 30, margin: 5 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.getPhotoByGallery.bind(this)}>
+                      <Image source={require('../../assets/addGall.png')}
+                        style={{ width: 30, height: 30, margin: 5 }} />
+                    </TouchableOpacity></View>}
+                  <Image style={{ width: '100%', height: 320 }} source={{ uri: this.state.form.img.uri }} />
+                </View>
 
-          </View>
-        </ScrollView>
-        <View style={styles.formButton} >
-          <Button mode="contained" color='black'
-            onPress={this.handleSkip.bind(this, form)} style={{marginVertical: 5}}
-            buttonStyle={{ backgroundColor: '#232323' }} >Skip & Post Ad</Button>
-          <Button mode="contained" color='black' style={{marginVertical: 5}}
-            onPress={this.handleSubmit.bind(this, payment, form)}
-            buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
-        </View>
-      </SafeAreaView >
+              </View>
+            </ScrollView>
+            <View style={styles.formButton} >
+              <Button mode="contained" color='black'
+                onPress={this.handleSkip.bind(this, form)} style={{ marginVertical: 5 }}
+                buttonStyle={{ backgroundColor: '#232323' }} >Skip Now</Button>
+              <Button mode="contained" color='black' style={{ marginVertical: 5 }}
+                onPress={this.handleSubmit.bind(this, payment, form)}
+                buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
+            </View>
+          </SafeAreaView >
+          <Modal visible={this.state.visible} onDismiss={this.toggleModal.bind(this)} dismissable={true}
+            contentContainerStyle={styles.modal}>
+            <Image source={require('../../assets/success.png')} style={{ width: 60, height: 60 }} />
+            <Text style={{ alignSelf: 'center' }} >Successfully Posted Ad!</Text>
+          </Modal>
+        </Portal>
+      </Provider>
     )
   }
 }
@@ -316,6 +359,16 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 2
+  },
+  modal: {
+    width: 200,
+    height: 150,
+    zIndex: 10,
+    backgroundColor: 'white',
+    justifyContent: 'space-evenly',
+    alignContent: 'space-around',
+    alignSelf: 'center',
+    alignItems: 'center'
   }
 })
 

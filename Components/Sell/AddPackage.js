@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, Alert } from 'react-native';
 import { SearchBar, Icon, Card, Image, ButtonGroup } from 'react-native-elements';
 import { NavigationContainer, StackActions, CommonActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +10,7 @@ import { baseUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import AsyncStorage from '@react-native-community/async-storage'
 import { postAd } from '../../redux/Actions'
-import { ToggleButton, Button, RadioButton, Divider } from 'react-native-paper';
+import { ToggleButton, Button, RadioButton, Divider, Modal, Portal, Provider } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const mapStateToProps = state => ({
@@ -26,7 +26,8 @@ class AddPackage extends Component {
     this.state = {
       userId: 0,
       selectedIndex: 0,
-      paymentMethod: 'easypaisa'
+      paymentMethod: 'easypaisa',
+      visible: false
     }
     // this.updateIndex = this.updateIndex.bind(this)
   }
@@ -47,6 +48,10 @@ class AddPackage extends Component {
 
   updateIndex(index) {
     this.setState({ selectedIndex: index })
+  }
+
+  toggleModal() {
+    this.setState({ visible: !this.state.visible })
   }
 
   displayPaymentMethod() {
@@ -93,7 +98,10 @@ class AddPackage extends Component {
       form = Object.assign(form, { paid: '' })
       console.log(form.img[0].path)
       this.props.postAd(this.state.userId, form)
-      this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'root' }] }))
+      this.toggleModal()
+      setTimeout(() => {
+        this.props.navigation.dispatch(StackActions.popToTop())
+      }, 1500);
     }
     else if (this.state.selectedIndex == 1) {
       console.log(form)
@@ -109,41 +117,50 @@ class AddPackage extends Component {
   render() {
     const { form } = this.props.route.params
     return (
-      <SafeAreaView style={styles.container} >
-        <View style={styles.innerContainer} >
-          <Text style={styles.haeding} >Select Package </Text>
-          <View style={styles.pkgCont}>
-            <TouchableOpacity key={0} style={[styles.touchOption, this.state.selectedIndex === 0 ? styles.activeBorder : styles.deactiveBorder]}
-              onPress={this.updateIndex.bind(this, 0)} accessible={true} accessibilityLabel='Tap me!' accessibilityHint="Navigates to the previous screen" >
-              <Button style={[styles.btnOption, this.state.selectedIndex === 0 ? styles.activeBtn : styles.deactiveBtn]}
-                color={this.state.selectedIndex === 0 ? 'white' : 'black'} >
-                Basic
+      <Provider >
+        <Portal>
+          <SafeAreaView style={styles.container} >
+            <View style={styles.innerContainer} >
+              <Text style={styles.haeding} >Select Package </Text>
+              <View style={styles.pkgCont}>
+                <TouchableOpacity key={0} style={[styles.touchOption, this.state.selectedIndex === 0 ? styles.activeBorder : styles.deactiveBorder]}
+                  onPress={this.updateIndex.bind(this, 0)} accessible={true} accessibilityLabel='Tap me!' accessibilityHint="Navigates to the previous screen" >
+                  <Button style={[styles.btnOption, this.state.selectedIndex === 0 ? styles.activeBtn : styles.deactiveBtn]}
+                    color={this.state.selectedIndex === 0 ? 'white' : 'black'} >
+                    Basic
               </Button>
-              <View style={styles.textsOption} >
-                <Text style={{ margin: 5 }} >Expiry One Month</Text>
-                <Text style={{ margin: 5 }} >Free!</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity key={1} style={[styles.touchOption, this.state.selectedIndex === 1 ? styles.activeBorder : styles.deactiveBorder]}
-              onPress={this.updateIndex.bind(this, 1)} >
-              <Button style={[styles.btnOption, this.state.selectedIndex === 1 ? styles.activeBtn : styles.deactiveBtn]}
-                color={this.state.selectedIndex === 1 ? 'white' : 'black'} >
-                Premium
+                  <View style={styles.textsOption} >
+                    <Text style={{ margin: 5 }} >Expiry One Month</Text>
+                    <Text style={{ margin: 5 }} >Free!</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity key={1} style={[styles.touchOption, this.state.selectedIndex === 1 ? styles.activeBorder : styles.deactiveBorder]}
+                  onPress={this.updateIndex.bind(this, 1)} >
+                  <Button style={[styles.btnOption, this.state.selectedIndex === 1 ? styles.activeBtn : styles.deactiveBtn]}
+                    color={this.state.selectedIndex === 1 ? 'white' : 'black'} >
+                    Premium
               </Button>
-              <View style={styles.textsOption} >
-                <Text style={{ margin: 5 }} >No Expiry ad</Text>
-                <Text style={{ margin: 5 }} >$25/ad</Text>
+                  <View style={styles.textsOption} >
+                    <Text style={{ margin: 5 }} >No Expiry ad</Text>
+                    <Text style={{ margin: 5 }} >$25/ad</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          </View>
-          {this.displayPaymentMethod()}
-        </View>
-        <View style={styles.formButton} >
-          <Button mode="contained" color='black'
-            onPress={this.handleNavigate.bind(this, form)}
-            buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
-        </View>
-      </SafeAreaView>
+              {this.displayPaymentMethod()}
+            </View>
+            <View style={styles.formButton} >
+              <Button mode="contained" color='black'
+                onPress={this.handleNavigate.bind(this, form)}
+                buttonStyle={{ backgroundColor: '#232323' }} >Next</Button>
+            </View>
+          </SafeAreaView>
+          <Modal visible={this.state.visible} onDismiss={this.toggleModal.bind(this)} dismissable={true}
+            contentContainerStyle={styles.modal}>
+            <Image source={require('../../assets/success.png')} style={{ width: 60, height: 60 }} />
+            <Text style={{ alignSelf: 'center' }} >Successfully Posted Ad!</Text>
+          </Modal>
+        </Portal>
+      </Provider>
     )
   }
 }
@@ -222,6 +239,16 @@ const styles = StyleSheet.create({
     margin: 20,
     bottom: 0,
   },
+  modal: {
+    width: 200,
+    height: 150,
+    zIndex: 10,
+    backgroundColor: 'white',
+    justifyContent: 'space-evenly',
+    alignContent: 'space-around',
+    alignSelf: 'center',
+    alignItems: 'center'
+  }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddPackage)

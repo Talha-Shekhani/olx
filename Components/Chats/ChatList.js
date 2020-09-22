@@ -32,6 +32,9 @@ class ChatList extends Component {
             search: '',
             userId: 0
         }
+        this.props.navigation.addListener('tabPress', () => {
+            this.props.fetchChatUser(this.state.userId)
+        })
     }
 
     renderChatList() {
@@ -47,42 +50,59 @@ class ChatList extends Component {
         }
         else
             if (Array.isArray(this.props.chatUser) != false)
-                return (
-                    // <View></View>
-                    this.props.user.users
-                        // .filter(item => item.id == this.props.chatUser.map((itm, indx) => itm.to_user_id))
-                        .map((item, index) => {
-                            let toUserId
-                            {
-                                for (let i in this.props.chatUser)
-                                    if (item.id == this.props.chatUser[i].to_user_id)
-                                        toUserId = item.id
-                                console.log(toUserId)
-                            }
-                            // console.log(item)
-                            let subtitle = '', dat = new Date()
-                            this.props.chatUser
-                                .filter(itm => itm.to_user_id == item.id)
-                                .map((itm, indx) => {
-                                    subtitle = itm.text
-                                    dat = new Date(itm.createdAt)
-                                })
-                            if (toUserId != undefined)
-                                return (
-                                    <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id, title: item.name })}
-                                        title={item.name}
-                                        subtitle={subtitle}
-                                        containerStyle={{ height: 74 }}
-                                        // chevron={true}
-                                        rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
-                                        rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
-                                        leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }}
+                console.log(this.props.chatUser)
+        return (
+            this.props.user.chatUser.map((item, index) => {
+                let userItem = this.props.user.users.filter(itm => itm.id == item.to_user_id)[0]
+                // console.log(userItem)
+                let dat = new Date(item.createdAt)
+                if (userItem != undefined)
+                    return (
+                        <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: userItem.id, title: userItem.name })}
+                            title={userItem.name}
+                            subtitle={item.text}
+                            containerStyle={{ height: 74 }}
+                            rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
+                            rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
+                            leftAvatar={<Avatar source={{ uri: userItem.img == '' ? baseUrl + 'boy.png' : baseUrl + userItem.img }} style={{ width: 40, height: 40, borderRadius: 50 }}
+                            />} >
+                        </ListItem>
+                    )
+                else return (<></>)
+            })
+            // this.props.user.users
+            //     .map((item, index) => {
+            //         let toUserId
+            //         {
+            //             for (let i in this.props.chatUser)
+            //                 if (item.id == this.props.chatUser[i].to_user_id)
+            //                     toUserId = item.id
+            //             console.log(this.props.chatUser)
+            //         }
+            //         // console.log(item)
+            //         let subtitle = '', dat = new Date()
+            //         this.props.chatUser
+            //             .filter(itm => itm.to_user_id == item.id)
+            //             .map((itm, indx) => {
+            //                 subtitle = itm.text
+            //                 dat = new Date(itm.createdAt)
+            //             })
+            //         if (toUserId != undefined)
+            //             return (
+            //                 <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: item.id, title: item.name })}
+            //                     title={item.name}
+            //                     subtitle={subtitle}
+            //                     containerStyle={{ height: 74 }}
+            //                     // chevron={true}
+            //                     rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
+            //                     rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
+            //                     leftAvatar={<Avatar source={{ uri: baseUrl + 'boy.png' }} style={{ width: 40, height: 40, borderRadius: 50 }}
 
-                                        />} >
-                                    </ListItem>
-                                )
-                        })
-                )
+            //                     />} >
+            //                 </ListItem>
+            //             )
+            //     })
+        )
     }
 
     componentDidUpdate() {
@@ -120,9 +140,6 @@ class ChatList extends Component {
     }
 
     render() {
-        // this.props.navigation.addListener('tabPress', () => {
-        //     this.props.fetchChatUser(this.state.userId)
-        // })
         // console.log(this.props.chatUser)
         if (this.state.userId != '')
             return (
