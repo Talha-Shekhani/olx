@@ -10,6 +10,11 @@ Ads.use(bodyParser.urlencoded({ extended: true }))
 Ads.use(bodyParser.json())
 
 Ads.route('/')
+    // .options((req, res) => {
+    //     if (req.headers["access-control-allow-origin"] == '*')
+    //         res.setHeader('Access-Control-Allow-Origin', '*')
+    //     next()
+    // })
     .get((req, res, next) => {
         con.query("SELECT * FROM ads", (err, result) => {
             if (err) {
@@ -18,7 +23,9 @@ Ads.route('/')
                 res.send(err)
             }
             else {
+                console.log("res ", req.headers);
                 res.statusCode = 200
+                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.setHeader('Content-Type', 'application/json')
                 res.send(result)
             }

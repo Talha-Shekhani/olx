@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Nav, NavItem, Navbar, NavbarBrand, Collapse, NavbarToggler } from 'reactstrap'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import Header from './components/Header'
+import SideBar from './components/SideBar'
 import './App.css';
 import { configureStore } from './redux/ConfigureStore';
 
@@ -14,7 +14,7 @@ function App(props) {
     <Provider store={store} >
       <BrowserRouter>
         <>
-          <Header />
+          <SideBar />
         </>
       </BrowserRouter>
     </Provider>
