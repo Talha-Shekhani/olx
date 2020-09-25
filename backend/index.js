@@ -15,6 +15,8 @@ const favorites = require('./routes/favorites');
 const Chats = require('./routes/chats');
 const rev = require('./routes/review');
 const feature = require('./routes/featured');
+const Admin = require('./routes/admin')
+const cors = require('cors')
 
 // const hostname = '192.168.0.105'
 const hostname = '127.0.0.1'
@@ -24,6 +26,7 @@ const app = express()
 app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cors())
 app.use('/ads', Ads)
 app.use('/fetchSubcat', Subcat)
 app.use('/fetchCat', Cat)
@@ -33,6 +36,7 @@ app.use('/favorite', favorites)
 app.use('/chat', Chats)
 app.use('/review', rev)
 app.use('/feature', feature)
+app.use('/admin', Admin)
 app.put('/setStatus', (req, res) => {
     console.log(req.body)
     let stat = req.body.active == 'true' ? 'false' : 'true'

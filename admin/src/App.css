@@ -38,85 +38,104 @@
 } */
 
 .navbar {
-  width: 15% !important;
+    width: 15% !important;
 }
 
 .navbar-dark {
-  background-color: grey;
+    background-color: grey;
 }
 
 .nav-collapse {
-  flex-direction: column !important;
+    flex-direction: column !important;
 }
 
 .navbar-expand-md .navbar-nav {
-  flex-direction: column;
+    flex-direction: column;
 }
 
 .container {
-  flex-direction: column;
+    flex-direction: column;
 }
 
-
 .sidenav {
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  background-color: #111;
-  overflow-x: hidden;
-  transition: 0.5s;
-  padding-top: 60px;
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
 }
 
 .sidenav a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
 }
 
 .sidenav a:nth-child(2) {
-  padding: 8px 10px;
-  text-decoration: none;
-  color: #fff;
-  display: block;
-  transition: 0.3s;
+    padding: 8px 10px;
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
 }
 
 .sidenav a:hover {
-  color: #f1f1f1;
+    color: #f1f1f1;
 }
 
 .sidenav .closeBtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
 }
 
 #main {
-  transition: margin-left .5s;
-  padding: 16px;
-  z-index: 1;
+    transition: margin-left .5s;
+    padding: 16px;
+    z-index: 1;
 }
 
 @media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
+    .sidenav {
+        padding-top: 15px;
+    }
+    .sidenav a {
+        font-size: 18px;
+    }
 }
 
 .upperCard {
-  background: linear-gradient(to right, #f78e0f, #fcb156); 
-  border: none;
-  /* height: 40px;
-  width: 160px; */
-  /* position: 'absolute'; */
-  /* z-index: 1; */
-  margin: -20px 8px
+    border: none;
+}
+
+@media screen and (max-width: 450px) {
+    .upperCard {
+        width: 100%;
+    }
+}
+
+.upperCard:nth-child(1):hover {
+    background: linear-gradient(to right, #ff9436, #ff3636) !important;
+}
+
+.upperCard:nth-child(2):hover {
+    background: linear-gradient(to right, #7cff36, #ffee36) !important;
+}
+
+.upperCard:nth-child(3):hover {
+    background: linear-gradient(to right, #3676ff, #36ffee) !important;
+}
+
+.upperCard:nth-child(4):hover {
+    background: linear-gradient(to right, #ff3697, #cd36ff) !important;
 }

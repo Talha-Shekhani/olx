@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const fs = require('fs')
 const multer = require('multer')
+const cors = require('cors')
 // const connection = require("../connection");
 
 const Ads = express.Router()
@@ -10,11 +11,10 @@ Ads.use(bodyParser.urlencoded({ extended: true }))
 Ads.use(bodyParser.json())
 
 Ads.route('/')
-    // .options((req, res) => {
-    //     if (req.headers["access-control-allow-origin"] == '*')
-    //         res.setHeader('Access-Control-Allow-Origin', '*')
-    //     next()
-    // })
+    .options((req, res) => {
+            console.log(req.headers)
+            res.sendStatus(200)
+    })
     .get((req, res, next) => {
         con.query("SELECT * FROM ads", (err, result) => {
             if (err) {
@@ -23,10 +23,7 @@ Ads.route('/')
                 res.send(err)
             }
             else {
-                console.log("res ", req.headers);
                 res.statusCode = 200
-                res.setHeader('Access-Control-Allow-Origin', '*')
-                res.setHeader('Content-Type', 'application/json')
                 res.send(result)
             }
         })

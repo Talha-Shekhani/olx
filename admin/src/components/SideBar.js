@@ -4,6 +4,7 @@ import { NavbarBrand, Card, CardBody } from 'reactstrap'
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom'
 import '../App.css';
 import Dashboard from './Dashboard';
+import Ads from './Ads';
 
 function SideBar(props) {
     const [visible, setVisible] = useState(0)
@@ -50,7 +51,9 @@ function SideBar(props) {
                         <NavLink to='/admin'>Details</NavLink>
                         <Redirect to='/admin/dashboard' ></Redirect>
                     </div>
-                    <div id="main" style={{ marginLeft: window.innerWidth < 920 ? 0 : visible, height: window.outerHeight }} >
+                    <div id="main"
+                    // style={{ marginLeft: window.innerWidth < 920 ? 0 : visible, height: window.outerHeight }} 
+                    >
                         <Card style={{ background: 'transparent' }} >
                             <CardBody style={{ padding: '.5rem' }} >
                                 <span style={{ fontSize: 20, paddingLeft: 15, cursor: 'pointer' }} onClick={toggleNav} >&#9776;</span>
@@ -58,6 +61,7 @@ function SideBar(props) {
                         </Card>
                         <Switch>
                             <Route path='/admin/dashboard' component={() => <Dashboard />} />
+                            <Route path='/admin/ads' component={() => <Ads />} />
                         </Switch>
                     </div>
                 </div>
