@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-// import logo from './logo.svg';
-import { Nav, NavItem, Navbar, NavbarBrand, Collapse, NavbarToggler } from 'reactstrap'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import SideBar from './components/SideBar'

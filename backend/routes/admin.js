@@ -112,4 +112,37 @@ Admin.get('/revenue', (req, res) => {
     }, 1000);
 })
 
+Admin.get('/adsDetail', (req, res) => {
+    con.query(`SELECT *, t.id AS tId FROM ads AS a, transactions AS t, users AS u WHERE a.user_id = u.id AND a.id = t.ad_id`, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            res.statusCode = 403
+            res.send(err)
+        }
+        else {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            // console.log('result: ', result)
+            res.send(result)
+        }
+    })
+})
+
+Admin.put('/putPaid', (req, res) => {
+    console.log(`UPDATE ads SET paid = '${req.body.paid}' WHERE id = ${req.body.adId}`)
+    con.query(`UPDATE ads SET paid = '${req.body.paid}' WHERE id = ${req.body.adId}`, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            res.statusCode = 403
+            res.send(err)
+        }
+        else {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            console.log('result: ', result)
+            res.send({success: true, result: result})
+        }
+    })
+})
+
 module.exports = Admin

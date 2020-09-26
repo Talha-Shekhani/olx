@@ -49,7 +49,7 @@ function SideBar(props) {
                         <NavLink to='/admin/user'>User</NavLink>
                         <NavLink to='/admin/ads'>Ads</NavLink>
                         <NavLink to='/admin'>Details</NavLink>
-                        <Redirect to='/admin/dashboard' ></Redirect>
+                        {/* <Redirect to='/admin/dashboard' ></Redirect> */}
                     </div>
                     <div id="main"
                     // style={{ marginLeft: window.innerWidth < 920 ? 0 : visible, height: window.outerHeight }} 

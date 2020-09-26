@@ -139,3 +139,14 @@
 .upperCard:nth-child(4):hover {
     background: linear-gradient(to right, #ff3697, #cd36ff) !important;
 }
+
+.adminAdTable {
+    background: linear-gradient(to right, #ff3636, #ff9436, #ffee36, #7cff36, #36ffee, #3676ff, #cd36ff);
+    box-shadow: 5px 2px 15px grey !important;
+    margin: 0px !important;
+}
+
+.adminAdTableRow {
+    /* border-width: 1px;
+    border-style: solid; */
+}

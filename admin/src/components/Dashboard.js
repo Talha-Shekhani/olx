@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 // import logo from './logo.svg';
 import { Card, CardBody, CardText, } from 'reactstrap'
-import { Pie, Bar, Doughnut, Line, HorizontalBar } from 'react-chartjs-2'
+import { Pie, Line, HorizontalBar } from 'react-chartjs-2'
 import { baseUrl } from '../baseUrl'
+
+const abortController = new AbortController()
+const signal = abortController.signal
 
 function Dashboard(props) {
     const [totalCounts, setTotalCounts] = useState({})
@@ -22,7 +25,10 @@ function Dashboard(props) {
             setRevenueByMethod(res.byMethod)
             setRevenueByBank(res.byBank)
         })
-    }, [])
+        // return function cleanup() {
+        //     abortController.abort()
+        // }
+    }, [fetchAds, fetchRevenue, fetchSome])
 
     return (
         <>
@@ -122,6 +128,7 @@ function Dashboard(props) {
 
 export const fetchSome = () => {
     return fetch(`${baseUrl}admin`, {
+        signal: signal,
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -150,6 +157,7 @@ export const fetchSome = () => {
 
 export const fetchAds = () => {
     return fetch(`${baseUrl}admin/totalAds`, {
+        signal: signal,
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -178,6 +186,7 @@ export const fetchAds = () => {
 
 export const fetchRevenue = () => {
     return fetch(`${baseUrl}admin/revenue`, {
+        signal: signal,
         method: 'GET',
         mode: 'cors',
         headers: {

@@ -12,8 +12,8 @@ Ads.use(bodyParser.json())
 
 Ads.route('/')
     .options((req, res) => {
-            console.log(req.headers)
-            res.sendStatus(200)
+        console.log(req.headers)
+        res.sendStatus(200)
     })
     .get((req, res, next) => {
         con.query("SELECT * FROM ads", (err, result) => {
@@ -74,18 +74,6 @@ Ads.route('/:userId/form')
             img3 = req.body.img[2].uri.slice(req.body.img[2].uri.lastIndexOf('/') + 1)
         console.log(img1, img2, img3)
         console.log('formData', req.params.userId, ' ', req.body)
-
-        // fs.copyFile(req.body.img[0].uri.replace('file://', ""), '../assets/images/', (err, res) => {
-        //     if (err) console.log('err ', err)
-        //     else console.log(contents)
-        // })
-        // fs.readFile(req.body.img[0].uri, (err, contents) => {
-        //     if (err)
-        //         console.log('err ', err)
-        //     else console.log(contents)
-        // })
-        // res.send(req.body)
-
         con.query(`INSERT INTO ads 
         (user_id, title, description, price, category_id, sub_category_id, area_id, img1, img2, img3, created_date, updated_date, active, type, paid) 
         values (${req.params.userId}, 
