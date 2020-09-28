@@ -146,7 +146,40 @@
     margin: 0px !important;
 }
 
-.adminAdTableRow {
-    /* border-width: 1px;
-    border-style: solid; */
+.productCardColumn {
+    width: 47% !important;
+    height: 250px;
+    padding: 5px;
+    margin: 8px 4px;
+    border-color: 'grey';
+    border-radius: 5px;
+}
+
+.featuredTag {
+    background-color: '#fff200';
+    width: 80px;
+    position: absolute;
+    z-index: 1;
+    padding: 1px;
+    margin: 2px;
+}
+
+.premiumTag {
+    background-color: '#00e5ff';
+    width: 80px;
+    position: absolute;
+    z-index: 1;
+    padding: 1px;
+    margin: 4px;
+}
+
+.iconHBack {
+    position: absolute;
+    background-color: 'white';
+    border-radius: 50;
+    width: 40px;
+    height: 40px;
+    align-self: flex-end;
+    justify-content: center;
+    z-index: 2;
 }

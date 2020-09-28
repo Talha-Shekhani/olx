@@ -1,10 +1,8 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom'
-import { Provider, useSelector } from 'react-redux'
+import { Provider } from 'react-redux'
 import './App.css';
 import { configureStore } from './redux/ConfigureStore';
-import Header from './components/Header';
-import { ads } from './redux/ads';
 import { fetchAds } from './redux/Actions'
 import Main from './components/Main';
 

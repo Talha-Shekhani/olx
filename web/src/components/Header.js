@@ -6,8 +6,10 @@ import { baseUrl } from '../baseUrl';
 
 function Header(props) {
 
-    const st = useSelector(state => state.ads)
+    const cat = useSelector(state => state.categories)
+    const subCat = useSelector(state => state.subcategories)
     const [isOpen, setIsOpen] = useState(false)
+    const [caret, setCaret] = useState('down')
 
     const handleToggle = () => {
         setIsOpen(!isOpen)
@@ -15,38 +17,50 @@ function Header(props) {
 
     return (
         <>
-            <Navbar color="light" light expand="md">
-                <NavbarBrand href="/" className='p-0' >
-                    <img src={baseUrl + 'OLX_BLUE_LOGO.png'} style={{width: 60}} />
-                    </NavbarBrand>
+            <Navbar color="black" light expand="md" className='bg-white py-0'>
+                {/* <NavbarBrand href="/" className='p-0' >
+                    <img src={baseUrl + 'OLX_BLUE_LOGO.png'} style={{ width: 60 }} />
+                </NavbarBrand> */}
                 <NavbarToggler onClick={handleToggle} />
-                <Collapse isOpen={isOpen} navbar>
+                <Collapse isOpen={isOpen} navbar className='col-12' >
                     <Nav className="mr-auto" navbar>
-                        <NavItem>
-                            <NavLink href="/"></NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-                        </NavItem>
                         <UncontrolledDropdown nav inNavbar>
-                            <DropdownToggle nav caret>Options</DropdownToggle>
-                            <DropdownMenu right>
-                                <DropdownItem>
-                                    Option 1
-                </DropdownItem>
-                                <DropdownItem>
-                                    Option 2
-                </DropdownItem>
-                                <DropdownItem divider />
-                                <DropdownItem>
-                                    Reset
-                </DropdownItem>
-                            </DropdownMenu>
+                            <DropdownToggle nav onClick={() => {
+                                console.log(caret); caret === 'down' ? setCaret('up') : setCaret('down')
+                            }} >Categories
+                            <span className={`fa fa-angle-${caret} mx-2`} ></span>
+                            </DropdownToggle >
+                            {caret == 'up' && <DropdownMenu right className='d-flex flex-column flex-wrap'
+                                style={{
+                                    right: 'auto', left: -10, width: window.innerWidth - 80, top: 37, height:
+                                        window.innerWidth <= 1024 ? 815 : 814
+                                }} >
+                                {cat.categories.map((item, index) => {
+                                    return (
+                                        <div key={index} className='mx-2 d-flex flex-column flex-wrap my-2' style={{ width: '23%' }} >
+                                            <b style={{ fontSize: 14 }}>{item.title}</b>
+                                            {subCat.subcategories.filter(itm => itm.cat_id == item.cat_id).map((item, index) => (
+                                                <DropdownItem key={index} className='p-0' style={{ fontSize: 12 }}
+                                                    href={`/${item.name}`} >{item.title}</DropdownItem>
+                                            ))}
+                                        </div>
+                                    )
+                                }
+                                )}
+                            </DropdownMenu>}
                         </UncontrolledDropdown>
+                        {cat.categories.map((item, index) => {
+                            while (index < 6)
+                                return (
+                                    <NavItem>
+                                        <NavLink href={`/${item.name}`} key={index} >{item.title}</NavLink>
+                                    </NavItem>
+                                )
+                        })}
                     </Nav>
-                    <NavbarText>Simple Text</NavbarText>
                 </Collapse>
             </Navbar>
+            <img src='assets/main_pic.jpg' style={{ width: '100%', height: 'auto' }} />
         </>
     )
 }
