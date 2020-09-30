@@ -1,38 +1,155 @@
-.App {
-  text-align: center;
+.cardColumn {
+  /* overflow: scroll; */
+  /* display: flex;
+  flex-wrap: wrap;
+  flex-direction: row; */
+  /* justify-content: space-around; */
+  /* margin-bottom: 40px;
+  margin-left: 50px;
+  margin-right: 50px; */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.productCardColumn {
+  /* width: 20% !important; */
+  /* background-color: #3676ff !important; */
+  height: 250px !important;
+  /* padding: 5px !important; */
+  /* margin-left: 8px !important; */
+  border-color: grey !important;
+  border-radius: 5px !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.productCardBody {
+  /* width: 100px !important; */
+  /* display: flex;
+  flex-direction: column; */
+  /* padding: 0; */
+  /* padding-top: 10px; */
+  /* padding-left: 10px; */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.productCardImage {
+  align-self: center;
+  border-radius: 0;
+  resize: both;
+  width: 90%;
+  height: 60%;
+  object-fit: contain;
+}
+
+.productAddress {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin-top: auto;
+}
+
+.productAddress div p {
+  margin-bottom: 10px;
+}
+
+.featuredTag {
+  background-color: #fff200 !important;
+  width: 80px !important;
+  position: absolute;
+  z-index: 1;
+  /* padding: 1px; */
+  margin: 2px;
+  margin-top: 8px;
+}
+
+.premiumTag {
+  background-color: #00e5ff;
+  width: 80px;
+  position: absolute;
+  z-index: 1;
+  /* padding: 1px; */
+  margin: 4px;
+  margin-top: 8px;
+}
+
+.iconHBack {
+  position: absolute;
+  background-color: white;
+  border-radius: 50px;
+  width: 40px;
+  height: 40px;
+  align-self: flex-end;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  z-index: 2;
 }
 
-.App-link {
-  color: #61dafb;
+.iconHBack span {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-self: center;
+  margin-top: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.btnLogin {
+  border: none;
+  color: black;
+  text-decoration: underline;
+  background: none;
+  font-weight: bold;
+}
+
+.btnLogin:hover {
+  border: none;
+  color: black;
+  text-decoration: none;
+  background: none;
+}
+
+.btnLogin:focus {
+  border: none;
+  outline: none;
+}
+
+.productTitle {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.btnInsideText {
+  margin-left: -75px !important;
+  margin-top: 12px;
+  z-Index: 1 
+}
+
+.btnGroupLogin {
+  padding: 25px;
+}
+
+.btnGroupLogin button {
+  outline: none;
+  border: none;
+  outline: 2px solid black;
+  margin-top: 15px;
+  padding: 5px;
+  background-color: #fff;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.btnGroupLogin button:hover {
+  outline: 4px solid black;
+}
+
+.carousel-caption p {
+  color: black;
+  position: absolute;
+  top: 100px;
+  align-self: center;
+  left: 10px;
+  /* margin-top: 100px; */
+}
+
+.carousel, .carousel-inner {
+  height: 230px;
+  /* background-color: black; */
+}
+
+.carousel-control-prev span, .carousel-control-next span {
+  color: black;
 }

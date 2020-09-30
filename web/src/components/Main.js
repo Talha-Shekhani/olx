@@ -18,11 +18,12 @@ function Main(props) {
         dispatch(fetchFav(userId))
         dispatch(fetchFeat(userId))
         dispatch(fetchLoc())
-    }, [])
+    }, [dispatch, userId])
 
     return (
         <>
-            <p style={{background: '#eee', margin: 0, padding: 10}} > Main</p>
+            {/* <p style={{background: '#eee', margin: 0, padding: 10}} > Main</p> */}
+            {/* <p>{JSON.stringify(st.favorites)}</p> */}
             <Header />
             <Home />
         </>

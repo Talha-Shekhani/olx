@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Nav, Navbar, NavLink, NavbarToggler, NavItem, NavbarBrand, NavbarText, Collapse, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
-import { baseUrl } from '../baseUrl';
+import { Nav, Navbar, NavLink, NavbarToggler, NavItem, Collapse, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
+import Login from './Login';
+// import { baseUrl } from '../baseUrl';
 
 
 function Header(props) {
@@ -17,6 +18,9 @@ function Header(props) {
 
     return (
         <>
+            <div style={{background: '#ddd'}} >
+                <Login />
+            </div>
             <Navbar color="black" light expand="md" className='bg-white py-0'>
                 {/* <NavbarBrand href="/" className='p-0' >
                     <img src={baseUrl + 'OLX_BLUE_LOGO.png'} style={{ width: 60 }} />
