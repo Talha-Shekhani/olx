@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { postChatMsg, fetchChats } from '../../redux/Actions'
 import { baseUrl } from '../../shared/baseUrl';
 var W3CWebSocket = require('websocket').w3cwebsocket
-var client = '', myInterval = ''
+var client = ''
 
 const mapStateToProps = state => ({
   user: state.users,
@@ -39,9 +39,9 @@ class Chat extends Component {
         //     avatar: 'https://placeimg.com/140/140/any',
         //   },
         // },
-      ],
-      abc: false
+      ]
     }
+
   }
 
   UNSAFE_componentWillMount() {
@@ -56,7 +56,8 @@ class Chat extends Component {
         }
       })
       .catch((err) => console.log('Cannot find user info' + err))
-    console.log('readystate: ', client.readyState)
+  }
+  componentDidMount() {
     client.onopen = () => {
       console.log('WebSocket Client Connected')
     }
@@ -66,42 +67,20 @@ class Chat extends Component {
     // client.close()
     client.onclose = () => {
       console.log('close')
+    }
+    client.onmessage = (msg) => {
+      this.props.fetchChats(this.state.userId, this.props.route.params.userId)
     }
   }
 
-  UNSAFE_componentWillUpdate() {
-    console.log('readyupdate ', client.readyState)
-    client.onopen = () => {
-      console.log('WebSocket Client Connected')
-      // myInterval = setInterval(() => {
-      //   console.log('run')
-      //   this.props.fetchChats(this.state.userId, this.props.route.params.userId)
-      // }, 2000)
-    }
-    client.onerror = err => {
-      console.log('socketerr ', err)
-    }
-    // client.close()
-    client.onclose = () => {
-      console.log('close')
-      // clearInterval(myInterval)
-    }
-  }
   componentWillUnmount() {
     client.close()
-    clearInterval(myInterval)
   }
 
   handleSend(msg = []) {
-    // console.log(this.state.userId)
-    // console.log(msg[0].user._id)
-    msg[0].from_user_id = this.state.userId;
+    msg[0].from_user_id = this.state.userId
     this.props.postChatMsg(msg)
-    // client.OPEN = 3
-    console.log('readystate1: ', client.readyState)
-    client.onmessage
     client.send(JSON.stringify(msg))
-    console.log('readystate2: ', client.readyState)
     client.onerror = (err) => console.log(err)
   }
 

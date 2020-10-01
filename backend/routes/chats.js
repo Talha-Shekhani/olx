@@ -22,7 +22,7 @@ Chats.route('/')
 
     })
     .post((req, res, next) => {
-        console.log(req.body)
+        // console.log(req.body)
         con.query(`INSERT INTO chats(_id, createdAt, text, to_user_id, from_user_id) 
         VALUES ('${req.body._id}',
         '${req.body.createdAt}',

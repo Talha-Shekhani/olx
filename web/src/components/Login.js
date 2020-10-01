@@ -58,8 +58,6 @@ function Login() {
         setisOpen(!isOpen)
     }
 
-
-
     return (
         <div className='d-flex flex-row p-2'>
             <button className='btnLogin d-flex align-self-center' onClick={toggleModal} >
@@ -81,7 +79,6 @@ function Login() {
             </div>
             <Modal isOpen={isOpen} toggle={toggleModal} >
                 <ModalHeader toggle={toggleModal} >
-
                 </ModalHeader>
                 <ModalBody className='d-flex flex-column btnGroupLogin' >
                     <Carousel
@@ -90,8 +87,9 @@ function Login() {
                         previous={previous} >
                         <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={goToIndex} />
                         {slides}
-                        <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
-                        <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
+                        {/* <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} /> */}
+                        <a className="carousel-control-prev" onClick={previous} style={{cursor: 'pointer'}}><span className="fa fa-angle-left" style={{fontSize: 30}} aria-hidden="true"></span><span className="sr-only">Previous</span></a>
+                        <a className="carousel-control-next" onClick={next} style={{cursor: 'pointer'}}><span className="fa fa-angle-right" style={{fontSize: 30}} aria-hidden="true"></span><span className="sr-only">Next</span></a>
                     </Carousel>
                     <button >Continue with Phone</button>
                     <button>Continue with Facebook</button>

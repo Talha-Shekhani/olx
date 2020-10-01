@@ -53,9 +53,10 @@ class ChatList extends Component {
                 console.log(this.props.chatUser)
         return (
             this.props.user.chatUser.map((item, index) => {
-                let userItem = this.props.user.users.filter(itm => itm.id == item.to_user_id)[0]
+                let userItem = this.props.user.users.filter(itm => item.from_user_id == this.state.userId ? itm.id == item.to_user_id : itm.id == item.from_user_id)[0]
                 // console.log(userItem)
                 let dat = new Date(item.createdAt)
+                console.log(dat, item.createdAt)
                 if (userItem != undefined)
                     return (
                         <ListItem key={index} bottomDivider onPress={() => this.props.navigation.navigate('chat', { userId: userItem.id, title: userItem.name })}

@@ -74,7 +74,7 @@ app.use((req, res, next) => {
     console.log(req.headers)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
-    res.send({data: 'not found'})
+    res.send({ data: 'not found' })
 })
 
 const server = http.createServer(app)
@@ -98,29 +98,33 @@ const wsServer = new webSocketServer({
 // const wsServer = new webSocketServer({
 //     httpServer: server
 // });
+const getUniqueID = () => {
+    const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    return s4() + s4() + '-' + s4();
+};
+const clients = {}
 wsServer.on('request', (request) => {
     console.log('req')
-    const conn = request.accept(null, null)
+    var userID = getUniqueID();
+    console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
+    const conn = request.accept(null, request.origin)
+    clients[userID] = conn
+    // console.log(clients)
     // console.log(conn)
     conn.on('message', (msg) => {
-        console.log(msg)
+        console.log('serversidemsg:', msg)
+        if (msg.type === 'utf8')
+            console.log('Recieved message: ', msg.utf8Data)
+            for (key in clients){
+                clients[key].sendUTF(msg.utf8Data)
+                // console.log('Send msgs to ', clients[key])
+            }
+
     })
 })
 wsServer.on('connect', (req) => {
     console.log('connect')
-    // const conn = req.accept(null, '*')
-    // console.log(conn)
-    // conn.on('message', (msg) => {
-    //     console.log(msg)
-    // })
 })
 wsServer.on('close', (conn, reason, desc) => {
     console.log('close')
 })
-
-// setInterval(() => {
-//     var sock = new wsClient('ws://127.0.0.1:8000')
-//     sock.onopen = () => console.log('open')
-//     sock.onerror = (err) => console.log('err')
-//     sock.onclose = (event) => console.log('close: ', event.reason, event.code, event.wasClean)
-// }, 3000);

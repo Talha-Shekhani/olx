@@ -107,7 +107,7 @@ user.route('/chat/user/:userId')
             else {
                 var promise = new Promise((resolve, rej) => {
                     for (var i in result) {
-                        con.query(`SELECT * FROM chats where from_user_id = ${result[i].from_user_id} AND to_user_id = ${result[i].to_user_id} ORDER BY createdAt DESC LIMIT 1`, (err, reslt) => {
+                        con.query(`SELECT * FROM chats where from_user_id IN (${result[i].from_user_id},${result[i].to_user_id}) AND to_user_id IN (${result[i].from_user_id},${result[i].to_user_id}) ORDER BY createdAt DESC LIMIT 1`, (err, reslt) => {
                             if (err) {
                                 console.log(err)
                                 res.send(err)
@@ -121,7 +121,7 @@ user.route('/chat/user/:userId')
                 })
                 setTimeout(() => {
                     promise.then((rslt) => {
-                        // console.log('rslt', rslt)
+                        console.log('rslt', rslt)
                         res.statusCode = 200
                         res.setHeader('Content-Type', 'application/json')
                         res.send(rslt)

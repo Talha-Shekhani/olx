@@ -114,7 +114,7 @@
 .btnInsideText {
   margin-left: -75px !important;
   margin-top: 12px;
-  z-Index: 1 
+  z-Index: 1
 }
 
 .btnGroupLogin {
@@ -150,6 +150,10 @@
   /* background-color: black; */
 }
 
+.carousel-indicators li {
+  background-color: #00e5ff;
+}
+
 .carousel-control-prev span, .carousel-control-next span {
-  color: black;
+  color: #00e5ff;
 }
