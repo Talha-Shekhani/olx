@@ -2,7 +2,6 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const con = require("../connection");
 const bcrypt = require('bcrypt');
-const { isEmpty } = require('react-native-validator-form/lib/ValidationRules');
 const saltRounds = 10;
 
 const user = express.Router()
@@ -86,7 +85,7 @@ user.route('/:email/:password')
             }
             else {
                 console.log(req.params.password, req.params.email, 'cehck')
-                if (!isEmpty(result))
+                if (result.length !== 0)
                     if (bcrypt.compareSync(req.params.password, result[0].password) == true)
                         res.send(true)
                     else res.send(false)

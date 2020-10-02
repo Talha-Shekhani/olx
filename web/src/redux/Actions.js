@@ -66,7 +66,7 @@ export const delAd = (adId) => (dispatch) => {
                 return JSON.stringify(errmess)
             })
         .then((response) => { return response.json() })
-        .then(response => { if (response.success == true) dispatch(fetchAds()) })
+        .then(response => { if (response.success === true) dispatch(fetchAds()) })
         .catch(error => console.log(error))
 }
 

@@ -7,7 +7,6 @@ import { baseUrl } from '../baseUrl';
 
 function Home(props) {
     const dispatch = useDispatch()
-    const st = useSelector(state => state)
     const cat = useSelector(state => state.categories)
     const subCat = useSelector(state => state.subcategories)
     const ads = useSelector(state => state.ads)
@@ -31,8 +30,6 @@ function Home(props) {
                         if (userId != 0) favrite = fav.favorites
                             .filter(itm => item.id == itm.ad_id && itm.user_id == userId)
                             .map((item, index) => { return (item.ad_id) })
-                    }
-                    {
                         if (userId != 0) feature = feat.featured
                             .filter(itm => item.category_id == itm.cat_id && itm.user_id == userId)
                             .map((item, index) => { return (item.cat_id) })
@@ -60,7 +57,7 @@ function Home(props) {
                                     <p style={{ fontWeight: "bold", margin: 0 }}> Rs {item.price}</p>
                                     <p className='productTitle' >{item.title}</p>
                                     <div className='productAddress d-flex mt-auto mb-2' >
-                                        <span className="fa fa-map-marker" style={{color: 'grey', fontSize: 12, alignSelf: 'center'}}></span>
+                                        <span className="fa fa-map-marker" style={{ color: 'grey', fontSize: 12, alignSelf: 'center' }}></span>
                                         <div style={{ fontSize: 12, color: 'grey' }}>
                                             {loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
                                                 return (<p key={index} className='mb-0 ml-1' >  {itm.area}, {itm.city}</p>)

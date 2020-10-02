@@ -6,7 +6,7 @@ import Home from './Home';
 
 
 function Main(props) {
-    const st = useSelector(state => state)
+    const {ads} = useSelector(state => state)
     const dispatch = useDispatch()
     const [userId, setUserId] = useState(1)
 

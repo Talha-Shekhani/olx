@@ -1,10 +1,118 @@
 import React, { useState } from 'react';
-import { Modal, ModalHeader, ModalBody, Carousel, CarouselItem, CarouselControl, CarouselIndicators, CarouselCaption } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, Carousel, CarouselItem, CarouselIndicators, CarouselCaption, Input, Button } from 'reactstrap'
+import { baseUrl } from '../baseUrl'
+import { Formik, Field } from 'formik'
+
+function First({ next, previous, items, activeIndex, goToIndex, slides, changeIndex }) {
+    return (
+        <>
+            <Carousel
+                activeIndex={activeIndex}
+                next={next}
+                previous={previous} >
+                <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={goToIndex} />
+                {slides}
+                {/* <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} /> */}
+                <a className="carousel-control-prev" onClick={previous} style={{ cursor: 'pointer' }}><span className="fa fa-angle-left" style={{ fontSize: 30 }} aria-hidden="true"></span><span className="sr-only">Previous</span></a>
+                <a className="carousel-control-next" onClick={next} style={{ cursor: 'pointer' }}><span className="fa fa-angle-right" style={{ fontSize: 30 }} aria-hidden="true"></span><span className="sr-only">Next</span></a>
+            </Carousel>
+            <button className='btns' >Continue with Phone</button>
+            <button className='btns' >Continue with Facebook</button>
+            <button className='btns' >Continue with Google</button>
+            <button className='btns' onClick={() => changeIndex(1)} >Continue with Email</button>
+        </>
+    )
+
+}
+
+function Second({ email, changeEmail, changeIndex }) {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
+            <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
+            <h4>Enter your Email</h4>
+            {/* <Input name='email' type='email' placeholder='Email' value={email} chan />
+            <button type='button' disabled className='nextInLogin' >Next</button> */}
+            <Formik initialValues={{ email: '' }}
+                validate={(values) => {
+                    console.log('validate')
+                    const errors = {}
+                    if (values.email === '') {
+                        errors.email = 'Required'
+                    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+                        errors.email = 'Invalid email address'
+                    }
+                    return errors
+                }}
+                onSubmit={(values, { setSubmitting }) => {
+                    setTimeout(() => {
+                        changeEmail(values.email)
+                        changeIndex(2)
+                        setSubmitting(false);
+                    }, 400)
+                }} >
+                {({ values, errors, handleChange, handleSubmit, isSubmitting, touched, validateField }) => (
+                    <form onSubmit={handleSubmit} style={{ width: '100%' }} >
+                        <Input
+                            type='email'
+                            name="email"
+                            onChange={(e) => {changeEmail(e.target.value); handleChange(e)}}
+                            value={email}
+                        />
+                        {/* {errors.email && touched.email} */}
+                        <button type='submit' disabled={errors.email} className='nextInLogin' >Next</button>
+                    </form>
+                )}
+            </Formik>
+        </div>
+    )
+}
+
+function Third({ password, changePassword }) {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
+            <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
+            <h4>Enter your Password</h4>
+            <Formik initialValues={{ pswd: '' }}
+                validate={(values) => {
+                    console.log('validate')
+                    const errors = {}
+                    if (values.pswd === '') {
+                        errors.pswd = 'Required'
+                    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.pswd)) {
+                        errors.pswd = 'Invalid email address'
+                    }
+                    return errors
+                }}
+                onSubmit={(values, { setSubmitting }) => {
+                    setTimeout(() => {
+                        changePassword(values.pswd)
+                        setSubmitting(false);
+                    }, 400)
+                }} >
+                {({ values, errors, handleChange, handleSubmit, isSubmitting, touched, validateField }) => (
+                    <form onSubmit={handleSubmit} style={{ width: '100%' }} >
+                        <Input
+                            type='email'
+                            name="email"
+                            onChange={handleChange}
+                            value={values.email}
+                        />
+                        {/* {errors.email && touched.email} */}
+                        <button type='submit' disabled={errors.email} className='nextInLogin' >Next</button>
+                    </form>
+                )}
+            </Formik>
+        </div>
+    )
+}
 
 function Login() {
     const [isOpen, setisOpen] = useState(false)
     const [activeIndex, setActiveIndex] = useState(0);
     const [animating, setAnimating] = useState(false);
+    const [index, setIndex] = useState(0)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     const next = () => {
         if (animating) return;
@@ -57,9 +165,31 @@ function Login() {
     const toggleModal = () => {
         setisOpen(!isOpen)
     }
+    const changeIndex = (index) => {
+        setIndex(index)
+    }
+
+    const changeEmail = (email) => {
+        console.log(email)
+        setEmail(email)
+    }
+
+    const changePassword = (pswd) => {
+        console.log(pswd)
+        setEmail(pswd)
+    }
+
+    const indexing = () => {
+        if (index === 0)
+            return (<First items={items} previous={previous} next={next} activeIndex={activeIndex} goToIndex={goToIndex} slides={slides} changeIndex={changeIndex} />)
+        else if (index === 1)
+            return (<Second email={email} changeEmail={changeEmail} changeIndex={changeIndex} />)
+        else if (index === 2)
+            return (<Third password={password} changePassword={changePassword} />)
+    }
 
     return (
-        <div className='d-flex flex-row p-2'>
+        <div className='d-flex flex-row p-2 ml-auto mr-4'>
             <button className='btnLogin d-flex align-self-center' onClick={toggleModal} >
                 Login
             </button>
@@ -72,29 +202,17 @@ function Login() {
                         <path fill='#3a77ff' d="M1473.479 124.453l-55.855 9.91-10.307 47.76c61.844 53.929 95.92 125.617 95.92 201.88 0 25.235-3.772 50.26-11.214 74.363-38.348 124.311-168.398 211.129-316.262 211.129h-448.812l25.121 40.783-25.121 40.783h448.812c190.107 0 357.303-111.638 406.613-271.498 9.572-31.009 14.423-63.162 14.423-95.559 0-98.044-43.805-190.216-123.317-259.551z"></path>
                     </g>
                 </svg>
-                <div className='d-flex flex-row btnInsideText' >
+                <div className='d-flex flex-row btnInsideText' style={{ cursor: 'pointer' }} >
                     <span className='fa fa-plus mt-1'></span>
                     <span className='ml-2' style={{ fontWeight: 'bold' }} >Sell</span>
                 </div>
             </div>
             <Modal isOpen={isOpen} toggle={toggleModal} >
                 <ModalHeader toggle={toggleModal} >
+                    {index !== 0 ? <span className='fa fa-arrow-left' onClick={() => { let ind = index; changeIndex(ind - 1) }} ></span> : <span></span>}
                 </ModalHeader>
                 <ModalBody className='d-flex flex-column btnGroupLogin' >
-                    <Carousel
-                        activeIndex={activeIndex}
-                        next={next}
-                        previous={previous} >
-                        <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={goToIndex} />
-                        {slides}
-                        {/* <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} /> */}
-                        <a className="carousel-control-prev" onClick={previous} style={{cursor: 'pointer'}}><span className="fa fa-angle-left" style={{fontSize: 30}} aria-hidden="true"></span><span className="sr-only">Previous</span></a>
-                        <a className="carousel-control-next" onClick={next} style={{cursor: 'pointer'}}><span className="fa fa-angle-right" style={{fontSize: 30}} aria-hidden="true"></span><span className="sr-only">Next</span></a>
-                    </Carousel>
-                    <button >Continue with Phone</button>
-                    <button>Continue with Facebook</button>
-                    <button>Continue with Google</button>
-                    <button>Continue with Email</button>
+                    {indexing()}
                 </ModalBody>
             </Modal>
         </div>

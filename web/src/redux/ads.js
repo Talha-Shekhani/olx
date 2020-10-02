@@ -8,7 +8,7 @@ export const ads = (state = {
 }, action) => {
     switch (action.type) {
         case ActionTypes.ADD_ADS:
-            return { ...state, isLoading: false, errMess: null, ads: action.payload, premiumAds: state.ads.filter(item => item.type == 'premium') }
+            return { ...state, isLoading: false, errMess: null, ads: action.payload, premiumAds: state.ads.filter(item => item.type === 'premium') }
         case ActionTypes.ADS_LOADING:
             return { ...state, isLoading: true, errMess: null, ads: [], premiumAds: [] }
         case ActionTypes.ADS_FAILED:

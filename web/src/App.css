@@ -121,7 +121,7 @@
   padding: 25px;
 }
 
-.btnGroupLogin button {
+.btnGroupLogin .btns {
   outline: none;
   border: none;
   outline: 2px solid black;
@@ -132,7 +132,7 @@
   border-radius: 5px;
 }
 
-.btnGroupLogin button:hover {
+.btnGroupLogin .btns:hover {
   outline: 4px solid black;
 }
 
@@ -142,6 +142,7 @@
   top: 100px;
   align-self: center;
   left: 10px;
+  width: 100%;
   /* margin-top: 100px; */
 }
 
@@ -156,4 +157,13 @@
 
 .carousel-control-prev span, .carousel-control-next span {
   color: #00e5ff;
+}
+
+.nextInLogin {
+  width: 100%;
+  margin: 15px 0px;
+  border: 2px solid;
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: bold;
 }
