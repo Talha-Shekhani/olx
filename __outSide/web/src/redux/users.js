@@ -4,7 +4,9 @@ export const users = (state = {
     isLoading: true,
     errMess: null,
     users: [],
-    chatUser: []
+    chatUser: [],
+    loggedInUserId: 0,
+    loggedInUser: null
 }, action) => {
     switch (action.type) {
         case ActionTypes.ADD_USER:
@@ -15,6 +17,13 @@ export const users = (state = {
             return { ...state, isLoading: false, errMess: action.payload, users: [], chatUser: [] }
         case ActionTypes.ADD_CHAT_USER:
             return { ...state, isLoading: false, errMess: null, users: state.users, chatUser: action.payload }
+        case ActionTypes.ADD_LOGGED_USER:
+            action.payload[0].password = ''
+            return { ...state, loggedInUser: action.payload }
+        case ActionTypes.ADD_LOGGED_USER_ID:
+            return { ...state, loggedInUserId: state.loggedInUser[0].id}
+        case ActionTypes.FAILED_LOGGED_USER:
+            return { ...state, loggedInUserId: 0, loggedInUser: null }
         default:
             return state
     }

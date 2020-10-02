@@ -12,8 +12,9 @@ function Home(props) {
     const ads = useSelector(state => state.ads)
     const fav = useSelector(state => state.favorites)
     const feat = useSelector(state => state.featured)
+    const { loggedInUser, loggedInUserId } = useSelector(state => state.users)
     const loc = useSelector(state => state.loc)
-    const [userId, setUserId] = useState(1)
+    const [userId, setUserId] = useState(loggedInUserId)
     const [search, setsearch] = useState('')
 
     const renderAds = (type) => {

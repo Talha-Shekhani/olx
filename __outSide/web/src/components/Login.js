@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, Carousel, CarouselItem, CarouselIndicators, CarouselCaption, Input, Button } from 'reactstrap'
 import { baseUrl } from '../baseUrl'
 import { Formik, Field } from 'formik'
+import * as Actions from '../redux/ActionTypes'
+import { useDispatch, useSelector } from 'react-redux';
+import { checkUser } from '../redux/Actions';
 
 function First({ next, previous, items, activeIndex, goToIndex, slides, changeIndex }) {
     return (
@@ -25,16 +28,17 @@ function First({ next, previous, items, activeIndex, goToIndex, slides, changeIn
 
 }
 
-function Second({ email, changeEmail, changeIndex }) {
+function Second({ email, changeEmail, changeIndex, loggedInUser }) {
+    const dispatch = useDispatch()
+    const [err, setErr] = useState('')
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
             <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
             <h4>Enter your Email</h4>
             {/* <Input name='email' type='email' placeholder='Email' value={email} chan />
             <button type='button' disabled className='nextInLogin' >Next</button> */}
-            <Formik initialValues={{ email: '' }}
+            <Formik initialValues={{ email: email }}
                 validate={(values) => {
-                    console.log('validate')
                     const errors = {}
                     if (values.email === '') {
                         errors.email = 'Required'
@@ -45,20 +49,25 @@ function Second({ email, changeEmail, changeIndex }) {
                 }}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
-                        changeEmail(values.email)
-                        changeIndex(2)
-                        setSubmitting(false);
+                        dispatch(fetchUserToStore(email))
+                            .then((res) => {
+                                if (res !== null && Array.isArray(res)) {
+                                    setSubmitting(false)
+                                    changeIndex(2)
+                                }
+                                else setErr('Email not matched!')
+                            })
                     }, 400)
                 }} >
-                {({ values, errors, handleChange, handleSubmit, isSubmitting, touched, validateField }) => (
+                {({ values, errors, handleChange, handleSubmit, isSubmitting, touched }) => (
                     <form onSubmit={handleSubmit} style={{ width: '100%' }} >
                         <Input
                             type='email'
                             name="email"
-                            onChange={(e) => {changeEmail(e.target.value); handleChange(e)}}
+                            onChange={(e) => { changeEmail(e.target.value); handleChange(e) }}
                             value={email}
                         />
-                        {/* {errors.email && touched.email} */}
+                        {err && <p style={{ fontSize: 12, color: 'red', margin: '5px 0 0 0' }}>{err}</p>}
                         <button type='submit' disabled={errors.email} className='nextInLogin' >Next</button>
                     </form>
                 )}
@@ -67,24 +76,32 @@ function Second({ email, changeEmail, changeIndex }) {
     )
 }
 
-function Third({ password, changePassword }) {
+function Third({ password, changePassword, loggedInUser }) {
+    const dispatch = useDispatch()
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
             <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
             <h4>Enter your Password</h4>
             <Formik initialValues={{ pswd: '' }}
                 validate={(values) => {
-                    console.log('validate')
                     const errors = {}
                     if (values.pswd === '') {
                         errors.pswd = 'Required'
-                    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.pswd)) {
-                        errors.pswd = 'Invalid email address'
+                    } else if (!/^[A-Za-z0-9]\w{7,14}$/.test(values.pswd)) {
+                        errors.pswd = 'Password must be greater than 7 characters and contain (A-Z,a-z,0-9) characters only!'
                     }
                     return errors
                 }}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
+                        dispatch(checkUser(loggedInUser[0].email, values.pswd))
+                            .then((res) => {
+                                if (res == true) {
+                                    dispatch({ type: Actions.ADD_LOGGED_USER_ID })
+                                    
+                                    // window.location.reload()
+                                }
+                            })
                         changePassword(values.pswd)
                         setSubmitting(false);
                     }, 400)
@@ -92,13 +109,13 @@ function Third({ password, changePassword }) {
                 {({ values, errors, handleChange, handleSubmit, isSubmitting, touched, validateField }) => (
                     <form onSubmit={handleSubmit} style={{ width: '100%' }} >
                         <Input
-                            type='email'
-                            name="email"
+                            type='password'
+                            name="pswd"
                             onChange={handleChange}
-                            value={values.email}
+                            value={values.pswd}
                         />
-                        {/* {errors.email && touched.email} */}
-                        <button type='submit' disabled={errors.email} className='nextInLogin' >Next</button>
+                        {errors.pswd && touched.pswd && <p style={{ fontSize: 12, color: 'red', margin: '5px 0 0 0' }}>{errors.pswd}</p>}
+                        <button type='submit' disabled={isSubmitting} className='nextInLogin' >Submit</button>
                     </form>
                 )}
             </Formik>
@@ -113,6 +130,7 @@ function Login() {
     const [index, setIndex] = useState(0)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const { loggedInUser, loggedInUserId } = useSelector(state => state.users)
 
     const next = () => {
         if (animating) return;
@@ -170,22 +188,20 @@ function Login() {
     }
 
     const changeEmail = (email) => {
-        console.log(email)
         setEmail(email)
     }
 
     const changePassword = (pswd) => {
-        console.log(pswd)
-        setEmail(pswd)
+        setPassword(pswd)
     }
 
     const indexing = () => {
         if (index === 0)
             return (<First items={items} previous={previous} next={next} activeIndex={activeIndex} goToIndex={goToIndex} slides={slides} changeIndex={changeIndex} />)
         else if (index === 1)
-            return (<Second email={email} changeEmail={changeEmail} changeIndex={changeIndex} />)
+            return (<Second email={email} changeEmail={changeEmail} changeIndex={changeIndex} loggedInUser={loggedInUser} />)
         else if (index === 2)
-            return (<Third password={password} changePassword={changePassword} />)
+            return (<Third password={password} changePassword={changePassword} loggedInUser={loggedInUser} />)
     }
 
     return (
@@ -217,6 +233,30 @@ function Login() {
             </Modal>
         </div>
     )
+}
+
+export const fetchUserToStore = (email) => (dispatch) => {
+    return fetch(`${baseUrl}users/${email}`, {
+        mode: 'cors',
+        method: 'GET'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { dispatch({ type: Actions.ADD_LOGGED_USER, payload: response }); return response })
+        .catch(error => { dispatch({ type: Actions.FAILED_LOGGED_USER, payload: error }); return error })
 }
 
 export default Login
