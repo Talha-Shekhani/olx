@@ -36,7 +36,7 @@ function Header(props) {
                             }} >Categories
                             <span className={`fa fa-angle-${caret} mx-2`} ></span>
                             </DropdownToggle >
-                            {caret == 'up' && <DropdownMenu right className='d-flex flex-column flex-wrap'
+                            {caret === 'up' && <DropdownMenu right className='d-flex flex-column flex-wrap'
                                 style={{
                                     right: 'auto', left: -10, width: window.innerWidth - 80, top: 37, height:
                                         window.innerWidth <= 1024 ? 815 : 814
@@ -45,7 +45,7 @@ function Header(props) {
                                     return (
                                         <div key={index} className='mx-2 d-flex flex-column flex-wrap my-2' style={{ width: '23%' }} >
                                             <b style={{ fontSize: 14 }}>{item.title}</b>
-                                            {subCat.subcategories.filter(itm => itm.cat_id == item.cat_id).map((item, index) => (
+                                            {subCat.subcategories.filter(itm => itm.cat_id === item.cat_id).map((item, index) => (
                                                 <DropdownItem key={index} className='p-0' style={{ fontSize: 12 }}
                                                     href={`/${item.name}`} >{item.title}</DropdownItem>
                                             ))}
@@ -58,7 +58,7 @@ function Header(props) {
                         {cat.categories.map((item, index) => {
                             while (index < 6)
                                 return (
-                                    <NavItem>
+                                    <NavItem key={index} >
                                         <NavLink href={`/${item.name}`} key={index} >{item.title}</NavLink>
                                     </NavItem>
                                 )

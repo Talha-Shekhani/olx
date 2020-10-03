@@ -4,7 +4,8 @@ import { baseUrl } from '../baseUrl'
 import { Formik, Field } from 'formik'
 import * as Actions from '../redux/ActionTypes'
 import { useDispatch, useSelector } from 'react-redux';
-import { checkUser } from '../redux/Actions';
+import { checkUser, fetchAds, fetchFav, fetchCategories, fetchSubCategories, fetchFeat, fetchLoc } from '../redux/Actions';
+// import { useNavigation } from '@react-navigation/native'
 
 function First({ next, previous, items, activeIndex, goToIndex, slides, changeIndex }) {
     return (
@@ -52,6 +53,7 @@ function Second({ email, changeEmail, changeIndex, loggedInUser }) {
                         dispatch(fetchUserToStore(email))
                             .then((res) => {
                                 if (res !== null && Array.isArray(res)) {
+                                    window.localStorage.setItem('userdata', JSON.stringify({email: res[0].email, id: res[0].id, name: res[0].name, img: res[0].img}))
                                     setSubmitting(false)
                                     changeIndex(2)
                                 }
@@ -76,8 +78,21 @@ function Second({ email, changeEmail, changeIndex, loggedInUser }) {
     )
 }
 
-function Third({ password, changePassword, loggedInUser }) {
+function Third({ password, changePassword, loggedInUser, toggleModal }) {
     const dispatch = useDispatch()
+    const [userId, setUserId] = useState(loggedInUser[0].id)
+
+    useEffect(() => {
+        return () => {
+            dispatch(fetchAds())
+            dispatch(fetchFav(userId))
+            dispatch(fetchCategories())
+            dispatch(fetchSubCategories())
+            dispatch(fetchFav(userId))
+            dispatch(fetchFeat(userId))
+            dispatch(fetchLoc())
+        }
+    }, [])
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
             <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
@@ -98,8 +113,7 @@ function Third({ password, changePassword, loggedInUser }) {
                             .then((res) => {
                                 if (res == true) {
                                     dispatch({ type: Actions.ADD_LOGGED_USER_ID })
-                                    
-                                    // window.location.reload()
+                                    window.location.reload()
                                 }
                             })
                         changePassword(values.pswd)
@@ -201,7 +215,7 @@ function Login() {
         else if (index === 1)
             return (<Second email={email} changeEmail={changeEmail} changeIndex={changeIndex} loggedInUser={loggedInUser} />)
         else if (index === 2)
-            return (<Third password={password} changePassword={changePassword} loggedInUser={loggedInUser} />)
+            return (<Third password={password} changePassword={changePassword} loggedInUser={loggedInUser} toggleModal={toggleModal} />)
     }
 
     return (
