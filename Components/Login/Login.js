@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { ads } from '../../redux/ads';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -84,7 +84,7 @@ class Login extends Component {
             <SafeAreaView style={{ backgroundColor: 'white' }}>
                 <ScrollView style={{ height: '90%', backgroundColor: 'white' }}  >
                     <View style={styles.container} >
-                        <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
+                        <Image source={{ uri: imageUrl + 'boy.png' }} style={styles.image} />
                         <Text style={styles.title}>Enter your Email</Text>
                         <Text style={styles.heading}>Email</Text>
                         <Input

@@ -63,14 +63,14 @@ class AddPackage extends Component {
             <View style={styles.row} >
               <RadioButton.Item value='easypaisa' label='Easy Paisa'
                 color='#387eff' labelStyle={styles.labelStyle}
-                style={styles.radioStyle} />
-              {/* <Text>Easy Paisa</Text> */}
+                style={[styles.radioStyle]} />
+              <Text  >Easy Paisa</Text>
             </View>
             <View style={styles.row} >
               <RadioButton.Item value='bank' label='Bank'
                 color='#387eff' labelStyle={styles.labelStyle}
                 style={styles.radioStyle} />
-              {/* <Text>Bank</Text> */}
+              <Text>Bank</Text>
             </View>
           </RadioButton.Group>
           <Divider style={{ height: 2 }} />
@@ -222,7 +222,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   labelStyle: {
-    width: '90%'
+    width: '90%',
+    color: 'black'
   },
   radioStyle: {
     flexDirection: 'row-reverse',

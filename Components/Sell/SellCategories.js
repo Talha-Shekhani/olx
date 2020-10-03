@@ -10,7 +10,7 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import SubCategories from '../Home/SubCategories'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
-import { baseUrl } from '../../shared/baseUrl'
+import { baseUrl, imageUrl } from '../../shared/baseUrl'
 import { Loading } from '../LoadingComponent'
 
 const mapStateToProps = state => {
@@ -72,7 +72,7 @@ class SellCategories extends Component {
               <ListItem containerStyle={styles.navLink} onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: true })}
                 key={index}
                 title={item.title}
-                leftAvatar={{ source: { uri: baseUrl + item.img } }}
+                leftAvatar={{ source: { uri: imageUrl + item.img } }}
                 rightIcon={<Icon style={styles.arrowIcon} name='angle-right' type='font-awesome' size={24} />} >
               </ListItem>
             )

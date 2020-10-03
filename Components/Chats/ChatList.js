@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import NumberFormat from 'react-number-format';
 import { Loading } from '../LoadingComponent';
 import { fetchChatUser, fetchUser } from '../../redux/Actions'
@@ -65,7 +65,7 @@ class ChatList extends Component {
                             containerStyle={{ height: 74 }}
                             rightSubtitleStyle={{ fontSize: 10, marginTop: 40 }}
                             rightSubtitle={dat.toUTCString().slice(5, 12) + '' + dat.toUTCString().slice(16, 22)}
-                            leftAvatar={<Avatar source={{ uri: userItem.img == '' ? baseUrl + 'boy.png' : baseUrl + userItem.img }} style={{ width: 40, height: 40, borderRadius: 50 }}
+                            leftAvatar={<Avatar source={{ uri: userItem.img == '' ? imageUrl + 'boy.png' : baseUrl + userItem.img }} style={{ width: 40, height: 40, borderRadius: 50 }}
                             />} >
                         </ListItem>
                     )

@@ -69,7 +69,7 @@ class ImageSelection extends Component {
             this.forceUpdate()
             switch (results) {
                 case RESULTS.GRANTED: {
-                    CameraRoll.getPhotos({ first: 10, groupTypes: "All", assetType: "Photos", include: ["fileSize", "filename", "imageSize"] }).then((res) => {
+                    CameraRoll.getPhotos({ first: 20, groupTypes: "All", assetType: "Photos", include: ["fileSize", "filename", "imageSize"] }).then((res) => {
                         return (
                             res.edges.map((item, index) => {
                                 // console.log(item.node)

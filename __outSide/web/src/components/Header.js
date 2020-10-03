@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Nav, Navbar, NavLink, NavbarToggler, NavItem, Collapse, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
 import Login from './Login';
-import { baseUrl } from '../baseUrl';
+import { baseUrl, imageUrl } from '../baseUrl';
 // import { baseUrl } from '../baseUrl';
 
 
@@ -20,7 +20,7 @@ function Header(props) {
     return (
         <>
             <div style={{background: '#ddd', display: "flex"}} >
-                <img src={baseUrl + 'OLX_LOGO.png'} style={{width: 50, height: 30, margin: 15}} />
+                <img src={imageUrl + 'OLX_LOGO.png'} style={{width: 50, height: 30, margin: 15}} />
                 <Login />
             </div>
             <Navbar color="black" light expand="md" className='bg-white py-0'>

@@ -10,7 +10,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { putStatus, delAd } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import NumberFormat from 'react-number-format';
 import { Button, Colors } from 'react-native-paper';
 
@@ -70,9 +70,9 @@ class MyAds extends Component {
                   <View style={styles.btnFlowDelete}>
                     <Button style={styles.btnFloatText}
                       mode={"contained"}
-                      labelStyle={{ fontSize: 12, textTransform: "none" }}
+                      labelStyle={{ fontSize: 11, textTransform: "none" }}
                       contentStyle={{ margin: -6 }} color='#00a6ff'
-                      onPress={() => Alert.alert('Pakka?', 'sachi, delete krdu?', [
+                      onPress={() => Alert.alert('Confirm?', 'Are you sure to delete this ad?', [
                         { text: 'Cancel', style: "destructive" },
                         { text: 'OK', style: 'default', onPress: () => this.props.delAd(item.id) }
                       ], { cancelable: true })}>Delete Ad</Button>
@@ -83,7 +83,7 @@ class MyAds extends Component {
                         <Image containerStyle={styles.cardImage}
                           resizeMethod="scale"
                           resizeMode="contain"
-                          source={{ uri: baseUrl + item.img1 }}
+                          source={{ uri: imageUrl + item.img1 }}
                         />
                       </View>
                       <View style={styles.rightSide} >
@@ -93,7 +93,7 @@ class MyAds extends Component {
                           prefix={'Rs '}
                           renderText={formattedValue => <Text style={styles.productPrice} >{formattedValue}</Text>} />
                         <Text style={styles.productTitle} numberOfLines={1}>{item.title}</Text>
-                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: Colors.white, backgroundColor: Colors.lightBlue500, padding: 1, paddingHorizontal: 5, width: 60, margin: 1 }}>{item.type}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: Colors.white, backgroundColor: Colors.lightBlue500, padding: 1, paddingHorizontal: 5, width: 80, margin: 1 }}>{item.type}</Text>
                         {item.type != 'basic' &&
                           <Text style={{ color: 'grey', fontSize: 12 }} >
                             Status: {item.paid == 'y' ? 'Paid' : 'Not-Paid'}
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 20
+    marginTop: 15
   },
   productTitle: {
     fontSize: 14,

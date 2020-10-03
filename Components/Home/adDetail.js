@@ -4,7 +4,7 @@ import { Icon, Card, Image, Rating, Input, Button } from 'react-native-elements'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { postComment, postFav, delFav, fetchFav, postReview, fetchReviewByAd, postFeatured } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -94,7 +94,7 @@ class adDetail extends Component {
                   <Image containerStyle={styles.cardImage}
                     resizeMethod="scale"
                     resizeMode="stretch"
-                    source={{ uri: (baseUrl + item.img1) }}
+                    source={{ uri: (imageUrl + item.img1) }}
                   />
                 </View>
                 <View>
@@ -154,9 +154,9 @@ class adDetail extends Component {
           }
           var dat = new Date(item.created_date)
           let img = []
-          if (item.img1 != '') img[0] = baseUrl + item.img1
-          if (item.img2 != '') img[1] = baseUrl + item.img2
-          if (item.img3 != '') img[2] = baseUrl + item.img3
+          if (item.img1 != '') img[0] = imageUrl + item.img1
+          if (item.img2 != '') img[1] = imageUrl + item.img2
+          if (item.img3 != '') img[2] = imageUrl + item.img3
           return (
             <View key={index} style={styles.container} >
               <View style={styles.imgConatiner}>
@@ -209,7 +209,7 @@ class adDetail extends Component {
                     return (
                       <>
                         <View style={styles.userDetail} >
-                          <Image source={{ uri: baseUrl + item.img }} style={styles.userImage} />
+                          <Image source={{ uri: imageUrl + item.img }} style={styles.userImage} />
                           <View>
                             <Text style={styles.textStyle}>{item.name}</Text>
                             <Text style={styles.textStyle} >Member since {dat.toUTCString().slice(7, 16)} </Text>
@@ -234,7 +234,7 @@ class adDetail extends Component {
                             return (
                               <View style={styles.reviewCont} >
                                 <View style={styles.reviewRow} >
-                                  <Image source={{ uri: baseUrl + item.img }} style={styles.reviewUserImage} />
+                                  <Image source={{ uri: imageUrl + item.img }} style={styles.reviewUserImage} />
                                   <Text>{item.name}</Text>
                                 </View>
                                 <View style={styles.reviewRow} >

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardBody, CardImg } from 'reactstrap'
 import { delFav, postFav } from '../redux/Actions';
-import { baseUrl } from '../baseUrl';
+import { baseUrl, imageUrl } from '../baseUrl';
 
 
 function Home(props) {
@@ -53,7 +53,7 @@ function Home(props) {
                                             dispatch(postFav(userId, item.id))
                                     }}
                                         style={{ zIndex: 2, color: 'red', fontSize: 22 }} /></div>
-                                <CardImg src={`${baseUrl + item.img1}`} top className='productCardImage py-2' />
+                                <CardImg src={`${imageUrl + item.img1}`} top className='productCardImage py-2' />
                                 <CardBody className='productCardBody d-flex flex-column p-0 pl-3' >
                                     <p style={{ fontWeight: "bold", margin: 0 }}> Rs {item.price}</p>
                                     <p className='productTitle' >{item.title}</p>

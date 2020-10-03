@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { fetchUser, getOverallReview } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
@@ -93,7 +93,7 @@ class MyAccount extends Component {
             <SafeAreaView style={{ backgroundColor: 'white' }}>
                 <ScrollView style={styles.container}  >
                     <View style={styles.header} >
-                        <Image source={{ uri: baseUrl + 'boy.png' }} style={styles.image} />
+                        <Image source={{ uri: imageUrl + 'boy.png' }} style={styles.image} />
                         <View style={styles.subHead} >
                             <Text style={styles.username} >
                                 {isLogin === true ? this.props.user.users[0].name : 'Login'}

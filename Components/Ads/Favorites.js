@@ -12,7 +12,7 @@ import { Loading } from '../LoadingComponent'
 import NumberFormat from 'react-number-format';
 import AsyncStorage from '@react-native-community/async-storage'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { isEmpty } from 'react-native-validator-form/lib/ValidationRules';
 
 
@@ -83,7 +83,7 @@ class Favorites extends Component {
                             <Image containerStyle={styles.cardImage}
                               resizeMethod="scale"
                               resizeMode="stretch"
-                              source={{ uri: baseUrl + item.img1 }}
+                              source={{ uri: imageUrl + item.img1 }}
                             />
                           </View>
                           <View style={styles.rightSide} >

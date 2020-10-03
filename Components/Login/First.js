@@ -8,7 +8,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import FeatIcon from 'react-native-vector-icons/Feather'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { postComment } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
@@ -30,7 +30,7 @@ class FirstPage extends Component {
           </TouchableOpacity>
         </View>
         <View style={{ height: '60%' }} >
-          <Image source={{ uri: baseUrl + 'OLX_BLUE_LOGO.png' }} resizeMode='contain' style={styles.img} />
+          <Image source={{ uri: imageUrl + 'OLX_BLUE_LOGO.png' }} resizeMode='contain' style={styles.img} />
         </View>
         <View style={styles.bottomContainer}>
           <View style={styles.btnContainer}>

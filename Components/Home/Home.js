@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { postFav, delFav, fetchFav, fetchFeat } from '../../redux/Actions'
 import { ads } from '../../redux/ads'
@@ -70,7 +70,7 @@ class Home extends Component {
                 containerStyle={styles.categoryLink}
                 onPress={() => this.props.navigation.navigate('subcategories', { catId: item.cat_id, catName: item.title, sell: false })} >
                 <View style={styles.iconBack}>
-                  <Image style={{ width: 40, height: 40 }} source={{ uri: baseUrl + item.img }} />
+                  <Image style={{ width: 40, height: 40 }} source={{ uri: imageUrl + item.img }} />
                 </View>
                 <Text style={styles.productText} >{item.title}</Text>
               </TouchableOpacity>
@@ -123,7 +123,7 @@ class Home extends Component {
                       <Image containerStyle={styles.cardImage}
                         resizeMethod="scale"
                         resizeMode="contain"
-                        source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                        source={{ uri: (imageUrl + item.img1), cache: 'force-cache' }}
                       />
                     </View>
                     <View>
@@ -199,7 +199,7 @@ class Home extends Component {
                               <Image containerStyle={styles.cardImage}
                                 resizeMethod="scale"
                                 resizeMode="contain"
-                                source={{ uri: (baseUrl + item.img1), cache: 'force-cache' }}
+                                source={{ uri: (imageUrl + item.img1), cache: 'force-cache' }}
                               />
                             </View>
                             <View>

@@ -4,7 +4,7 @@ import { Icon, Card, Image, Rating, Input, Button } from 'react-native-elements'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { connect } from 'react-redux';
-import { baseUrl } from '../../shared/baseUrl';
+import { baseUrl, imageUrl } from '../../shared/baseUrl';
 import { Loading } from '../LoadingComponent';
 import { postReview, fetchReviewByUser } from '../../redux/Actions'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -74,7 +74,7 @@ class Reviews extends Component {
                                                     <Text style={{ fontWeight: "bold" }} > Product Title : {item.title}</Text>
                                                 </View>
                                                 <View style={styles.reviewRow} >
-                                                    <Image source={{ uri: baseUrl + item.img }} style={styles.reviewUserImage} />
+                                                    <Image source={{ uri: imageUrl + item.img }} style={styles.reviewUserImage} />
                                                     <Text>{item.name}</Text>
                                                 </View>
                                                 <View style={styles.reviewRow} >
