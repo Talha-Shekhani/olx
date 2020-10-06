@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors')
 const http = require('http')
+const nodemailer = require('nodemailer')
 
 const con = require("./connection");
 const bodyParser = require('body-parser')
@@ -64,6 +65,38 @@ app.put('/setStatus', (req, res) => {
     })
 })
 
+app.use('/sendCode', (req, res) => {
+    console.log(req.body)
+    var transporter = nodemailer.createTransport({
+        host: 'mail.cacmarket.com',
+        mailer: 'smtp',
+        port: 465,
+        tls: true,
+        rejectUnauthorized: false,
+        auth: {
+            user: 'info@cacmarket.com',
+            pass: '.]_o+Iig+nXQ'
+        }
+    });
+
+    var mailOptions = {
+        from: 'info@cacmarket.com',
+        to: `${req.body.email}`,
+        subject: 'Sending Email using Node.js',
+        text: `Verification Code: ${req.body.code}`
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+            res.send({success: false, error: error.toString()})
+        } else {
+            console.log('Email sent: ' + info.response)
+            res.send({success: true})
+        }
+    });
+})
+
 setInterval(() => {
     const dat = new Date()
     dat.setHours(24, 0, 0, 0)
@@ -114,10 +147,10 @@ wsServer.on('request', (request) => {
         console.log('serversidemsg:', msg)
         if (msg.type === 'utf8')
             console.log('Recieved message: ', msg.utf8Data)
-            for (key in clients){
-                clients[key].sendUTF(msg.utf8Data)
-                // console.log('Send msgs to ', clients[key])
-            }
+        for (key in clients) {
+            clients[key].sendUTF(msg.utf8Data)
+            // console.log('Send msgs to ', clients[key])
+        }
     })
 })
 wsServer.on('connect', (req) => {
@@ -129,19 +162,19 @@ wsServer.on('close', (conn, reason, desc) => {
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;

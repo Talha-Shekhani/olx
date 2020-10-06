@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, Carousel, CarouselItem, CarouselIndicators, CarouselCaption, Input, Button } from 'reactstrap'
-import { baseUrl } from '../baseUrl'
+import { Modal, ModalHeader, ModalBody, Carousel, CarouselItem, CarouselIndicators, CarouselCaption, Input, Button, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
+import { baseUrl, imageUrl } from '../baseUrl'
 import { Formik, Field } from 'formik'
 import * as Actions from '../redux/ActionTypes'
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,7 +34,7 @@ function Second({ email, changeEmail, changeIndex, loggedInUser }) {
     const [err, setErr] = useState('')
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
-            <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
+            <img src={imageUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
             <h4>Enter your Email</h4>
             {/* <Input name='email' type='email' placeholder='Email' value={email} chan />
             <button type='button' disabled className='nextInLogin' >Next</button> */}
@@ -53,7 +53,7 @@ function Second({ email, changeEmail, changeIndex, loggedInUser }) {
                         dispatch(fetchUserToStore(email))
                             .then((res) => {
                                 if (res !== null && Array.isArray(res)) {
-                                    window.localStorage.setItem('userdata', JSON.stringify({email: res[0].email, id: res[0].id, name: res[0].name, img: res[0].img}))
+                                    window.localStorage.setItem('userdata', JSON.stringify({ email: res[0].email, id: res[0].id, name: res[0].name, img: res[0].img }))
                                     setSubmitting(false)
                                     changeIndex(2)
                                 }
@@ -95,7 +95,7 @@ function Third({ password, changePassword, loggedInUser, toggleModal }) {
     }, [])
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} >
-            <img src={baseUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
+            <img src={imageUrl + 'OLX_LOGO.png'} style={{ width: 50, height: 30, margin: 15 }} />
             <h4>Enter your Password</h4>
             <Formik initialValues={{ pswd: '' }}
                 validate={(values) => {
@@ -145,6 +145,10 @@ function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const { loggedInUser, loggedInUserId } = useSelector(state => state.users)
+    var res = window.localStorage.getItem('userdata')
+    var rs = JSON.parse(res)
+    var rsId = rs !== null ? rs.id : 0
+    const [userId, setUserId] = useState(rsId)
 
     const next = () => {
         if (animating) return;
@@ -220,9 +224,18 @@ function Login() {
 
     return (
         <div className='d-flex flex-row p-2 ml-auto mr-4'>
-            <button className='btnLogin d-flex align-self-center' onClick={toggleModal} >
-                Login
-            </button>
+            {userId == 0 ?
+                <button className='btnLogin d-flex align-self-center' onClick={toggleModal} >
+                    Login
+                </button> :
+                <UncontrolledDropdown>
+                    <DropdownToggle nav >
+                        <img src={imageUrl + rs.img} style={{ width: 40, height: 40, borderRadius: 50 }} />
+                    </DropdownToggle >
+                    <DropdownMenu right>
+                        <DropdownItem onClick={() => {localStorage.removeItem('userdata'); window.location.href = '/'}} >LogOut</DropdownItem>
+                    </DropdownMenu>
+                </UncontrolledDropdown>}
             <div className='d-flex flex-row' onClick={() => console.log('object')} >
                 <svg width="104" height="48" viewBox="0 0 1603 768" >
                     <g>

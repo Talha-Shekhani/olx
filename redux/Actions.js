@@ -429,6 +429,7 @@ export const postAd = (userId, formData) => (dispatch) => {
     }
     console.log('data', JSON.stringify(data))
     fetch(`${baseUrl}ads/upload`, {
+        mode: 'no-cors',
         method: 'POST',
         headers: {
             'Accept': 'application/json',

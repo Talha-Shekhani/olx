@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { Nav, Navbar, NavLink, NavbarToggler, NavItem, Collapse, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
 import Login from './Login';
 import { baseUrl, imageUrl } from '../baseUrl';
-// import { baseUrl } from '../baseUrl';
 
 
 function Header(props) {
@@ -30,7 +29,7 @@ function Header(props) {
                 <NavbarToggler onClick={handleToggle} />
                 <Collapse isOpen={isOpen} navbar className='col-12' >
                     <Nav className="mr-auto" navbar>
-                        <UncontrolledDropdown nav inNavbar>
+                        <UncontrolledDropdown inNavbar>
                             <DropdownToggle nav onClick={() => {
                                 console.log(caret); caret === 'down' ? setCaret('up') : setCaret('down')
                             }} >Categories

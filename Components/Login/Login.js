@@ -72,6 +72,9 @@ class Login extends Component {
         if (this.state.email != '') {
             if (isEmail(this.state.email)) {
                 let code = Math.floor(1000 + Math.random() * 9000);
+                sendCode(code, this.state.email).then((res) => {
+                    console.log(res)
+                })
                 this.props.navigation.navigate('code', { code: code, email: this.state.email })
             }
             else this.setState({ errmsg: 'Not Valid Email' })
@@ -102,7 +105,6 @@ class Login extends Component {
                         />
                         <Text style={{ textDecorationLine: 'underline', color: 'blue', alignSelf: 'center', fontSize: 16 }}
                             onPress={this.handleSignUp.bind(this)}
-                        // Linking.openURL(`mailto:${this.state.email}&subject=any&body=any`) } 
                         >
                             Sign-up?
                         </Text>
@@ -158,6 +160,35 @@ const styles = StyleSheet.create({
         bottom: 0,
     }
 })
+
+export const sendCode = (code, email) => {
+    console.log(code)
+    return fetch(`${baseUrl}sendCode`, {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({code: code, email: email})
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

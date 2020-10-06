@@ -3,15 +3,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchAds, fetchFav, fetchCategories, fetchSubCategories, fetchFeat, fetchLoc } from '../redux/Actions';
 import Header from './Header';
 import Home from './Home';
+import { Switch, Route } from 'react-router-dom';
+import AdDetail from './AdDetail';
 
 
 function Main(props) {
     const {ads} = useSelector(state => state)
     const dispatch = useDispatch()
-    const { loggedInUser, loggedInUserId } = useSelector(state => state.users)
+    // const {  } = useSelector(state => state.users)
     var res = window.localStorage.getItem('userdata')
-    console.log(JSON.parse(res).id)
-    var rs = JSON.parse(res).id === undefined ? 0 : JSON.parse(res).id
+    // console.log(JSON.parse(res).id)
+    var rs = JSON.parse(res)
+    rs = rs !== null ? rs.id : 0
     const [userId, setUserId] = useState(rs)
 
     useEffect(() => {
@@ -29,7 +32,10 @@ function Main(props) {
             {/* <p style={{background: '#eee', margin: 0, padding: 10}} > Main</p> */}
             {/* <p>{JSON.stringify(st.favorites)}</p> */}
             <Header />
-            <Home />
+            <Switch>
+                <Route path='/' component={() => <Home />} />
+                <Route path='/item' component={() => <AdDetail />} />
+            </Switch>
         </>
     )
 }
