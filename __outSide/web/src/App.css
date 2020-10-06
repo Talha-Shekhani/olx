@@ -1,31 +1,7 @@
-.cardColumn {
-  /* overflow: scroll; */
-  /* display: flex;
-  flex-wrap: wrap;
-  flex-direction: row; */
-  /* justify-content: space-around; */
-  /* margin-bottom: 40px;
-  margin-left: 50px;
-  margin-right: 50px; */
-}
-
 .productCardColumn {
-  /* width: 20% !important; */
-  /* background-color: #3676ff !important; */
   height: 250px !important;
-  /* padding: 5px !important; */
-  /* margin-left: 8px !important; */
   border-color: grey !important;
   border-radius: 5px !important;
-}
-
-.productCardBody {
-  /* width: 100px !important; */
-  /* display: flex;
-  flex-direction: column; */
-  /* padding: 0; */
-  /* padding-top: 10px; */
-  /* padding-left: 10px; */
 }
 
 .productCardImage {
@@ -51,7 +27,7 @@
   width: 80px !important;
   position: absolute;
   z-index: 1;
-  /* padding: 1px; */
+  color: #000;
   margin: 2px;
   margin-top: 8px;
 }
@@ -61,20 +37,23 @@
   width: 80px;
   position: absolute;
   z-index: 1;
-  /* padding: 1px; */
+  color: #000;
   margin: 4px;
   margin-top: 8px;
 }
 
 .iconHBack {
   position: absolute;
+  right: 18px;
+  top: 3px;
   background-color: white;
+  box-shadow: 0px 3px 5px #ccc;
   border-radius: 50px;
   width: 40px;
   height: 40px;
   align-self: flex-end;
   justify-content: center;
-  z-index: 2;
+  z-index: 200;
 }
 
 .iconHBack span {
@@ -83,6 +62,14 @@
   align-content: center;
   align-self: center;
   margin-top: 10px;
+}
+
+.productLink:hover {
+  text-decoration: none;
+}
+
+.productLink {
+  z-index: 1;
 }
 
 .btnLogin {
@@ -109,6 +96,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  color: #000;
 }
 
 .btnInsideText {
@@ -136,7 +124,7 @@
   outline: 4px solid black;
 }
 
-.carousel-caption p {
+.loginSliderCaption p {
   color: black;
   position: absolute;
   top: 100px;
@@ -146,16 +134,16 @@
   /* margin-top: 100px; */
 }
 
-.carousel, .carousel-inner {
+.loginSlider, .loginSliderIndicators + .carousel-inner {
   height: 230px;
   /* background-color: black; */
 }
 
-.carousel-indicators li {
+.loginSliderIndicators li {
   background-color: #00e5ff;
 }
 
-.carousel-control-prev span, .carousel-control-next span {
+.loginSliderPrev span, .loginSliderNext span {
   color: #00e5ff;
 }
 
@@ -166,4 +154,12 @@
   border-radius: 5px;
   padding: 5px;
   font-weight: bold;
+}
+
+.adDetailSlider {
+  display: flex;
+  width: 60%;
+  margin: 20px;
+  border-radius: 5px;
+  border: 1px solid #999;
 }

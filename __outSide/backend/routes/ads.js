@@ -54,11 +54,6 @@ Ads.route('/')
     })
 
 Ads.route('/:userId/form')
-    .all((req, res, next) => {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        next()
-    })
     .get((req, res, next) => {
         console.log('formData', req.params.userId, ' ', req.body)
         res.send(req.body)
@@ -86,8 +81,8 @@ Ads.route('/:userId/form')
             '${img1}', 
             '${img2}',
             '${img3}',
-            '${dat.toISOString()}', 
-            '${dat.toISOString()}',
+            '${dat}', 
+            '${dat}',
             'true',
             '${req.body.type}',
             '${req.body.paid}') `, (err, result) => {
@@ -112,7 +107,11 @@ Ads.route('/:userId/form')
                             res.statusCode = 403
                             res.send(err)
                         }
-                        else res.send(result)
+                        else {
+                            res.statusCode = 200
+                            res.setHeader('Content-Type', 'application/json')
+                            res.send(result)
+                        }
                     })
             }
         })
@@ -128,7 +127,7 @@ Ads.route('/:userId/form')
 
 const storage = multer.diskStorage({
     destination(req, file, callback) {
-        callback(null, './assets/images/')
+        callback(null, 'public/images')
     },
     filename(req, file, callback) {
         callback(null, `${file.originalname}`)

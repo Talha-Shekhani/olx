@@ -10,15 +10,15 @@ import { checkUser, fetchAds, fetchFav, fetchCategories, fetchSubCategories, fet
 function First({ next, previous, items, activeIndex, goToIndex, slides, changeIndex }) {
     return (
         <>
-            <Carousel
+            <Carousel className='loginSlider'
                 activeIndex={activeIndex}
                 next={next}
                 previous={previous} >
-                <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={goToIndex} />
+                <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={goToIndex} className='loginSliderIndicators' />
                 {slides}
                 {/* <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} /> */}
-                <a className="carousel-control-prev" onClick={previous} style={{ cursor: 'pointer' }}><span className="fa fa-angle-left" style={{ fontSize: 30 }} aria-hidden="true"></span><span className="sr-only">Previous</span></a>
-                <a className="carousel-control-next" onClick={next} style={{ cursor: 'pointer' }}><span className="fa fa-angle-right" style={{ fontSize: 30 }} aria-hidden="true"></span><span className="sr-only">Next</span></a>
+                <a className="carousel-control-prev loginSliderPrev" onClick={previous} style={{ cursor: 'pointer' }}><span className="fa fa-angle-left" style={{ fontSize: 30 }} aria-hidden="true"></span><span className="sr-only">Previous</span></a>
+                <a className="carousel-control-next loginSliderNext" onClick={next} style={{ cursor: 'pointer' }}><span className="fa fa-angle-right" style={{ fontSize: 30 }} aria-hidden="true"></span><span className="sr-only">Next</span></a>
             </Carousel>
             <button className='btns' >Continue with Phone</button>
             <button className='btns' >Continue with Facebook</button>
@@ -193,7 +193,7 @@ function Login() {
                 key={item.src}
             >
                 <img src={item.src} alt={item.altText} width='120' style={{ marginLeft: '37%' }} />
-                <CarouselCaption captionText={item.caption} />
+                <CarouselCaption captionText={item.caption} className='loginSliderCaption' />
             </CarouselItem>
         );
     });

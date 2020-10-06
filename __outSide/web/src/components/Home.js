@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardBody, CardImg } from 'reactstrap'
 import { delFav, postFav } from '../redux/Actions';
 import { baseUrl, imageUrl } from '../baseUrl';
+import { Link } from 'react-router-dom';
 
 
 function Home(props) {
@@ -40,36 +41,39 @@ function Home(props) {
                     }
                     return (
                         <div className='col-12 col-md-4 col-lg-3 col-xl-3 my-2' key={index} >
-                            <Card className='productCardColumn' key={index} >
-                                {feature == item.category_id && item.type != 'premium' ? <div className='featuredTag' >
-                                    <p style={{ alignSelf: 'center' }} className='m-0 pl-2' >Featured</p>
-                                </div> : <></>}
-                                {item.type == 'premium' ? <div className='premiumTag' >
-                                    <p style={{ alignSelf: 'center' }} className='m-0 pl-2'>Premium</p>
-                                </div> : <></>}
-                                <div className='iconHBack'>
-                                    <span className={favrite == item.id ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={() => {
-                                        // console.log('object')
-                                        if (favrite == item.id)
-                                            dispatch(delFav(userId, item.id))
-                                        else
-                                            dispatch(postFav(userId, item.id))
-                                    }}
-                                        style={{ zIndex: 2, color: 'red', fontSize: 22 }} /></div>
-                                <CardImg src={`${imageUrl + item.img1}`} top className='productCardImage py-2' />
-                                <CardBody className='productCardBody d-flex flex-column p-0 pl-3' >
-                                    <p style={{ fontWeight: "bold", margin: 0 }}> Rs {item.price}</p>
-                                    <p className='productTitle' >{item.title}</p>
-                                    <div className='productAddress d-flex mt-auto mb-2' >
-                                        <span className="fa fa-map-marker" style={{ color: 'grey', fontSize: 12, alignSelf: 'center' }}></span>
-                                        <div style={{ fontSize: 12, color: 'grey' }}>
-                                            {loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
-                                                return (<p key={index} className='mb-0 ml-1' >  {itm.area}, {itm.city}</p>)
-                                            })}
+                            {feature == item.category_id && item.type != 'premium' ? <div className='featuredTag' >
+                                <p style={{ alignSelf: 'center' }} className='m-0 pl-2' >Featured</p>
+                            </div> : <></>}
+                            {item.type == 'premium' ? <div className='premiumTag' >
+                                <p style={{ alignSelf: 'center' }} className='m-0 pl-2'>Premium</p>
+                            </div> : <></>}
+                            <div className='iconHBack'>
+                                <span className={favrite == item.id ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={() => {
+                                    // console.log('object')
+                                    if (favrite == item.id)
+                                        dispatch(delFav(userId, item.id))
+                                    else
+                                        dispatch(postFav(userId, item.id))
+                                }}
+                                    style={{ zIndex: 2, color: 'red', fontSize: 22 }} /></div>
+                            <Link to={`item/${item.title}-${item.id}`} className='productLink' >
+                                <Card className='productCardColumn' key={index} >
+
+                                    <CardImg src={`${imageUrl + item.img1}`} top className='productCardImage py-2' />
+                                    <CardBody className='productCardBody d-flex flex-column p-0 pl-3' >
+                                        <p style={{ fontWeight: "bold", margin: 0, color: 'black' }}> Rs {item.price}</p>
+                                        <p className='productTitle' >{item.title}</p>
+                                        <div className='productAddress d-flex mt-auto mb-2' >
+                                            <span className="fa fa-map-marker" style={{ color: 'grey', fontSize: 12, alignSelf: 'center' }}></span>
+                                            <div style={{ fontSize: 12, color: 'grey' }}>
+                                                {loc.loc.filter(itm => itm.id == item.area_id).map((itm, index) => {
+                                                    return (<p key={index} className='mb-0 ml-1' >  {itm.area}, {itm.city}</p>)
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardBody>
-                            </Card>
+                                    </CardBody>
+                                </Card>
+                            </Link>
                         </div>
                         // <Card className='productCardColumn' key={index} >
                         //     {feat === item.category_id && item.type != 'premium' ? <div className='featuredTag' >
@@ -117,7 +121,7 @@ function Home(props) {
 
     return (
         <>
-            {/* {JSON.stringify(st)} */}
+            {/* <img src='assets/main_pic.jpg' style={{ width: '100%', height: 'auto' }} /> */}
             <div className='cardColumn d-flex flex-row flex-wrap mx-5 my-3 justify-content-start' >
                 {renderAds('premium')}
                 {renderAds('basic')}

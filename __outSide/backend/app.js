@@ -21,12 +21,13 @@ const Chats = require('./routes/chats');
 const rev = require('./routes/review');
 const feature = require('./routes/featured');
 const Admin = require('./routes/admin')
+const config = require('./config')
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -74,13 +75,13 @@ app.use('/sendCode', (req, res) => {
         tls: true,
         rejectUnauthorized: false,
         auth: {
-            user: 'info@cacmarket.com',
-            pass: '.]_o+Iig+nXQ'
+            user: config.module.mail,
+            pass: config.module.pass
         }
     });
 
     var mailOptions = {
-        from: 'info@cacmarket.com',
+        from: config.module.mail,
         to: `${req.body.email}`,
         subject: 'Sending Email using Node.js',
         text: `Verification Code: ${req.body.code}`

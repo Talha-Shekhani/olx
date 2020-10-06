@@ -65,7 +65,6 @@ function Header(props) {
                     </Nav>
                 </Collapse>
             </Navbar>
-            <img src='assets/main_pic.jpg' style={{ width: '100%', height: 'auto' }} />
         </>
     )
 }

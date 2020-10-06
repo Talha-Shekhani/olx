@@ -480,7 +480,7 @@ export const postAd = (userId, formData) => (dispatch) => {
                 return errmess
             })
         .then((response) => { return response.json() })
-        .then(response => dispatch(fetchAds()))
+        .then(response => {return response})
         .catch(error => dispatch(adsFailed(error)))
 }
 
