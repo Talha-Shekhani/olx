@@ -9,7 +9,6 @@ import AdDetail from './AdDetail';
 function Main(props) {
     const { ads } = useSelector(state => state)
     const dispatch = useDispatch()
-    // const {  } = useSelector(state => state.users)
     var res = window.localStorage.getItem('userdata')
     var rs = JSON.parse(res)
     rs = rs !== null ? rs.id : 0
@@ -26,17 +25,16 @@ function Main(props) {
 
     const itemDetail = ({match}) => {
         var { itemId } = match.params
-        var adId = itemId.slice(itemId.toString().lastIndexOf('-') + 1)
-        console.log('itmslice', adId, ads.ads)
+        // var adId = itemId.slice(itemId.toString().lastIndexOf('-') + 1)
         return (
-            <AdDetail ad={ads.ads.filter(item => item.id == adId)[0]} />
+            <AdDetail adId={itemId} />
         )
     }
 
     return (
         <>
             {/* <p style={{background: '#eee', margin: 0, padding: 10}} > Main</p> */}
-            {/* <p>{JSON.stringify(st.favorites)}</p> */}
+            {/* <p>{JSON.stringify(ads.ads)}</p> */}
             <Header />
             <img src='/assets/main_pic.jpg' style={{ width: '100%', height: 'auto' }} />
             <Switch>

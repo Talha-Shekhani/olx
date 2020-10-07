@@ -83,7 +83,7 @@ class MyAccount extends Component {
     }
 
     render() {
-        console.log(this.props.user)
+        console.log(this.props.user.users)
         let isLogin = false
         if (this.state.userId != 0)
             isLogin = true
@@ -96,7 +96,7 @@ class MyAccount extends Component {
                         <Image source={{ uri: imageUrl + 'boy.png' }} style={styles.image} />
                         <View style={styles.subHead} >
                             <Text style={styles.username} >
-                                {isLogin === true ? this.props.user.users[0].name : 'Login'}
+                                {this.props.user.users.length != 0 ? this.props.user.users[0].name : 'Login'}
                             </Text>
                             <View style={{ flexDirection: 'row' }}>
                                 <Rating startingValue={this.state.rating} readonly count={5} imageSize={18}

@@ -94,6 +94,7 @@ class ImageSelection extends Component {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 console.log(response)
+                response.data = ''
                 this.setState({ selectedImage: this.state.selectedImage.concat(response) })
                 this.processImage()
             }

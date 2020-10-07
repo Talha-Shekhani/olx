@@ -56,7 +56,7 @@ function Home(props) {
                                         dispatch(postFav(userId, item.id))
                                 }}
                                     style={{ zIndex: 2, color: 'red', fontSize: 22 }} /></div>
-                            <Link to={`item/${item.title}-${item.id}`} className='productLink' >
+                            <Link to={`item/${item.id}`} className='productLink' >
                                 <Card className='productCardColumn' key={index} >
 
                                     <CardImg src={`${imageUrl + item.img1}`} top className='productCardImage py-2' />

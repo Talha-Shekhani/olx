@@ -113,6 +113,7 @@ Ads.route('/:userId/form')
                             res.send(result)
                         }
                     })
+                else res.send(result)
             }
         })
         // res.send(req.body)

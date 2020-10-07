@@ -452,9 +452,9 @@ export const postAd = (userId, formData) => (dispatch) => {
                 var errmess = new Error(error)
                 return errmess
             })
-        // .then((response) => { return response.json() })
-        .then(response => console.log(response))
-        .catch(error => console.log(error))
+        .then((response) => { return response.json() })
+        .then(response => fetchAds())
+        .catch(error => adsFailed(error))
 
     return fetch(`${baseUrl}ads/${userId}/form`, {
         mode: 'no-cors',
