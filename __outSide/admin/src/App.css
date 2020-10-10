@@ -106,3 +106,15 @@
     box-shadow: 5px 2px 15px grey !important;
     margin: 0px !important;
 }
+
+.navAds {
+    border: 1px solid #999;
+    margin-top: 5px;
+    border-radius: 5px;
+    background-color: #fff;
+    width: 100% !important;
+}
+
+.navAds ul div a {
+    color: black;
+}

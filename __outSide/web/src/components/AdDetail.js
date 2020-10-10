@@ -7,7 +7,7 @@ import { delFav, postFav } from '../redux/Actions';
 
 function AdDetail(props) {
     const dispatch = useDispatch()
-    const { ads, loc } = useSelector(state => state)
+    const { ads, loc, users } = useSelector(state => state)
     const cat = useSelector(state => state.categories)
     const subCat = useSelector(state => state.subcategories)
     const fav = useSelector(state => state.favorites)
@@ -52,7 +52,7 @@ function AdDetail(props) {
     const displayRightSide = () => {
         if (ad != undefined && Object.keys(ad).length != 0) {
             var formatter = new Intl.NumberFormat('en-US', {
-                style: 'currency', currency: 'USD'
+                style: 'currency', currency: 'PKR'
             })
             var favrite = ''
             if (userId != 0) favrite = fav.favorites
@@ -60,32 +60,41 @@ function AdDetail(props) {
                 .map((item, index) => { return (item.ad_id) })
             var dat = new Date(ad.created_date)
             return (
-                <Card className='margin-20' >
-                    <CardBody>
-                        <div className='d-flex flex-column'>
-                            <h4 className='font-weight-bold' >{formatter.format(ad.price)}</h4>
-                            <h5 className='text-secondary'>{ad.title}</h5>
-                            <div>
-                                <span className={favrite == ad.id ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={() => {
-                                    // console.log('object')
-                                    if (favrite == ad.id)
-                                        dispatch(delFav(userId, ad.id))
-                                    else
-                                        dispatch(postFav(userId, ad.id))
-                                }}
-                                    style={{ zIndex: 2, color: 'red', fontSize: 22 }} />
+                <>
+                    <Card className='margin-20' >
+                        <div className='position-absolute' style={{ right: 18, top: 8 }} >
+                            <span className={favrite == ad.id ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={() => {
+                                // console.log('object')
+                                if (favrite == ad.id)
+                                    dispatch(delFav(userId, ad.id))
+                                else
+                                    dispatch(postFav(userId, ad.id))
+                            }}
+                                style={{ zIndex: 2, color: 'red', fontSize: 22 }} />
+                        </div>
+                        <CardBody>
+                            <div className='d-flex flex-column'>
+                                <h4 className='font-weight-bold' >{formatter.format(ad.price)}</h4>
+                                <h5 className='text-secondary'>{ad.title}</h5>
+
                             </div>
-                        </div>
-                        <div className='d-flex justify-content-between mt-4 text-secondary' >
-                            {loc.loc
-                                .filter(itm => itm.id == ad.area_id)
-                                .map((itm, index) => {
-                                    return (<small className='mb-0' key={index}>  {itm.area}, {itm.city}</small>)
-                                })}
-                            <small className='mb-0'>{dat.toUTCString().slice(5, 12)}</small>
-                        </div>
-                    </CardBody>
-                </Card>
+                            <div className='d-flex justify-content-between mt-4 text-secondary' >
+                                {loc.loc
+                                    .filter(itm => itm.id == ad.area_id)
+                                    .map((itm, index) => {
+                                        return (<small className='mb-0' key={index}>  {itm.area}, {itm.city}</small>)
+                                    })}
+                                <small className='mb-0'>{dat.toUTCString().slice(5, 12)}</small>
+                            </div>
+                        </CardBody>
+                    </Card>
+                    <Card className='margin-20' >
+                        <CardBody>
+                            <CardTitle>Seller Description</CardTitle>
+                            <img src={users.img} />
+                        </CardBody>
+                    </Card>
+                </>
             )
         }
         else return (<></>)
@@ -94,7 +103,7 @@ function AdDetail(props) {
     if (ad != undefined)
         return (
             <>
-                {JSON.stringify(ad)}
+                {JSON.stringify(ad), JSON.stringify(users.users)}
                 <div className='float-left' style={{ width: '65%' }} >
                     <Carousel activeIndex={activeIndex} next={next} previous={previous}
                         className='adDetailSlider' >

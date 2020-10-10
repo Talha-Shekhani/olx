@@ -102,7 +102,22 @@ setInterval(() => {
     const dat = new Date()
     dat.setHours(24, 0, 0, 0)
     dat.setDate(dat.getDate() + 30)
-    con.query(`DELETE FROM ads where updated_date = '${dat.toISOString().slice(0, 10)}' AND type = 'basic'`, (err, result) => {
+    console.log(dat.toISOString().slice(0,10))
+    con.query(`DELETE FROM ads where updated_date LIKE '${dat.toISOString().slice(0, 10)}%' AND type = 'basic'`, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            console.log(err)
+        }
+        else {
+            console.log(result)
+        }
+    })
+}, 1000 * 60 * 60 * 24)
+setInterval(() => {
+    const dat = new Date()
+    dat.setHours(24, 0, 0, 0)
+    dat.setDate(dat.getDate() + 180)
+    con.query(`DELETE FROM ads where updated_date LIKE '${dat.toISOString().slice(0, 10)}%' AND type = 'premium'`, (err, result) => {
         if (err) {
             console.log("error: ", err);
             console.log(err)

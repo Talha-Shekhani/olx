@@ -140,7 +140,23 @@ Admin.put('/putPaid', (req, res) => {
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json')
             console.log('result: ', result)
-            res.send({success: true, result: result})
+            res.send({ success: true, result: result })
+        }
+    })
+})
+
+Admin.get('/:startDate/:endDate', (req, res) => {
+    con.query(`SELECT COUNT(*) AS tPAds, updated_date AS date FROM ads WHERE updated_date BETWEEN '${req.params.startDate}' AND '${req.params.endDate}' GROUP BY updated_date ORDER BY updated_date`, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            res.statusCode = 403
+            res.send(err)
+        }
+        else {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            console.log('result: ', result)
+            res.send(result)
         }
     })
 })

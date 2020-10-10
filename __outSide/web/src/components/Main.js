@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAds, fetchFav, fetchCategories, fetchSubCategories, fetchFeat, fetchLoc } from '../redux/Actions';
+import { fetchAds, fetchFav, fetchCategories, fetchSubCategories, fetchFeat, fetchLoc, fetchUser } from '../redux/Actions';
 import Header from './Header';
 import Home from './Home';
 import { Switch, Route, useParams } from 'react-router-dom';
@@ -21,6 +21,7 @@ function Main(props) {
         dispatch(fetchSubCategories())
         dispatch(fetchFeat(userId))
         dispatch(fetchLoc())
+        dispatch(fetchUser(userId))
     }, [dispatch, userId])
 
     const itemDetail = ({match}) => {

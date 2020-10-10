@@ -5,6 +5,8 @@ import { NavLink, Redirect, Route, Switch } from 'react-router-dom'
 import '../App.css';
 import Dashboard from './Dashboard';
 import Ads from './Ads';
+import Users from './Users';
+import PremiumAds from './PremiumAds';
 
 function SideBar(props) {
     const [visible, setVisible] = useState(0)
@@ -46,9 +48,9 @@ function SideBar(props) {
                         </NavbarBrand>
                         <hr style={{ color: 'white', height: 1, background: 'white' }} />
                         <NavLink to='/admin/dashboard' >Dashboard</NavLink>
-                        <NavLink to='/admin/user'>User</NavLink>
+                        <NavLink to='/admin/users'>User</NavLink>
                         <NavLink to='/admin/ads'>Ads</NavLink>
-                        <NavLink to='/admin'>Details</NavLink>
+                        <NavLink to='/admin/premiumads'>Premium Ads</NavLink>
                         {/* <Redirect to='/admin/dashboard' ></Redirect> */}
                     </div>
                     <div id="main"
@@ -61,7 +63,9 @@ function SideBar(props) {
                         </Card>
                         <Switch>
                             <Route path='/admin/dashboard' component={() => <Dashboard />} />
-                            <Route path='/admin/ads' component={() => <Ads />} />
+                            <Route path='/admin/ads' component={() => <Ads   />} />
+                            <Route path='/admin/users' component={() => <Users />} />
+                            <Route path='/admin/premiumads' component={() => <PremiumAds />} />
                         </Switch>
                     </div>
                 </div>

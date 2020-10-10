@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // import logo from './logo.svg';
-import { Card, CardBody, CardText, } from 'reactstrap'
+import { Card, CardBody, CardText, FormGroup, Label, Col, Input, } from 'reactstrap'
 import { Pie, Line, HorizontalBar } from 'react-chartjs-2'
 import { baseUrl } from '../baseUrl'
 
@@ -12,10 +12,16 @@ function Dashboard(props) {
     const [ads, setAds] = useState([])
     const [revenueByMethod, setRevenueByMethod] = useState([])
     const [revenueByBank, setRevenueByBank] = useState([])
+    const [allAds, setAllAds] = useState([])
+    const [totalPremium, setTotalPremium] = useState(0)
+    const [totalBasic, setTotalBasic] = useState(0)
+    const dat = new Date().toISOString().split('T')[0]
+    const [startDate, setStartDate] = useState(dat)
+    const [endDate, setEndDate] = useState(dat)
+    const [premiumExp, setPremiumExp] = useState([])
 
     useEffect(() => {
         fetchSome().then((res) => {
-            // console.log(res.tAds)
             setTotalCounts(res)
         })
         fetchAds().then((res) => {
@@ -25,10 +31,33 @@ function Dashboard(props) {
             setRevenueByMethod(res.byMethod)
             setRevenueByBank(res.byBank)
         })
-        // return function cleanup() {
-        //     abortController.abort()
-        // }
-    }, [fetchAds, fetchRevenue, fetchSome])
+        fetchAllAds().then((res) => {
+            countBasic(res)
+            countPremium(res)
+            setAllAds(res)
+        })
+    }, [fetchAds, fetchRevenue, fetchSome, fetchAllAds])
+
+    const countPremium = (ads) => {
+        let count = 0
+        console.log(ads)
+        ads.filter(item => item.type == 'premium').map((item) => count++)
+        setTotalPremium(count)
+    }
+    const countBasic = (ads) => {
+        let count = 0
+        ads.filter(item => item.type == 'basic').map((item) => count++)
+        setTotalBasic(count)
+    }
+
+    const dateObject = () => {
+        let st = new Date(startDate)
+        let et = new Date(endDate)
+        let dat = []
+        for (let i = st; i < et; i+5)
+            dat.push(i)
+        console.log(dat)
+    }
 
     return (
         <>
@@ -48,13 +77,13 @@ function Dashboard(props) {
                 <Card className='upperCard col-md-4 col-lg-3 col-xl-2 m-1 mx-3 mx-md-5 mx-lg-3 mx-xl-5'
                     style={{ background: `linear-gradient(to right, #36ffee, #3676ff)` }}  >
                     <CardBody>
-                        <CardText style={{ color: 'white', fontSize: 20 }} >Total Users: <span style={{ fontWeight: 'bold' }}>{}</span> </CardText>
+                        <CardText style={{ color: 'white', fontSize: 18 }} >Premium Ads: <span style={{ fontWeight: 'bold' }}>{totalPremium}</span> </CardText>
                     </CardBody>
                 </Card>
                 <Card className='upperCard col-md-4 col-lg-3 col-xl-2 m-1 mx-3 mx-md-5 mx-lg-3 mx-xl-5'
                     style={{ background: `linear-gradient(to right, #cd36ff, #ff3697)` }} >
                     < CardBody >
-                        <CardText style={{ color: 'white', fontSize: 20 }} >Total Users: <span style={{ fontWeight: 'bold' }}>{}</span> </CardText>
+                        <CardText style={{ color: 'white', fontSize: 20 }} >Basic Ads: <span style={{ fontWeight: 'bold' }}>{totalBasic}</span> </CardText>
                     </CardBody>
                 </Card>
             </div>
@@ -120,7 +149,39 @@ function Dashboard(props) {
                         }} />
                     </CardBody>
                 </Card>
-
+                <Card className='col-12 col-md-12 col-lg-5 col-xl-5 mx-1 mx-md-0 ml-lg-0 my-1' >
+                    <CardBody>
+                        <FormGroup row className='col-12'>
+                            <Col sm={6} >
+                                <Label>Start Date:</Label>
+                                <Input type="date" name="select" id="start" placeholder='Start Date' max={dat}
+                                    value={startDate} onChange={(e) => {
+                                        setStartDate(e.target.value);
+                                        setEndDate(dat);
+                                        fetchPremiumExpiry(startDate, endDate).then((res) => { console.log(res); setPremiumExp(res) })
+                                    }} />
+                            </Col>
+                            <Col sm={6} >
+                                <Label>End Date:</Label>
+                                <Input type="date" name="select" id="start" placeholder='End Date' min={startDate}
+                                    value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                            </Col>
+                        </FormGroup>
+                        <Line data={{
+                            datasets: [{
+                                label: 'Premium ads Expiration',
+                                pointHitRadius: 10,
+                                borderColor: ['#999'],
+                                borderWidth: 1,
+                                backgroundColor: ['#B21F00', '#C9DE00', '#2FDE00', '#00A6B4', '#6800B4'],
+                                hoverBackgroundColor: ['#501800', '#4B5000', '#175000', '#003350', '#35014F'],
+                                data: premiumExp.map((itm) => itm.tPAds),
+                                fill: false,
+                            }],
+                            labels: [startDate, startDate.setDay(startDate.getDate() + 5)],
+                        }} />
+                    </CardBody>
+                </Card>
             </div>
         </>
     )
@@ -213,5 +274,56 @@ export const fetchRevenue = () => {
         .catch(error => { return error })
 }
 
+export const fetchAllAds = () => {
+    return fetch(`${baseUrl}ads`, {
+        mode: 'cors',
+        method: 'GET'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}
+
+export const fetchPremiumExpiry = (startDate, endDate) => {
+    return fetch(`${baseUrl}admin/${startDate}/${endDate}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                return error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                return errmess
+            })
+        .then((response) => { return response.json() })
+        .then(response => { return response })
+        .catch(error => { return error })
+}
 
 export default Dashboard;
