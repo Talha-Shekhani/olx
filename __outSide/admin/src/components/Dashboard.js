@@ -40,7 +40,6 @@ function Dashboard(props) {
 
     const countPremium = (ads) => {
         let count = 0
-        console.log(ads)
         ads.filter(item => item.type == 'premium').map((item) => count++)
         setTotalPremium(count)
     }
@@ -54,9 +53,12 @@ function Dashboard(props) {
         let st = new Date(startDate)
         let et = new Date(endDate)
         let dat = []
-        for (let i = st; i < et; i+5)
+        for (let i = st; i < et; i + 5) {
             dat.push(i)
+            console.log('i', i)
+        }
         console.log(dat)
+        return dat
     }
 
     return (
@@ -122,9 +124,6 @@ function Dashboard(props) {
                                 fill: false
                             }],
                             labels: revenueByMethod.map((itm) => itm.method),
-                        }} options={{
-                            title: 'per Month',
-                            tooltips: (data) => { }
                         }} />
                     </CardBody>
                 </Card>
@@ -144,9 +143,7 @@ function Dashboard(props) {
                                 fill: false
                             }],
                             labels: revenueByBank.map((itm) => itm.bankName),
-                        }} options={{
-                            title: ''
-                        }} />
+                        }}  />
                     </CardBody>
                 </Card>
                 <Card className='col-12 col-md-12 col-lg-5 col-xl-5 mx-1 mx-md-0 ml-lg-0 my-1' >
@@ -178,7 +175,7 @@ function Dashboard(props) {
                                 data: premiumExp.map((itm) => itm.tPAds),
                                 fill: false,
                             }],
-                            labels: [startDate, startDate.setDay(startDate.getDate() + 5)],
+                            labels: premiumExp.map((itm) => itm.date.split('T')[0]),
                         }} />
                     </CardBody>
                 </Card>

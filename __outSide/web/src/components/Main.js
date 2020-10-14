@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAds, fetchFav, fetchCategories, fetchSubCategories, fetchFeat, fetchLoc, fetchUser } from '../redux/Actions';
+import { fetchAds, fetchFav, fetchCategories, fetchSubCategories, fetchFeat, fetchLoc, fetchUser, fetchCity, fetchProvince } from '../redux/Actions';
 import Header from './Header';
 import Home from './Home';
 import { Switch, Route, useParams } from 'react-router-dom';
 import AdDetail from './AdDetail';
+import Sell from './Sell';
 
 function Main(props) {
     const { ads } = useSelector(state => state)
@@ -22,9 +23,11 @@ function Main(props) {
         dispatch(fetchFeat(userId))
         dispatch(fetchLoc())
         dispatch(fetchUser(userId))
+        dispatch(fetchCity())
+        dispatch(fetchProvince())
     }, [dispatch, userId])
 
-    const itemDetail = ({match}) => {
+    const itemDetail = ({ match }) => {
         var { itemId } = match.params
         // var adId = itemId.slice(itemId.toString().lastIndexOf('-') + 1)
         return (
@@ -41,6 +44,7 @@ function Main(props) {
             <Switch>
                 <Route exact path='/' component={() => <Home />} />
                 <Route path='/item/:itemId' component={itemDetail} />
+                <Route exact path='/sell' component={() => <Sell />} />
             </Switch>
         </>
     )

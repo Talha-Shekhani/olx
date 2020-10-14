@@ -7,6 +7,7 @@ import Dashboard from './Dashboard';
 import Ads from './Ads';
 import Users from './Users';
 import PremiumAds from './PremiumAds';
+import Reviews from './Reviews';
 
 function SideBar(props) {
     const [visible, setVisible] = useState(0)
@@ -51,6 +52,7 @@ function SideBar(props) {
                         <NavLink to='/admin/users'>User</NavLink>
                         <NavLink to='/admin/ads'>Ads</NavLink>
                         <NavLink to='/admin/premiumads'>Premium Ads</NavLink>
+                        <NavLink to='/admin/reviews'>Reviews</NavLink>
                         {/* <Redirect to='/admin/dashboard' ></Redirect> */}
                     </div>
                     <div id="main"
@@ -66,6 +68,7 @@ function SideBar(props) {
                             <Route path='/admin/ads' component={() => <Ads   />} />
                             <Route path='/admin/users' component={() => <Users />} />
                             <Route path='/admin/premiumads' component={() => <PremiumAds />} />
+                            <Route path='/admin/reviews' component={() => <Reviews />} />
                         </Switch>
                     </div>
                 </div>

@@ -84,7 +84,6 @@ function Ads() {
                 </Nav>
             </Navbar>
             <div className='mt-5' >
-                {selectedCat + ' ' + selectedSubcat + ' ' + selectedCity}
                 <Table hover responsive  >
                     <tbody>
                         <tr className='adminAdTable' >
@@ -92,8 +91,8 @@ function Ads() {
                             <th>created at</th><th>updated at</th><th>Active?</th>
                             <th>type</th>
                         </tr>
-                        <tr><td colSpan={7} >{JSON.stringify(ads.map(item => selectedCity == 0 ? (selectedSubcat == 0 ? selectedCat != 0 ? item.category_id == selectedCat : true : true || selectedSubcat != 0 ? item.sub_category_id == selectedSubcat : true) : true
-                        || selectedCity != 0 ? (selectedSubcat == 0 ? selectedCat != 0 ? item.category_id == selectedCat : true : true || selectedSubcat != 0 ? item.sub_category_id == selectedSubcat : true) && loc.filter(itm => itm.id == item.area_id && itm.c_id == selectedCity).map((itm) => item.area_id == itm.c_id)[0] : true))}</td></tr>
+                        {/* <tr><td colSpan={7} >{JSON.stringify(ads.map(item => selectedCity == 0 ? (selectedSubcat == 0 ? selectedCat != 0 ? item.category_id == selectedCat : true : true || selectedSubcat != 0 ? item.sub_category_id == selectedSubcat : true) : true
+                        || selectedCity != 0 ? (selectedSubcat == 0 ? selectedCat != 0 ? item.category_id == selectedCat : true : true || selectedSubcat != 0 ? item.sub_category_id == selectedSubcat : true) && loc.filter(itm => itm.id == item.area_id && itm.c_id == selectedCity).map((itm) => item.area_id == itm.c_id)[0] : true))}</td></tr> */}
                         {ads.filter(item => selectedCity == 0 ? (selectedSubcat == 0 ? selectedCat != 0 ? item.category_id == selectedCat : true : true || selectedSubcat != 0 ? item.sub_category_id == selectedSubcat : true) : true
                         || selectedCity != 0 ? (selectedSubcat == 0 ? selectedCat != 0 ? item.category_id == selectedCat : true : true || selectedSubcat != 0 ? item.sub_category_id == selectedSubcat : true) && loc.filter(itm => itm.id == item.area_id && itm.c_id == selectedCity).map((itm) => item.area_id == itm.c_id)[0] : true
                         ).map((item, index) => (

@@ -419,11 +419,11 @@ export const postAd = (userId, formData) => (dispatch) => {
     console.log('val', formData)
     var data = new FormData()
     for (let i = 0; i < formData.img.length; i++) {
-        data.append('img', formData.img[i], formData.img[i].path)
-        console.log(formData.img[i].path, formData.img.length)
+        data.append('img', formData.img[i], formData.img[i].name)
     }
-    console.log('data', JSON.stringify(data))
-    fetch(`${baseUrl}ads/upload`, {
+    // data.append(formData.img, formData.img)
+    console.log('data', data.getAll('img'))
+    fetch(`${baseUrl}ads/webupload`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -450,7 +450,7 @@ export const postAd = (userId, formData) => (dispatch) => {
         .then(response => console.log(response))
         .catch(error => console.log(error))
 
-    return fetch(`${baseUrl}ads/${userId}/form`, {
+    return fetch(`${baseUrl}ads/${userId}/webform`, {
         mode: 'cors',
         method: 'POST',
         headers: {

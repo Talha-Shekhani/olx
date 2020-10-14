@@ -168,3 +168,7 @@
 .margin-20 {
   margin: 20px;
 }
+
+.noDeco:hover {
+  text-decoration: none;
+}

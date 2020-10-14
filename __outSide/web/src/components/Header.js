@@ -23,9 +23,6 @@ function Header(props) {
                 <Login />
             </div>
             <Navbar color="black" light expand="md" className='bg-white py-0'>
-                {/* <NavbarBrand href="/" className='p-0' >
-                    <img src={baseUrl + 'OLX_BLUE_LOGO.png'} style={{ width: 60 }} />
-                </NavbarBrand> */}
                 <NavbarToggler onClick={handleToggle} />
                 <Collapse isOpen={isOpen} navbar className='col-12' >
                     <Nav className="mr-auto" navbar>
