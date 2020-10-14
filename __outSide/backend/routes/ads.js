@@ -60,6 +60,7 @@ Ads.route('/:userId/form')
 
     })
     .post((req, res, next) => {
+        console.log(req.body)
         let dat = new Date()
         let img1 = '', img2 = '', img3 = ''
         img1 = req.body.img[0].uri.slice(req.body.img[0].uri.lastIndexOf('/') + 1)
@@ -137,16 +138,88 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 Ads.post('/upload', upload.array('img', 3), (req, res) => {
-    // if (err) console.log('err ', err)
-    // for (var i in req.files) {
-    //     req.files[i].path = req.files[i].destination + req.files[i].originalname
-    // }
-    // console.log(req)
-    // console.log(JSON.stringify(req.body))
     console.log(req.headers)
     // console.log(req.file)
     console.log(req.files)
     res.send(req.files)
 })
+
+Ads.post('/:userId/webform', (req, res, next) => {
+    console.log(req.body.img)
+    let dat = new Date()
+    let img1 = '', img2 = '', img3 = ''
+    img1 = req.body.img
+    if (req.body.img[1] != undefined)
+        img2 = req.body.img[1].name
+    if (req.body.img[2] != undefined)
+        img3 = req.body.img[2].name
+    console.log(img1, img2, img3)
+    console.log('formData', req.params.userId, ' ', req.body)
+    con.query(`INSERT INTO ads 
+    (user_id, title, description, price, category_id, sub_category_id, area_id, img1, img2, img3, created_date, updated_date, active, type, paid) 
+    values (${req.params.userId}, 
+        '${req.body.title}', 
+        '${req.body.description}', 
+        '${req.body.price}', 
+        ${req.body.catId}, 
+        ${req.body.subcatId}, 
+        ${req.body.loc},
+        '${req.body.img[0].name}', 
+        '${img2}',
+        '${img3}',
+        '${dat}', 
+        '${dat}',
+        'true',
+        '${req.body.type}',
+        '${req.body.paid}') `, (err, result) => {
+        if (err) {
+            console.log("error: ", err);
+            res.statusCode = 403
+            res.send(err)
+        }
+        else {
+            if (req.body.transactionId != undefined)
+                con.query(`INSERT INTO transactions(id, date, ad_id, method, amount, bill_no, bank_name) 
+                VALUES (
+                ${req.body.transactionId},
+                '${req.body.tDate}',
+                ${result.insertId},
+                '${req.body.method}',
+                ${req.body.price},
+                ${req.body.billNo || null},
+                '${req.body.bankName}')`, (err, result) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        res.statusCode = 403
+                        res.send(err)
+                    }
+                    else {
+                        res.statusCode = 200
+                        res.setHeader('Content-Type', 'application/json')
+                        res.send(result)
+                    }
+                })
+            else res.send(result)
+        }
+    })
+    // res.send(req.body)
+})
+
+const storag = multer.diskStorage({
+    destination(req, file, callback) {
+        callback(null, 'public/images')
+    },
+    filename(req, files, callback) {
+        callback(null, `${files.name}`)
+    },
+})
+const uplod = multer({ storage: storag })
+
+Ads.post('/webupload', uplod.array('img', 3), (req, res) => {
+    console.log(req.headers)
+    console.log(req.files)
+    res.send(req.files)
+})
+
 
 module.exports = Ads

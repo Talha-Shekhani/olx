@@ -7,18 +7,17 @@ rev.use(bodyParser.json())
 
 rev.route('/')
     .get((req, res, next) => {
-        // con.query(`SELECT * FROM review WHERE ad_id = ${req.body.adId}`, (err, result) => {
-        //     if (err) {
-        //         console.log("error: ", err);
-        //         res.send({err: err})
-        //     }
-        //     else {
-        //         // console.log("loc: ", result);
-        //         res.statusCode = 200
-        //         res.setHeader({'Content-Type': 'application/json'})
-        //         res.send({success: true, result: result})
-        //     }
-        // })
+        con.query(`SELECT * FROM review`, (err, result) => {
+            if (err) {
+                console.log("error: ", err);
+                res.send({ err: err })
+            }
+            else {
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json')
+                res.send(result)
+            }
+        })
     })
     .post((req, res, next) => {
         console.log(req.body)
